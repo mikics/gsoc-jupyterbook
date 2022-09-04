@@ -139,3 +139,11 @@ _build/*
 *.h5
 *.xdmf
 *.bp
+
+# additional stuffs
+.bash_history
+.gitconfig
+.jupyter/
+.ssh/
+.vscode-server/
+

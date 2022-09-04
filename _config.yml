@@ -19,7 +19,7 @@ bibtex_bibfiles:
 
 # Information about where the book exists on the web
 repository:
-  url: https://github.com/jorgensd/fenics22-tutorial # Online location of your book
+  url: https://github.com/mikics/gsoc-jupyterbook # Online location of your book
   path_to_book: . # Optional path to your book, relative to the repository root
   branch: main # Which branch of the repository should be used when creating links (optional)
 
@@ -42,6 +42,15 @@ html:
   use_issues_button: true
   use_repository_button: true
   use_edit_page_button: true
+
+
+  extra_footer: |
+    <div>
+        This webpage is an adaptation of <a href=https://jorgensd.github.io/fenics22-tutorial/intro.html>The FEniCSx tutorial for FEniCS 2022</a> and
+        is distributed under the terms of the      <a href=http://creativecommons.org/licenses/by/4.0/>Creative Commons Attribution 4.0 International License  </a>
+        which permits use, duplication, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source,
+        provide a link to the Creative Commons license and indicate if changes were made.
+    </div>
 
 exclude_patterns: [README.md]
 
