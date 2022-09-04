@@ -43,7 +43,6 @@ html:
   use_repository_button: true
   use_edit_page_button: true
 
-
   extra_footer: |
     <div>
         This webpage is an adaptation of <a href=https://jorgensd.github.io/fenics22-tutorial/intro.html>The FEniCSx tutorial for FEniCS 2022</a> and
