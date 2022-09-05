@@ -17,26 +17,6 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  curl:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Update SBC demo
-      run: |
-        URL_SBC=https://raw.githubusercontent.com/mikics/dolfinx/gsoc-demo-01/python/demo/demo_scattering_boundary_conditions
-        curl $URL_SBC/demo_scattering_boundary_conditions.py -o demo_scattering_boundary_conditions.py
-        curl $URL_SBC/analytical_efficiencies_wire.py -o analytical_efficiencies_wire.py
-        curl $URL_SBC/mesh_wire.py -o mesh_wire.py
-
-    - name: Push updates
-      run: |
-        git config --global user.name 'Michele Castriotta'
-        git config --global user.email 'mich.castriotta@gmail.com'
-        git add -A
-        git commit -m "Update demos"
-        git push origin main
-        
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -56,6 +36,18 @@ jobs:
 
       - name: Install dependencies
         run: pip3 install notebook nbconvert==6.5.3 jupyter-book --upgrade
+
+      -name: Install cURL
+        run: |
+          apt-get update
+          apt-get install curl
+
+      - name: Update SBC demo
+        run: |
+          URL_SBC=https://raw.githubusercontent.com/mikics/dolfinx/gsoc-demo-01/python/demo/demo_scattering_boundary_conditions
+          curl $URL_SBC/demo_scattering_boundary_conditions.py -o demo_scattering_boundary_conditions.py
+          curl $URL_SBC/analytical_efficiencies_wire.py -o analytical_efficiencies_wire.py
+          curl $URL_SBC/mesh_wire.py -o mesh_wire.py
 
       - name: Convert to ipynb
         run: |
