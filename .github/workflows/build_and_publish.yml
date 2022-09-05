@@ -22,21 +22,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install jupytext
-      run: pip3 install jupytext jupyter
-
     - name: Update SBC demo
       run: |
         URL_SBC=https://raw.githubusercontent.com/mikics/dolfinx/gsoc-demo-01/python/demo/demo_scattering_boundary_conditions
         curl $URL_SBC/demo_scattering_boundary_conditions.py -o demo_scattering_boundary_conditions.py
         curl $URL_SBC/analytical_efficiencies_wire.py -o analytical_efficiencies_wire.py
         curl $URL_SBC/mesh_wire.py -o mesh_wire.py
-
-    - name: Convert to ipynb
-      run: |
-        jupytext --set-kernel python3-complex --to ipynb demo_scattering_boundary_conditions.py
-        jupytext --to ipynb analytical_efficiencies_wire.py
-        jupytext --to ipynb mesh_wire.py
 
     - name: Push updates
       run: |
@@ -65,6 +56,12 @@ jobs:
 
       - name: Install dependencies
         run: pip3 install notebook nbconvert==6.5.3 jupyter-book --upgrade
+
+      - name: Convert to ipynb
+        run: |
+          jupytext --set-kernel python3-complex --to ipynb demo_scattering_boundary_conditions.py
+          jupytext --to ipynb analytical_efficiencies_wire.py
+          jupytext --to ipynb mesh_wire.py
 
       # Runs a single command using the runners shell
       - name: Build the book
