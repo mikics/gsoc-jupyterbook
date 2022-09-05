@@ -21,10 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    
     - name: curl
       run: |
-        curl https://raw.githubusercontent.com/mikics/dolfinx/gsoc-demo-01/python/demo/demo_scattering_boundary_conditions/demo_scattering_boundary_conditions.py -o demo_scattering_boundary_conditions.py
+        BASE_URL = https://raw.githubusercontent.com/mikics/dolfinx/gsoc-demo-01/python/demo/demo_scattering_boundary_conditions
+        curl $(BASE_URL)/demo_scattering_boundary_conditions.py -o demo_scattering_boundary_conditions.py
         
   build:
     # The type of runner that the job will run on
