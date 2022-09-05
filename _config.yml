@@ -1,8 +1,8 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: FEniCS 22 tutorial
-author: The FEniCS project
+title: GSoC 2022 - Expanding FEniCSx electromagnetic demos
+author: Michele Castriotta
 logo: logo.jpeg
 
 # Force re-execution of notebooks on each build.
