@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: pip3 install notebook nbconvert==6.5.3 jupyter-book --upgrade
 
-      -name: Install cURL
+      - name: Install cURL
         run: |
           apt-get update
           apt-get install curl
