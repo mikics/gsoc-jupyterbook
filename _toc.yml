@@ -6,6 +6,7 @@ root: intro
 parts:
   - caption: Scattering boundary conditions
     chapters:
+    - file: demo_scattering_boundary_conditions
     - file: analytical_efficiencies_wire
     - file: mesh_wire
 
