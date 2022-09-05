@@ -34,6 +34,9 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2 
 
+      - name: Install curl
+        run: apt install curl
+        
       - name: Install dependencies
         run: pip3 install jupytext notebook nbconvert==6.5.3 jupyter-book --upgrade
 
