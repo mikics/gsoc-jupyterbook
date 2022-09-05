@@ -27,8 +27,6 @@ jobs:
         curl $URL_SBC/demo_scattering_boundary_conditions.py -o demo_scattering_boundary_conditions.py
         curl $URL_SBC/analytical_efficiencies_wire.py -o analytical_efficiencies_wire.py
         curl $URL_SBC/mesh_wire.py -o mesh_wire.py
-        git config --global user.name 'Michele Castriotta'
-        git config --global user.email 'mich.castriotta@gmail.com'
         git add -A
         git commit -m "Update demos"
         git push origin main
