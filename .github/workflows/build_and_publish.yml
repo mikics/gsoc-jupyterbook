@@ -20,7 +20,7 @@ jobs:
   curl:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
     - name: curl
       run: |
         URL_SBC=https://raw.githubusercontent.com/mikics/dolfinx/gsoc-demo-01/python/demo/demo_scattering_boundary_conditions
