@@ -29,8 +29,9 @@ jobs:
         curl $URL_SBC/mesh_wire.py -o mesh_wire.py
         git config --global user.name 'Michele Castriotta'
         git config --global user.email 'mich.castriotta@gmail.com'
-        git commit -am "Add demos"
-        git push
+        git add -A
+        git commit -m "Update demos"
+        git push origin main
         
   build:
     # The type of runner that the job will run on
