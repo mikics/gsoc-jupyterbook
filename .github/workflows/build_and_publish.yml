@@ -23,8 +23,11 @@ jobs:
     - uses: actions/checkout@master
     - name: curl
       run: |
-        BASE_URL=https://raw.githubusercontent.com/mikics/dolfinx/gsoc-demo-01/python/demo/demo_scattering_boundary_conditions
-        curl $BASE_URL/demo_scattering_boundary_conditions.py -o demo_scattering_boundary_conditions.py
+        URL_SBC=https://raw.githubusercontent.com/mikics/dolfinx/gsoc-demo-01/python/demo/demo_scattering_boundary_conditions
+        curl $URL_SBC/demo_scattering_boundary_conditions.py -o demo_scattering_boundary_conditions.py
+        curl $URL_SBC/analytical_efficiencies_wire.py -o analytical_efficiencies_wire.py
+        curl $URL_SBC/mesh_wire.py -o mesh_wire.py
+
         
   build:
     # The type of runner that the job will run on
