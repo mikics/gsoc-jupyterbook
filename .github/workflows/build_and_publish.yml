@@ -58,7 +58,8 @@ jobs:
           jupytext --to ipynb mesh_wire.py
       
       - name: Push to GH
-        run: |  
+        run: |
+          git config --global --add safe.directory /__w/gsoc-jupyterbook/gsoc-jupyterbook
           git config --global user.name "Michele Castriotta"
           git config --global user.email mich.castriotta@gmail.com
           git add -A
