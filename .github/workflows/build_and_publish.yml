@@ -37,11 +37,6 @@ jobs:
       - name: Install dependencies
         run: pip3 install notebook nbconvert==6.5.3 jupyter-book --upgrade
 
-      - name: Install cURL
-        run: |
-          apt-get -y update
-          apt-get -y install curl
-
       - name: Update SBC demo
         run: |
           mkdir chapter1/
@@ -56,15 +51,6 @@ jobs:
           jupytext --set-kernel python3-complex --to ipynb demo_scattering_boundary_conditions.py
           jupytext --to ipynb analytical_efficiencies_wire.py
           jupytext --to ipynb mesh_wire.py
-      
-      - name: Push to GH
-        run: |
-          git config --global --add safe.directory /__w/gsoc-jupyterbook/gsoc-jupyterbook
-          git config --global user.name "Michele Castriotta"
-          git config --global user.email mich.castriotta@gmail.com
-          git add -A
-          git commit -m "Update demos
-          git push origin main
       
       # Runs a single command using the runners shell
       - name: Build the book
