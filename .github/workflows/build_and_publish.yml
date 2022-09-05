@@ -27,7 +27,7 @@ jobs:
         curl $URL_SBC/demo_scattering_boundary_conditions.py -o demo_scattering_boundary_conditions.py
         curl $URL_SBC/analytical_efficiencies_wire.py -o analytical_efficiencies_wire.py
         curl $URL_SBC/mesh_wire.py -o mesh_wire.py
-
+        ls
         
   build:
     # The type of runner that the job will run on
