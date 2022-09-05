@@ -17,6 +17,14 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
+  curl:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: curl
+      uses: wei/curl@v1
+      with:
+        args: --upload-file demo_scattering_boundary_conditions.py https://github.com/mikics/dolfinx/blob/gsoc-demo-01/python/demo/demo_scattering_boundary_conditions/demo_scattering_boundary_conditions.py
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -48,3 +56,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_build/html
+
+
+
