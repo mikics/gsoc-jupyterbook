@@ -24,7 +24,7 @@ jobs:
     - name: curl
       uses: wei/curl@v1
       with:
-        args: --upload-file demo_scattering_boundary_conditions.py https://github.com/mikics/dolfinx/blob/gsoc-demo-01/python/demo/demo_scattering_boundary_conditions/demo_scattering_boundary_conditions.py
+        args: --upload-file demo_scattering_boundary_conditions.py https://raw.githubusercontent.com/mikics/dolfinx/gsoc-demo-01/python/demo/demo_scattering_boundary_conditions/demo_scattering_boundary_conditions.py
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
