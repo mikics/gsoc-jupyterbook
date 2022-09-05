@@ -51,6 +51,7 @@ jobs:
           jupytext --to ipynb analytical_efficiencies_wire.py
  
       - name: Git push
+        run: |
           git config --global user.name 'Michele Castriotta'
           git config --global user.email 'mich.castriotta@gmail.com'
           git add -A
