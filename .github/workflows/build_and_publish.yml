@@ -35,6 +35,8 @@ jobs:
     - name: Convert to ipynb
       run: |
         jupytext --to ipynb demo_scattering_boundary_conditions.py
+        jupytext --to ipynb analytical_efficiencies_wire.py
+        jupytext --to ipynb mesh_wire.py
 
     - name: Push updates
       run: |
