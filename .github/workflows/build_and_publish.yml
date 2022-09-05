@@ -52,7 +52,7 @@ jobs:
 
       - name: Convert to ipynb
         run: |
-          cd chapter1
+          cd chapter1/
           jupytext --set-kernel python3-complex --to ipynb demo_scattering_boundary_conditions.py
           jupytext --to ipynb analytical_efficiencies_wire.py
           jupytext --to ipynb mesh_wire.py
