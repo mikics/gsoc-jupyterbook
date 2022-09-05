@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install jupytext
-      run: pip3 install jupytext
+      run: pip3 install jupytext jupyter
 
     - name: Update SBC demo
       run: |
