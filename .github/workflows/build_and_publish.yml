@@ -36,7 +36,7 @@ jobs:
 
       - name: Install dependencies
         run: pip3 install notebook ipywidgets==7.7.2 nbconvert==6.5.3 jupyter-book --upgrade
-	
+
       # Runs a single command using the runners shell
       - name: Build the book
         run: |
