@@ -8,3 +8,5 @@ cd chapter1/
 jupytext --to ipynb demo_scattering_boundary_conditions.py
 jupytext --to ipynb analytical_efficiencies_wire.py
 jupytext --to ipynb mesh_wire.py
+
+sudo chown -R $USER: ./

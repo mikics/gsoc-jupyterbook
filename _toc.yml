@@ -9,4 +9,5 @@ parts:
     - file: chapter1/demo_scattering_boundary_conditions
     - file: chapter1/analytical_efficiencies_wire
     - file: chapter1/mesh_wire
-
+    - file: chapter1/fundamentals_code
+    - file: chapter1/em
