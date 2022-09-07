@@ -54,6 +54,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Scattering from a wire with perfectly matched layer condition" href="../chapter2/demo_pml.html" />
     <link rel="prev" title="Calculation of analytical efficiencies" href="analytical_efficiencies_wire.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
@@ -131,6 +132,52 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
 </ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Perfectly matched layer (PML)
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter2/demo_pml.html">
+   Scattering from a wire with perfectly matched layer condition
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter2/analytical_efficiencies_wire.html">
+   Calculation of analytical efficiencies
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Half-loaded waveguide
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/demo_half_loaded_waveguide.html">
+   Mode analysis for a half-loaded rectangular waveguide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/analytical_modes.html">
+   Analytical solutions for the half-loaded waveguide
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Axisymmetric Maxwell's equations
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter4/demo_axis.html">
+   Scattering from a sphere in the axisymmetric formulation
+  </a>
+ </li>
+</ul>
 
     </div>
 </nav></div>
@@ -181,6 +228,35 @@ title="Toggle navigation"
         
     </div>
     <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/mikics/gsoc-jupyterbook/main?urlpath=tree/./chapter1/mesh_wire.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
 <button onclick="toggleFullScreen()"
   class="headerbtn"
   data-toggle="tooltip"
@@ -382,8 +458,10 @@ title="Print to PDF"
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">generate_mesh_wire</span><span class="p">(</span><span class="n">radius_wire</span><span class="p">,</span> <span class="n">radius_dom</span><span class="p">,</span> <span class="n">in_wire_size</span><span class="p">,</span> <span class="n">on_wire_size</span><span class="p">,</span>
-                       <span class="n">bkg_size</span><span class="p">,</span> <span class="n">boundary_size</span><span class="p">,</span> <span class="n">au_tag</span><span class="p">,</span> <span class="n">bkg_tag</span><span class="p">,</span> <span class="n">boundary_tag</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">generate_mesh_wire</span><span class="p">(</span>
+    <span class="n">radius_wire</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">radius_dom</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">in_wire_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">on_wire_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">bkg_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">boundary_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">au_tag</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">bkg_tag</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">boundary_tag</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 
     <span class="n">gmsh</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -449,13 +527,13 @@ title="Print to PDF"
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python3",
+            kernelName: "python3-complex",
             path: "./chapter1"
         },
         predefinedOutput: true
     }
     </script>
-    <script>kernelName = 'python3'</script>
+    <script>kernelName = 'python3-complex'</script>
 
               </div>
               
@@ -470,6 +548,13 @@ title="Print to PDF"
             <p class="prev-next-subtitle">previous</p>
             <p class="prev-next-title">Calculation of analytical efficiencies</p>
         </div>
+    </a>
+    <a class='right-next' id="next-link" href="../chapter2/demo_pml.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Scattering from a wire with perfectly matched layer condition</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
     </a>
 </div>
             </footer>

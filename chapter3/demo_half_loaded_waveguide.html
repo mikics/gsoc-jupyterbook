@@ -1,0 +1,972 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Mode analysis for a half-loaded rectangular waveguide &#8212; GSoC 2022 - Expanding FEniCSx electromagnetic demos</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Analytical solutions for the half-loaded waveguide" href="analytical_modes.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="../chapter2/mesh_wire_pml.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/logo.jpeg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">GSoC 2022 - Expanding FEniCSx electromagnetic demos</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    FEniCSx Tutorial @ FEniCS 2022
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Scattering boundary conditions
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter1/demo_scattering_boundary_conditions.html">
+   Scattering from a wire with scattering boundary conditions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter1/analytical_efficiencies_wire.html">
+   Calculation of analytical efficiencies
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Perfectly matched layer (PML)
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter2/demo_pml.html">
+   Scattering from a wire with perfectly matched layer condition
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter2/analytical_efficiencies_wire.html">
+   Calculation of analytical efficiencies
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Half-loaded waveguide
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Mode analysis for a half-loaded rectangular waveguide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="analytical_modes.html">
+   Analytical solutions for the half-loaded waveguide
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Axisymmetric Maxwell's equations
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter4/demo_axis.html">
+   Scattering from a sphere in the axisymmetric formulation
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/mikics/gsoc-jupyterbook/main?urlpath=tree/./chapter3/demo_half_loaded_waveguide.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/mikics/gsoc-jupyterbook"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/mikics/gsoc-jupyterbook/issues/new?title=Issue%20on%20page%20%2Fchapter3/demo_half_loaded_waveguide.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/mikics/gsoc-jupyterbook/edit/main/./chapter3/demo_half_loaded_waveguide.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Edit this page"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="headerbtn__text-container">suggest edit</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/chapter3/demo_half_loaded_waveguide.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#equations-problem-definition-and-implementation">
+   Equations, problem definition and implementation
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Mode analysis for a half-loaded rectangular waveguide</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#equations-problem-definition-and-implementation">
+   Equations, problem definition and implementation
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="mode-analysis-for-a-half-loaded-rectangular-waveguide">
+<h1>Mode analysis for a half-loaded rectangular waveguide<a class="headerlink" href="#mode-analysis-for-a-half-loaded-rectangular-waveguide" title="Permalink to this headline">#</a></h1>
+<p>Copyright © 2022 Michele Castriotta, Igor Baratta, Jørgen S. Dokken</p>
+<p>This demo is implemented in one file, which shows how to:</p>
+<ul class="simple">
+<li><p>Setup an eigenvalue problem for Maxwell’s equations</p></li>
+<li><p>Use SLEPc for solving eigenvalue problems in DOLFINx</p></li>
+</ul>
+<section id="equations-problem-definition-and-implementation">
+<h2>Equations, problem definition and implementation<a class="headerlink" href="#equations-problem-definition-and-implementation" title="Permalink to this headline">#</a></h2>
+<p>In this demo, we are going to show how to solve the eigenvalue problem
+associated with a half-loaded rectangular waveguide
+with perfect electric conducting walls.</p>
+<p>First of all, let’s import the modules we need for solving the problem:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">slepc4py</span> <span class="kn">import</span> <span class="n">SLEPc</span>
+
+<span class="kn">from</span> <span class="nn">analytical_modes</span> <span class="kn">import</span> <span class="n">verify_mode</span>
+
+<span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">fem</span><span class="p">,</span> <span class="n">io</span>
+<span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="p">(</span><span class="n">CellType</span><span class="p">,</span> <span class="n">create_rectangle</span><span class="p">,</span> <span class="n">exterior_facet_indices</span><span class="p">,</span>
+                          <span class="n">locate_entities</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="p">(</span><span class="n">FiniteElement</span><span class="p">,</span> <span class="n">MixedElement</span><span class="p">,</span> <span class="n">TestFunctions</span><span class="p">,</span> <span class="n">TrialFunctions</span><span class="p">,</span>
+                 <span class="n">curl</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">inner</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">from</span> <span class="nn">petsc4py.PETSc</span> <span class="kn">import</span> <span class="n">ScalarType</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s now define our domain. It is a rectangular domain
+with width <span class="math notranslate nohighlight">\(w\)</span> and height <span class="math notranslate nohighlight">\(h = 0.45w\)</span>, with the dielectric medium filling
+the lower-half of the domain, with a height of <span class="math notranslate nohighlight">\(d=0.5h\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">h</span> <span class="o">=</span> <span class="mf">0.45</span> <span class="o">*</span> <span class="n">w</span>
+<span class="n">d</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">h</span>
+<span class="n">nx</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">ny</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.4</span> <span class="o">*</span> <span class="n">nx</span><span class="p">)</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">create_rectangle</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+    <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">]]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">]),</span> <span class="n">CellType</span><span class="o">.</span><span class="n">quadrilateral</span><span class="p">)</span>
+
+<span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">create_connectivity</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we can define the dielectric permittivity <span class="math notranslate nohighlight">\(\varepsilon_r\)</span>
+over the domain as <span class="math notranslate nohighlight">\(\varepsilon_r = \varepsilon_v = 1\)</span> in the vacuum, and as
+<span class="math notranslate nohighlight">\(\varepsilon_r = \varepsilon_d = 2.45\)</span> in the dielectric:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eps_v</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">eps_d</span> <span class="o">=</span> <span class="mf">2.45</span>
+
+
+<span class="k">def</span> <span class="nf">Omega_d</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">d</span>
+
+
+<span class="k">def</span> <span class="nf">Omega_v</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">d</span>
+
+
+<span class="n">D</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;DQ&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">eps</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
+
+<span class="n">cells_v</span> <span class="o">=</span> <span class="n">locate_entities</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">Omega_v</span><span class="p">)</span>
+<span class="n">cells_d</span> <span class="o">=</span> <span class="n">locate_entities</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">Omega_d</span><span class="p">)</span>
+
+<span class="n">eps</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">cells_d</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">cells_d</span><span class="p">,</span> <span class="n">eps_d</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">ScalarType</span><span class="p">)</span>
+<span class="n">eps</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">cells_v</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">cells_v</span><span class="p">,</span> <span class="n">eps_v</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">ScalarType</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>In order to find the weak form of our problem, the starting point are
+Maxwell’s equation and the perfect electric conductor condition on the
+waveguide wall:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+&amp;\nabla \times \frac{1}{\mu_{r}} \nabla \times \mathbf{E}-k_{o}^{2}
+\epsilon_{r} \mathbf{E}=0 \quad &amp;\text { in } \Omega\\
+&amp;\hat{n}\times\mathbf{E} = 0 &amp;\text { on } \Gamma
+\end{align}
+\end{split}\]</div>
+<p>with <span class="math notranslate nohighlight">\(k_0\)</span> and <span class="math notranslate nohighlight">\(\lambda_0 = 2\pi/k_0\)</span> being the wavevector and the
+wavelength, that we consider fixed at <span class="math notranslate nohighlight">\(\lambda = h/0.2\)</span>. If we focus on
+non-magnetic material only, we can consider <span class="math notranslate nohighlight">\(\mu_r=1\)</span>.</p>
+<p>Now we can assume a known dependance on <span class="math notranslate nohighlight">\(z\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{E}(x, y, z)=\left[\mathbf{E}_{t}(x, y)+\hat{z} E_{z}(x, y)\right]
+e^{-jk_z z}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{E}_t\)</span> is the component of the electric field transverse to the
+waveguide axis, and <span class="math notranslate nohighlight">\(E_z\)</span> is the component  of the electric field parallel to
+the waveguide axis, and <span class="math notranslate nohighlight">\(k_z\)</span> represents our complex propagation constant.</p>
+<p>In order to pose the problem as an eigenvalue problem, we need to make the
+following substitution:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+&amp; \mathbf{e}_t = k_z\mathbf{E}_t\\
+&amp; e_z = -jE_z
+\end{align}
+\end{split}\]</div>
+<p>The final weak form can be written as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+F_{k_z}(\mathbf{e})=\int_{\Omega} &amp;\left(\nabla_{t} \times
+\mathbf{e}_{t}\right) \cdot\left(\nabla_{t} \times
+\bar{\mathbf{v}}_{t}\right) -k_{o}^{2} \epsilon_{r} \mathbf{e}_{t} \cdot
+\bar{\mathbf{v}}_{t} \\
+&amp;+k_z^{2}\left[\left(\nabla_{t} e_{z}+\mathbf{e}_{t}\right)
+\cdot\left(\nabla_{t} \bar{v}_{z}+\bar{\mathbf{v}}_{t}\right)-k_{o}^{2}
+\epsilon_{r} e_{z} \bar{v}_{z}\right] \mathrm{d} x = 0
+\end{aligned}
+\end{split}\]</div>
+<p>Or, in a more compact form, as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[\begin{array}{cc}
+A_{t t} &amp; 0 \\
+0 &amp; 0
+\end{array}\right]\left\{\begin{array}{l}
+\mathbf{e}_{t} \\
+e_{z}
+\end{array}\right\}=-k_z^{2}\left[\begin{array}{ll}
+B_{t t} &amp; B_{t z} \\
+B_{z t} &amp; B_{z z}
+\end{array}\right]\left\{\begin{array}{l}
+\mathbf{e}_{t} \\
+e_{z}
+\end{array}\right\}
+\end{split}\]</div>
+<p>A problem of this kind is known as a generalized eigenvalue problem, where
+our eigenvalues are all the possible <span class="math notranslate nohighlight">\( -k_z^2\)</span>. For
+further details about this problem, check Prof. Jin’s
+<em>The Finite Element Method in Electromagnetics</em>.</p>
+<p>To write the weak form in DOLFINx, we need to specify our function space.
+For the <span class="math notranslate nohighlight">\(\mathbf{e}_t\)</span> field, we can use RTCE elements (the equivalent of
+Nedelec elements on quadrilateral cells), while for <span class="math notranslate nohighlight">\(e_z\)</span> field we can use
+the Lagrange elements. In DOLFINx, this hybrid formulation is
+implemented with <code class="docutils literal notranslate"><span class="pre">MixedElement</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">degree</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">RTCE</span> <span class="o">=</span> <span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;RTCE&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">ufl_cell</span><span class="p">(),</span> <span class="n">degree</span><span class="p">)</span>
+<span class="n">Q</span> <span class="o">=</span> <span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;Lagrange&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">ufl_cell</span><span class="p">(),</span> <span class="n">degree</span><span class="p">)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">MixedElement</span><span class="p">(</span><span class="n">RTCE</span><span class="p">,</span> <span class="n">Q</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we can define our weak form:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lmbd0</span> <span class="o">=</span> <span class="n">h</span> <span class="o">/</span> <span class="mf">0.2</span>
+<span class="n">k0</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">lmbd0</span>
+
+<span class="n">et</span><span class="p">,</span> <span class="n">ez</span> <span class="o">=</span> <span class="n">TrialFunctions</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="n">vt</span><span class="p">,</span> <span class="n">vz</span> <span class="o">=</span> <span class="n">TestFunctions</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+
+<span class="n">a_tt</span> <span class="o">=</span> <span class="p">(</span><span class="n">inner</span><span class="p">(</span><span class="n">curl</span><span class="p">(</span><span class="n">et</span><span class="p">),</span> <span class="n">curl</span><span class="p">(</span><span class="n">vt</span><span class="p">))</span> <span class="o">-</span> <span class="n">k0</span>
+        <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">et</span><span class="p">,</span> <span class="n">vt</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">b_tt</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">et</span><span class="p">,</span> <span class="n">vt</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">b_tz</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">et</span><span class="p">,</span> <span class="n">grad</span><span class="p">(</span><span class="n">vz</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">b_zt</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">ez</span><span class="p">),</span> <span class="n">vt</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">b_zz</span> <span class="o">=</span> <span class="p">(</span><span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">ez</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">vz</span><span class="p">))</span> <span class="o">-</span> <span class="n">k0</span>
+        <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">ez</span><span class="p">,</span> <span class="n">vz</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">a_tt</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">b_tt</span> <span class="o">+</span> <span class="n">b_tz</span> <span class="o">+</span> <span class="n">b_zt</span> <span class="o">+</span> <span class="n">b_zz</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s add the perfect electric conductor conditions on the waveguide wall:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bc_facets</span> <span class="o">=</span> <span class="n">exterior_facet_indices</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
+
+<span class="n">bc_dofs</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bc_facets</span><span class="p">)</span>
+
+<span class="n">u_bc</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">u_bc</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+    <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">bc</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">dirichletbc</span><span class="p">(</span><span class="n">u_bc</span><span class="p">,</span> <span class="n">bc_dofs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we can solve the problem with SLEPc.
+First of all, we need to assemble our <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> matrices with PETSc
+in this way:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
+<span class="n">A</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
+<span class="n">B</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now, we need to create the eigenvalue problem in SLEPc. Our problem is a
+linear eigenvalue problem, that in SLEPc is solved with the <code class="docutils literal notranslate"><span class="pre">EPS</span></code> module.
+We can call this module in the following way:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span> <span class="o">=</span> <span class="n">SLEPc</span><span class="o">.</span><span class="n">EPS</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can pass to the <code class="docutils literal notranslate"><span class="pre">EPS</span></code> solver our matrices by using the <code class="docutils literal notranslate"><span class="pre">setOperators</span></code>
+routine:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span><span class="o">.</span><span class="n">setOperators</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>If the matrices in the problem have known properties (e.g. hermiticity) we
+can use this information in SLEPc to accelerate the calculation with the
+<code class="docutils literal notranslate"><span class="pre">setProblemType</span></code> function. For this problem, there is no property that can be
+exploited, and therefore we define it as a generalized non-Hermitian
+eigenvalue problem with the <code class="docutils literal notranslate"><span class="pre">SLEPc.EPS.ProblemType.GNHEP</span></code> object:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span><span class="o">.</span><span class="n">setProblemType</span><span class="p">(</span><span class="n">SLEPc</span><span class="o">.</span><span class="n">EPS</span><span class="o">.</span><span class="n">ProblemType</span><span class="o">.</span><span class="n">GNHEP</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Next, we need to specify a tolerance for considering a solution</span>
+<span class="c1"># acceptable:</span>
+<span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-9</span>
+<span class="n">eps</span><span class="o">.</span><span class="n">setTolerances</span><span class="p">(</span><span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we need to set the eigensolver for our problem, which is the algorithm
+we want to use to find the eigenvalues and the eigenvectors. SLEPc offers
+different methods, and also wrappers to external libraries. Some of these
+methods are only suitable for Hermitian or Generalized Hermitian problems
+and/or for eigenvalues in a certain portion of the spectrum. However, the
+choice of the method is a technical discussion that is out of the scope of
+this demo, and that is more comprehensively discussed in the
+<a class="reference external" href="https://slepc.upv.es/documentation/slepc.pdf">SLEPc documentation</a>.
+For our problem, we will use the Krylov-Schur method, which we can set by
+calling the <code class="docutils literal notranslate"><span class="pre">setType</span></code> function:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">SLEPc</span><span class="o">.</span><span class="n">EPS</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">KRYLOVSCHUR</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>In order to accelerate the calculation of our solutions,
+we can also use spectral transformation, which maps the
+original eigenvalues into another position of the spectrum
+without affecting the eigenvectors. In our case,
+we can use the shift-and-invert transformation with
+the <code class="docutils literal notranslate"><span class="pre">SLEPc.ST.Type.SINVERT</span></code> object:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get ST context from eps</span>
+<span class="n">st</span> <span class="o">=</span> <span class="n">eps</span><span class="o">.</span><span class="n">getST</span><span class="p">()</span>
+
+<span class="c1"># Set shift-and-invert transformation</span>
+<span class="n">st</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">SLEPc</span><span class="o">.</span><span class="n">ST</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">SINVERT</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The spectral transformation needs a target value for the
+eigenvalues we are looking at to perform the
+spectral transformation. Since the eigenvalues for our
+problem can be complex numbers, we need to specify
+whether we are searching for specific values in the real part,
+in the imaginary part, or in the magnitude. In our case, we are
+interested in propagating modes, and therefore in real <span class="math notranslate nohighlight">\(k_z\)</span>. For
+this reason, we can specify with the <code class="docutils literal notranslate"><span class="pre">setWhichEigenpairs</span></code> function
+that our target value will refer to the real part of the eigenvalue,
+with the <code class="docutils literal notranslate"><span class="pre">SLEPc.EPS.Which.TARGET_REAL</span></code> object:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span><span class="o">.</span><span class="n">setWhichEigenpairs</span><span class="p">(</span><span class="n">SLEPc</span><span class="o">.</span><span class="n">EPS</span><span class="o">.</span><span class="n">Which</span><span class="o">.</span><span class="n">TARGET_REAL</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>For specifying the target value, we can use the <code class="docutils literal notranslate"><span class="pre">setTarget</span></code> function.
+Even though we cannot know a good target value a priori, we can guess
+that <span class="math notranslate nohighlight">\(k_z\)</span> will be quite close to <span class="math notranslate nohighlight">\(k_0\)</span> in value, for instance
+<span class="math notranslate nohighlight">\(k_z = 0.5k_0^2\)</span>.
+Therefore, we can set a target value of <span class="math notranslate nohighlight">\(-(0.5k_0^2)\)</span>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span><span class="o">.</span><span class="n">setTarget</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">k0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then, we need to define the number of eigenvalues we want to calculate.
+We can do this with the <code class="docutils literal notranslate"><span class="pre">setDimensions</span></code> function, where we specify that
+we are searching for just one eigenvalue:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span><span class="o">.</span><span class="n">setDimensions</span><span class="p">(</span><span class="n">nev</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can finally solve the problem with the <code class="docutils literal notranslate"><span class="pre">solve</span></code> function.
+To gain a deeper insight over the simulation, we can get an
+output message by SLEPc by calling the <code class="docutils literal notranslate"><span class="pre">view</span></code> and <code class="docutils literal notranslate"><span class="pre">errorView</span></code>
+function:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="n">eps</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
+<span class="n">eps</span><span class="o">.</span><span class="n">errorView</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>EPS Object: 1 MPI processes
+  type: krylovschur
+    50% of basis vectors kept after restart
+    using the locking variant
+  problem type: generalized non-hermitian eigenvalue problem
+  selected portion of the spectrum: closest to target: -1.94955 (along the real axis)
+  number of eigenvalues (nev): 1
+  number of column vectors (ncv): 16
+  maximum dimension of projected problem (mpd): 16
+  maximum number of iterations: 13605
+  tolerance: 1e-09
+  convergence test: relative to the eigenvalue
+BV Object: 1 MPI processes
+  type: svec
+  17 columns of global length 108841
+  vector orthogonalization method: classical Gram-Schmidt
+  orthogonalization refinement: if needed (eta: 0.7071)
+  block orthogonalization method: GS
+  doing matmult as a single matrix-matrix product
+DS Object: 1 MPI processes
+  type: nhep
+ST Object: 1 MPI processes
+  type: sinvert
+  shift: -1.94955
+  number of matrices: 2
+  nonzero pattern of the matrices: UNKNOWN
+  KSP Object: (st_) 1 MPI processes
+    type: preonly
+    maximum iterations=10000, initial guess is zero
+    tolerances:  relative=1e-08, absolute=1e-50, divergence=10000.
+    left preconditioning
+    using NONE norm type for convergence test
+  PC Object: (st_) 1 MPI processes
+    type: lu
+      out-of-place factorization
+      tolerance for zero pivot 2.22045e-14
+      matrix ordering: nd
+      factor fill ratio given 5., needed 7.72513
+        Factored matrix follows:
+          Mat Object: 1 MPI processes
+            type: seqaij
+            rows=108841, cols=108841
+            package used to perform factorization: petsc
+            total: nonzeros=13096891, allocated nonzeros=13096891
+              using I-node routines: found 86045 nodes, limit used is 5
+    linear system matrix = precond matrix:
+    Mat Object: (st_) 1 MPI processes
+      type: seqaij
+      rows=108841, cols=108841
+      total: nonzeros=1695361, allocated nonzeros=1695361
+      total number of mallocs used during MatSetValues calls=0
+        not using I-node routines
+ All requested eigenvalues computed up to the required tolerance:
+     -1.69240
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we can get the eigenvalues and eigenvectors calculated by SLEPc:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Save the eigenvalues i</span>
+<span class="n">vals</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="n">eps</span><span class="o">.</span><span class="n">getEigenvalue</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">eps</span><span class="o">.</span><span class="n">getConverged</span><span class="p">())]</span>
+
+<span class="n">vals</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+
+<span class="n">eh</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+
+<span class="n">kz_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">kz</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">:</span>
+
+    <span class="c1"># Save eigenvector in eh</span>
+    <span class="n">eps</span><span class="o">.</span><span class="n">getEigenpair</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">eh</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+
+    <span class="c1"># Compute error for i-th eigenvalue</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">eps</span><span class="o">.</span><span class="n">computeError</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">SLEPc</span><span class="o">.</span><span class="n">EPS</span><span class="o">.</span><span class="n">ErrorType</span><span class="o">.</span><span class="n">RELATIVE</span><span class="p">)</span>
+
+    <span class="c1"># Verify, save and visualize solution</span>
+    <span class="k">if</span> <span class="n">error</span> <span class="o">&lt;</span> <span class="n">tol</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">kz</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">tol</span><span class="p">):</span>
+
+        <span class="n">kz_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kz</span><span class="p">)</span>
+
+        <span class="c1"># Verify if kz satisfy the analytical equations for the modes</span>
+        <span class="k">assert</span> <span class="n">verify_mode</span><span class="p">(</span><span class="n">kz</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">lmbd0</span><span class="p">,</span> <span class="n">eps_d</span><span class="p">,</span> <span class="n">eps_v</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;eigenvalue: </span><span class="si">{</span><span class="o">-</span><span class="n">kz</span><span class="o">**</span><span class="mi">2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;kz: </span><span class="si">{</span><span class="n">kz</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;kz/k0: </span><span class="si">{</span><span class="n">kz</span><span class="o">/</span><span class="n">k0</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">eh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
+
+        <span class="n">eth</span><span class="p">,</span> <span class="n">ezh</span> <span class="o">=</span> <span class="n">eh</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+        <span class="c1"># Transform eth, ezh into Et and Ez</span>
+        <span class="n">eth</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">eth</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">/</span> <span class="n">kz</span>
+        <span class="n">ezh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">ezh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">*</span> <span class="mi">1</span><span class="n">j</span>
+
+        <span class="n">V_dg</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;DQ&quot;</span><span class="p">,</span> <span class="n">degree</span><span class="p">))</span>
+        <span class="n">Et_dg</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V_dg</span><span class="p">)</span>
+        <span class="n">Et_dg</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">eth</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">VTXWriter</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;sols/Et_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.bp&quot;</span><span class="p">,</span> <span class="n">Et_dg</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">VTXWriter</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;sols/Ez_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.bp&quot;</span><span class="p">,</span> <span class="n">ezh</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>eigenvalue: (-1.6924040028257377-5.072606493549373e-15j)
+kz: (1.3009242878913967+1.949616338461675e-15j)
+kz/k0: (0.46585919476399434+6.981549241475188e-16j)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3-complex",
+            path: "./chapter3"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3-complex'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="../chapter2/mesh_wire_pml.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">&lt;no title&gt;</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="analytical_modes.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Analytical solutions for the half-loaded waveguide</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Michele Castriotta<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

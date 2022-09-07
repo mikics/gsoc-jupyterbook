@@ -1,0 +1,1232 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Scattering from a sphere in the axisymmetric formulation &#8212; GSoC 2022 - Expanding FEniCSx electromagnetic demos</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="mesh_sphere_axis.html" />
+    <link rel="prev" title="Analytical solutions for the half-loaded waveguide" href="../chapter3/analytical_modes.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/logo.jpeg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">GSoC 2022 - Expanding FEniCSx electromagnetic demos</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    FEniCSx Tutorial @ FEniCS 2022
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Scattering boundary conditions
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter1/demo_scattering_boundary_conditions.html">
+   Scattering from a wire with scattering boundary conditions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter1/analytical_efficiencies_wire.html">
+   Calculation of analytical efficiencies
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Perfectly matched layer (PML)
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter2/demo_pml.html">
+   Scattering from a wire with perfectly matched layer condition
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter2/analytical_efficiencies_wire.html">
+   Calculation of analytical efficiencies
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Half-loaded waveguide
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/demo_half_loaded_waveguide.html">
+   Mode analysis for a half-loaded rectangular waveguide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../chapter3/analytical_modes.html">
+   Analytical solutions for the half-loaded waveguide
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Axisymmetric Maxwell's equations
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Scattering from a sphere in the axisymmetric formulation
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/mikics/gsoc-jupyterbook/main?urlpath=tree/./chapter4/demo_axis.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/mikics/gsoc-jupyterbook"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/mikics/gsoc-jupyterbook/issues/new?title=Issue%20on%20page%20%2Fchapter4/demo_axis.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/mikics/gsoc-jupyterbook/edit/main/./chapter4/demo_axis.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Edit this page"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="headerbtn__text-container">suggest edit</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/chapter4/demo_axis.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#equations-problem-definition-and-implementation">
+   Equations, problem definition and implementation
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Scattering from a sphere in the axisymmetric formulation</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#equations-problem-definition-and-implementation">
+   Equations, problem definition and implementation
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="scattering-from-a-sphere-in-the-axisymmetric-formulation">
+<h1>Scattering from a sphere in the axisymmetric formulation<a class="headerlink" href="#scattering-from-a-sphere-in-the-axisymmetric-formulation" title="Permalink to this headline">#</a></h1>
+<p>Copyright © 2022 Michele Castriotta, Igor Baratta, Jørgen S. Dokken</p>
+<p>This demo is implemented in three files: one for the mesh
+generation with gmsh, one for the calculation of analytical efficiencies,
+and one for the variational forms and the solver. It illustrates how to:</p>
+<ul class="simple">
+<li><p>Setup and solve Maxwell’s equations for axisymmetric geometries</p></li>
+<li><p>Implement (axisymmetric) perfectly matched layers</p></li>
+</ul>
+<section id="equations-problem-definition-and-implementation">
+<h2>Equations, problem definition and implementation<a class="headerlink" href="#equations-problem-definition-and-implementation" title="Permalink to this headline">#</a></h2>
+<p>First of all, let’s import the modules that will be used:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">mesh_sphere_axis</span> <span class="kn">import</span> <span class="n">generate_mesh_sphere_axis</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">jv</span><span class="p">,</span> <span class="n">jvp</span>
+<span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">fem</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">plot</span>
+<span class="kn">from</span> <span class="nn">dolfinx.io</span> <span class="kn">import</span> <span class="n">VTXWriter</span>
+<span class="kn">from</span> <span class="nn">dolfinx.io.gmshio</span> <span class="kn">import</span> <span class="n">model_to_mesh</span>
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">import</span> <span class="nn">ufl</span>
+<span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">gmsh</span>
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This demo requires gmsh to be installed&quot;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pyvista</span>
+    <span class="n">have_pyvista</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;pyvista and pyvistaqt are required to visualise the solution&quot;</span><span class="p">)</span>
+    <span class="n">have_pyvista</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Since we want to solve time-harmonic Maxwell’s equation, we need to solve a
+complex-valued PDE, and therefore need to use PETSc compiled with complex numbers.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">complexfloating</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Demo should only be executed with DOLFINx complex mode&quot;</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now, let’s formulate our problem.
+Let’s consider a metallic sphere immersed in
+a background medium (e.g. vacuum or water) and hit by a plane wave.
+We want to calculate the scattered electric field scattered.
+Even though the problem is three-dimensional,
+we can simplify it into many two-dimensional problems
+by exploiting its axisymmetric nature. To verify this, let’s consider
+the weakf form of the problem with PML:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+&amp;\int_{\Omega_m\cup\Omega_b}-(\nabla \times \mathbf{E}_s)
+\cdot (\nabla \times \bar{\mathbf{v}})+\varepsilon_{r} k_{0}^{2}
+\mathbf{E}_s \cdot \bar{\mathbf{v}}+k_{0}^{2}\left(\varepsilon_{r}
+-\varepsilon_b\right)\mathbf{E}_b \cdot \bar{\mathbf{v}}~\mathrm{d} x\\
++&amp;\int_{\Omega_{pml}}\left[\boldsymbol{\mu}^{-1}_{pml} \nabla \times \mathbf{E}_s
+\right]\cdot \nabla \times \bar{\mathbf{v}}-k_{0}^{2}
+\left[\boldsymbol{\varepsilon}_{pml} \mathbf{E}_s \right]\cdot
+\bar{\mathbf{v}}~ d x=0
+\end{align}
+\end{split}\]</div>
+<p>Since we want to exploit the axisymmetry of the problem,
+we can use cylindrical coordinates as a more appropriate
+reference system:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+&amp;\int_{\Omega_{cs}}\int_{0}^{2\pi}-(\nabla \times \mathbf{E}_s)
+\cdot (\nabla \times \bar{\mathbf{v}})+\varepsilon_{r} k_{0}^{2}
+\mathbf{E}_s \cdot \bar{\mathbf{v}}+k_{0}^{2}\left(\varepsilon_{r}
+-\varepsilon_b\right)\mathbf{E}_b \cdot
+\bar{\mathbf{v}}~ \rho d\rho dz d \phi\\
++&amp;\int_{\Omega_{cs}}
+\int_{0}^{2\pi}\left[\boldsymbol{\mu}^{-1}_{pml} \nabla \times \mathbf{E}_s
+\right]\cdot \nabla \times \bar{\mathbf{v}}-k_{0}^{2}
+\left[\boldsymbol{\varepsilon}_{pml} \mathbf{E}_s \right]\cdot
+\bar{\mathbf{v}}~ \rho d\rho dz d \phi=0
+\end{align}
+\end{split}\]</div>
+<p>Let’s now expand <span class="math notranslate nohighlight">\(\mathbf{E}_s\)</span>,
+<span class="math notranslate nohighlight">\(\mathbf{E}_b\)</span> and <span class="math notranslate nohighlight">\(\bar{\mathbf{v}}\)</span> in cylindrical harmonics:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+&amp; \mathbf{E}_s(\rho, z, \phi) = \sum_m\mathbf{E}^{(m)}_s(\rho, z)e^{-im\phi} \\
+&amp; \mathbf{E}_b(\rho, z, \phi) = \sum_m\mathbf{E}^{(m)}_b(\rho, z)e^{-im\phi} \\
+&amp; \bar{\mathbf{v}}(\rho, z, \phi) =
+\sum_m\bar{\mathbf{v}}^{(m)}(\rho, z)e^{+im\phi}\\
+\end{align}
+\end{split}\]</div>
+<p>The curl operator <span class="math notranslate nohighlight">\(\nabla\times\)</span> in cylindrical coordinates becomes:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{aligned}
+\nabla \times \mathbf{a}=
+\sum_{m}\left(\nabla \times \mathbf{a}^{(m)}\right) e^{-i m \phi}
+\end{aligned}
+\]</div>
+<p>with:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+\left(\nabla \times \mathbf{a}^{(m)}\right) = &amp;\left[\hat{\rho}
+\left(-\frac{\partial a_{\phi}^{(m)}}{\partial z}
+-i \frac{m}{\rho} a_{z}^{(m)}\right)+\\ \hat{\phi}
+\left(\frac{\partial a_{\rho}^{(m)}}{\partial z}
+-\frac{\partial a_{z}^{(m)}}{\partial \rho}\right)+\right.\\
+&amp;\left.+\hat{z}\left(\frac{a_{\phi}^{(m)}}{\rho}
++\frac{\partial a_{\phi}^{(m)}}{\partial \rho}
++i \frac{m}{\rho} a_{\rho}^{(m)}\right)\right]
+\end{align}
+\end{split}\]</div>
+<p>By implementing these formula in our weak form, and by assuming an
+axisymmetric permittivity <span class="math notranslate nohighlight">\(\varepsilon(\rho, z)\)</span>, we can write:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+\sum_{n, m}\int_{\Omega_{cs}}&amp;-(\nabla \times \mathbf{E}^{(m)}_s)
+\cdot (\nabla \times \bar{\mathbf{v}}^{(m)})+\varepsilon_{r} k_{0}^{2}
+\mathbf{E}^{(m)}_s \cdot \bar{\mathbf{v}}^{(m)}+k_{0}^{2}
+\left(\varepsilon_{r}
+-\varepsilon_b\right)\mathbf{E}^{(m)}_b \cdot \bar{\mathbf{v}}^{(m)}\\
+&amp;+\left(\boldsymbol{\mu}^{-1}_{pml} \nabla \times \mathbf{E}^{(m)}_s
+\right)\cdot \nabla \times \bar{\mathbf{v}}^{(m)}-k_{0}^{2}
+\left(\boldsymbol{\varepsilon}_{pml} \mathbf{E}^{(m)}_s \right)\cdot
+\bar{\mathbf{v}}^{(m)}~ \rho d\rho dz \int_{0}^{2 \pi} e^{-i(m-n) \phi}
+d \phi=0
+\end{align}
+\end{split}\]</div>
+<p>For the last integral, we have that:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\int_{0}^{2 \pi} e^{-i(m-n) \phi}d \phi=
+\begin{cases}
+\begin{align}
+2\pi ~~~&amp;\textrm{if } m=n\\
+0 ~~~&amp;\textrm{if }m\neq n\\
+\end{align}
+\end{cases}
+\end{split}\]</div>
+<p>We can therefore consider only the case <span class="math notranslate nohighlight">\(m = n\)</span> and simplify the summation
+in the following way:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+\sum_{m}\int_{\Omega_{cs}}&amp;-(\nabla \times \mathbf{E}^{(m)}_s)
+\cdot (\nabla \times \bar{\mathbf{v}}^{(m)})+\varepsilon_{r} k_{0}^{2}
+\mathbf{E}^{(m)}_s \cdot \bar{\mathbf{v}}^{(m)}
++k_{0}^{2}\left(\varepsilon_{r}
+-\varepsilon_b\right)\mathbf{E}^{(m)}_b \cdot \bar{\mathbf{v}}^{(m)}\\
+&amp;+\left(\boldsymbol{\mu}^{-1}_{pml} \nabla \times \mathbf{E}^{(m)}_s
+\right)\cdot \nabla \times \bar{\mathbf{v}}^{(m)}-k_{0}^{2}
+\left(\boldsymbol{\varepsilon}_{pml} \mathbf{E}^{(m)}_s \right)\cdot
+\bar{\mathbf{v}}^{(m)}~ \rho d\rho dz =0
+\end{align}
+\end{split}\]</div>
+<p>In the end, we have multiple weak forms corresponding to the
+different cylindrical harmonics, where the integration is performed
+over a 2D domain.</p>
+<p>Let’s now implement this problem in DOLFINx.
+As a first step we can define the function for the <span class="math notranslate nohighlight">\(\nabla\times\)</span>
+operator in cylindrical coordinates:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">curl_axis</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rho</span><span class="p">):</span>
+
+    <span class="n">curl_r</span> <span class="o">=</span> <span class="o">-</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">dx</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">m</span> <span class="o">/</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">curl_z</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">rho</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">dx</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">m</span> <span class="o">/</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">curl_p</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dx</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dx</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ufl</span><span class="o">.</span><span class="n">as_vector</span><span class="p">((</span><span class="n">curl_r</span><span class="p">,</span> <span class="n">curl_z</span><span class="p">,</span> <span class="n">curl_p</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then we need to define the analytical formula for the background field.
+For our purposes, we can consider the wavevector and the electric field
+lying in the same plane of our 2D domain, while the magnetic field is
+transverse to such domain. For this reason, we will refer to this polarization
+as TMz polarization.</p>
+<p>For a TMz polarization, the cylindrical harmonics <span class="math notranslate nohighlight">\(\mathbf{E}^{(m)}_b\)</span>
+of the background field can be written in this way
+(<a class="reference external" href="https://doi.org/10.1139/p55-024">Wait 1955</a>):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+\mathbf{E}^{(m)}_b = &amp;\hat{\rho} \left(E_{0} \cos \theta
+e^{i k z \cos \theta} i^{-m+1} J_{m}^{\prime}\left(k_{0} \rho \sin
+\theta\right)\right)\\
++&amp;\hat{z} \left(E_{0} \sin \theta e^{i k z \cos \theta}i^{-m} J_{m}
+\left(k \rho \sin \theta\right)\right)\\
++&amp;\hat{\phi} \left(\frac{E_{0} \cos \theta}{k \rho \sin \theta}
+e^{i k z \cos \theta} i^{-m} J_{m}\left(k \rho \sin \theta\right)\right)
+\end{align}
+\end{split}\]</div>
+<p>with <span class="math notranslate nohighlight">\(k = 2\pi n_b/\lambda = k_0n_b\)</span> being the wavevector, <span class="math notranslate nohighlight">\(\theta\)</span> being
+the angle between <span class="math notranslate nohighlight">\(\mathbf{E}_b\)</span> and <span class="math notranslate nohighlight">\(\hat{\rho}\)</span>, and <span class="math notranslate nohighlight">\(J_m\)</span>
+representing the <span class="math notranslate nohighlight">\(m\)</span>-th order Bessel function of first kind and
+<span class="math notranslate nohighlight">\(J_{m}^{\prime}\)</span> its derivative.
+In DOLFINx, we can implement these functions in this way:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">background_field_rz</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n_bkg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">k0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+
+    <span class="n">k</span> <span class="o">=</span> <span class="n">k0</span> <span class="o">*</span> <span class="n">n_bkg</span>
+
+    <span class="n">a_r</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+           <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">jvp</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">k</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">a_z</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+           <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="p">)</span><span class="o">**-</span><span class="n">m</span> <span class="o">*</span> <span class="n">jv</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">k</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">a_r</span><span class="p">,</span> <span class="n">a_z</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">background_field_p</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n_bkg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">k0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+
+    <span class="n">k</span> <span class="o">=</span> <span class="n">k0</span> <span class="o">*</span> <span class="n">n_bkg</span>
+
+    <span class="n">a_p</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+           <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span> <span class="o">*</span> <span class="n">m</span>
+           <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="n">jv</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">k</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">a_p</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>For PML, we can introduce them in our original domain as a spherical shell.
+We can then implement a complex coordinate transformation
+of this form in this spherical shell:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+&amp; \rho^{\prime} = \rho\left[1 +j \alpha/k_0 \left(\frac{r
+- r_{dom}}{r~r_{pml}}\right)\right] \\
+&amp; z^{\prime} = z\left[1 +j \alpha/k_0 \left(\frac{r
+- r_{dom}}{r~r_{pml}}\right)\right] \\
+&amp; \phi^{\prime} = \phi \\
+\end{align}
+\end{split}\]</div>
+<p>with <span class="math notranslate nohighlight">\(\alpha\)</span> being a parameter tuning the absorption inside the PML,
+and <span class="math notranslate nohighlight">\(r = \sqrt{\rho^2 + z^2}\)</span>.
+This coordinate transformation has the following jacobian:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathbf{J}=\mathbf{A}^{-1}= \nabla\boldsymbol{\rho}^
+\prime(\boldsymbol{\rho}) =
+\left[\begin{array}{ccc}
+\frac{\partial \rho^{\prime}}{\partial \rho} &amp;
+\frac{\partial z^{\prime}}{\partial \rho} &amp;
+0 \\
+\frac{\partial \rho^{\prime}}{\partial z} &amp;
+\frac{\partial z^{\prime}}{\partial z} &amp;
+0 \\
+0 &amp;
+0 &amp;
+\frac{\rho^\prime}{\rho}\frac{\partial \phi^{\prime}}{\partial \phi}
+\end{array}\right]=\left[\begin{array}{ccc}
+J_{11} &amp; J_{12} &amp; 0 \\
+J_{21} &amp; J_{22} &amp; 0 \\
+0 &amp; 0 &amp; J_{33}
+\end{array}\right]
+\end{split}\]</div>
+<p>which we can use to calculate <span class="math notranslate nohighlight">\({\boldsymbol{\varepsilon}_{pml}}\)</span> and
+<span class="math notranslate nohighlight">\({\boldsymbol{\mu}_{pml}}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+&amp; {\boldsymbol{\varepsilon}_{pml}} =
+A^{-1} \mathbf{A} {\boldsymbol{\varepsilon}_b}\mathbf{A}^{T}\\
+&amp; {\boldsymbol{\mu}_{pml}} =
+A^{-1} \mathbf{A} {\boldsymbol{\mu}_b}\mathbf{A}^{T}
+\end{align}
+\end{split}\]</div>
+<p>For doing these calculations, we define the
+<code class="docutils literal notranslate"><span class="pre">pml_coordinate</span></code> and <code class="docutils literal notranslate"><span class="pre">create_mu_eps</span></code> functions:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pml_coordinate</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">k0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">radius_dom</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">radius_pml</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">/</span> <span class="n">k0</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">radius_dom</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">radius_pml</span> <span class="o">*</span> <span class="n">r</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">create_eps_mu</span><span class="p">(</span><span class="n">pml</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">eps_bkg</span><span class="p">,</span> <span class="n">mu_bkg</span><span class="p">):</span>
+
+    <span class="n">J</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">pml</span><span class="p">)</span>
+
+    <span class="c1"># Transform the 2x2 Jacobian into a 3x3 matrix.</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">(((</span><span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">),</span>
+                       <span class="p">(</span><span class="n">J</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">J</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">),</span>
+                       <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pml</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">rho</span><span class="p">)))</span>
+
+    <span class="n">A</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+    <span class="n">eps_pml</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">J</span><span class="p">)</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="n">eps_bkg</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">mu_pml</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">J</span><span class="p">)</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="n">mu_bkg</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">eps_pml</span><span class="p">,</span> <span class="n">mu_pml</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now define some constants and geometrical parameters,
+and then we can generate the mesh with Gmsh, by using the
+function <code class="docutils literal notranslate"><span class="pre">generate_mesh_sphere_axis</span></code> in <code class="docutils literal notranslate"><span class="pre">mesh_sphere_axis.py</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Constants</span>
+<span class="n">epsilon_0</span> <span class="o">=</span> <span class="mf">8.8541878128</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">12</span>  <span class="c1"># Vacuum permittivity</span>
+<span class="n">mu_0</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">7</span>  <span class="c1"># Vacuum permeability</span>
+<span class="n">Z0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mu_0</span> <span class="o">/</span> <span class="n">epsilon_0</span><span class="p">)</span>  <span class="c1"># Vacuum impedance</span>
+<span class="n">I0</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="n">Z0</span>  <span class="c1"># Intensity of electromagnetic field</span>
+
+<span class="c1"># Radius of the sphere</span>
+<span class="n">radius_sph</span> <span class="o">=</span> <span class="mf">0.025</span>
+
+<span class="c1"># Radius of the domain</span>
+<span class="n">radius_dom</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1"># Radius of the boundary where scattering efficiency</span>
+<span class="c1"># is calculated</span>
+<span class="n">radius_scatt</span> <span class="o">=</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">radius_dom</span>
+
+<span class="c1"># Radius of the PML shell</span>
+<span class="n">radius_pml</span> <span class="o">=</span> <span class="mf">0.25</span>
+
+<span class="c1"># Mesh sizes</span>
+<span class="n">mesh_factor</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">in_sph_size</span> <span class="o">=</span> <span class="n">mesh_factor</span> <span class="o">*</span> <span class="mf">2.0e-3</span>
+<span class="n">on_sph_size</span> <span class="o">=</span> <span class="n">mesh_factor</span> <span class="o">*</span> <span class="mf">2.0e-3</span>
+<span class="n">scatt_size</span> <span class="o">=</span> <span class="n">mesh_factor</span> <span class="o">*</span> <span class="mf">60.0e-3</span>
+<span class="n">pml_size</span> <span class="o">=</span> <span class="n">mesh_factor</span> <span class="o">*</span> <span class="mf">40.0e-3</span>
+
+<span class="c1"># Tags for the subdomains</span>
+<span class="n">au_tag</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">bkg_tag</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">pml_tag</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">scatt_tag</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="c1"># Mesh generation</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">generate_mesh_sphere_axis</span><span class="p">(</span>
+    <span class="n">radius_sph</span><span class="p">,</span> <span class="n">radius_scatt</span><span class="p">,</span> <span class="n">radius_dom</span><span class="p">,</span> <span class="n">radius_pml</span><span class="p">,</span>
+    <span class="n">in_sph_size</span><span class="p">,</span> <span class="n">on_sph_size</span><span class="p">,</span> <span class="n">scatt_size</span><span class="p">,</span> <span class="n">pml_size</span><span class="p">,</span>
+    <span class="n">au_tag</span><span class="p">,</span> <span class="n">bkg_tag</span><span class="p">,</span> <span class="n">pml_tag</span><span class="p">,</span> <span class="n">scatt_tag</span><span class="p">)</span>
+
+<span class="n">domain</span><span class="p">,</span> <span class="n">cell_tags</span><span class="p">,</span> <span class="n">facet_tags</span> <span class="o">=</span> <span class="n">model_to_mesh</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">gdim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">gmsh</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+<span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Error   : Unknown mesh format &#39;/tmp/tmp8eu93ruw.json&#39;
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : Meshing 1D...
+Info    : [  0%] Meshing curve 1 (Circle)
+Info    : [ 10%] Meshing curve 2 (Circle)
+Info    : [ 20%] Meshing curve 3 (Circle)
+Info    : [ 30%] Meshing curve 4 (Circle)
+Info    : [ 30%] Meshing curve 5 (Circle)
+Info    : [ 40%] Meshing curve 6 (Line)
+Info    : [ 50%] Meshing curve 7 (Line)
+Info    : [ 50%] Meshing curve 8 (Line)
+Info    : [ 60%] Meshing curve 9 (Line)
+Info    : [ 70%] Meshing curve 10 (Line)
+Info    : [ 80%] Meshing curve 11 (Line)
+Info    : [ 80%] Meshing curve 12 (Line)
+Info    : [ 90%] Meshing curve 13 (Line)
+Info    : [100%] Meshing curve 14 (Line)
+Info    : Done meshing 1D (Wall 0.0117124s, CPU 0.01124s)
+Info    : Meshing 2D...
+Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
+Info    : [ 20%] Meshing surface 2 (Plane, Frontal-Delaunay)
+Info    : [ 40%] Meshing surface 3 (Plane, Frontal-Delaunay)
+Info    : [ 60%] Meshing surface 4 (Plane, Frontal-Delaunay)
+Info    : [ 80%] Meshing surface 5 (Plane, Frontal-Delaunay)
+Info    : Done meshing 2D (Wall 0.18888s, CPU 0.186989s)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : 2402 nodes 4972 elements
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s have a visual check of the mesh and of the subdomains
+by plotting them with PyVista:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">have_pyvista</span><span class="p">:</span>
+    <span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">geometry</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_mesh</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+    <span class="n">pyvista</span><span class="o">.</span><span class="n">set_jupyter_backend</span><span class="p">(</span><span class="s2">&quot;pythreejs&quot;</span><span class="p">)</span>
+    <span class="n">plotter</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
+    <span class="n">num_local_cells</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">index_map</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">size_local</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">cell_data</span><span class="p">[</span><span class="s2">&quot;Marker&quot;</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="n">cell_tags</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">cell_tags</span><span class="o">.</span><span class="n">indices</span> <span class="o">&lt;</span> <span class="n">num_local_cells</span><span class="p">]</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;Marker&quot;</span><span class="p">)</span>
+    <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plotter</span><span class="o">.</span><span class="n">view_xy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">OFF_SCREEN</span><span class="p">:</span>
+        <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pyvista</span><span class="o">.</span><span class="n">start_xvfb</span><span class="p">()</span>
+        <span class="n">figure</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&quot;sphere_axis_mesh.png&quot;</span><span class="p">,</span>
+                                    <span class="n">window_size</span><span class="o">=</span><span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Faint">2022-09-07 16:14:31.911 (   0.844s) [        63724480]    vtkExtractEdges.cxx:435   INFO| </span>Executing edge extractor: points are renumbered
+<span class=" -Color -Color-Faint">2022-09-07 16:14:31.916 (   0.849s) [        63724480]    vtkExtractEdges.cxx:551   INFO| </span>Created 6993 edges
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">
+{"version_major": 2, "version_minor": 0, "model_id": "fd863af511ea4dc4ada8ea31a5a39dfa"}
+</script></div>
+</div>
+<p>We can now define our function space. For the <span class="math notranslate nohighlight">\(\hat{\rho}\)</span> and <span class="math notranslate nohighlight">\(\hat{z}\)</span>
+components of the electric field, we will use Nedelec elements,
+while for the <span class="math notranslate nohighlight">\(\hat{\phi}\)</span> components we will use Lagrange elements:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">degree</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">curl_el</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;N1curl&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">ufl_cell</span><span class="p">(),</span> <span class="n">degree</span><span class="p">)</span>
+<span class="n">lagr_el</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&quot;Lagrange&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">ufl_cell</span><span class="p">(),</span> <span class="n">degree</span><span class="p">)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">ufl</span><span class="o">.</span><span class="n">MixedElement</span><span class="p">([</span><span class="n">curl_el</span><span class="p">,</span> <span class="n">lagr_el</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s now define our integration domains:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Measures for subdomains</span>
+<span class="n">dx</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">Measure</span><span class="p">(</span><span class="s2">&quot;dx&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">subdomain_data</span><span class="o">=</span><span class="n">cell_tags</span><span class="p">,</span>
+                 <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;quadrature_degree&#39;</span><span class="p">:</span> <span class="mi">60</span><span class="p">})</span>
+
+<span class="n">dDom</span> <span class="o">=</span> <span class="n">dx</span><span class="p">((</span><span class="n">au_tag</span><span class="p">,</span> <span class="n">bkg_tag</span><span class="p">))</span>
+<span class="n">dPml</span> <span class="o">=</span> <span class="n">dx</span><span class="p">(</span><span class="n">pml_tag</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s now define the <span class="math notranslate nohighlight">\(\varepsilon_r\)</span> function:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_bkg</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Background refractive index</span>
+<span class="n">eps_bkg</span> <span class="o">=</span> <span class="n">n_bkg</span><span class="o">**</span><span class="mi">2</span>  <span class="c1"># Background relative permittivity</span>
+<span class="n">eps_au</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0782</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mf">5.8089</span>
+
+<span class="n">D</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">eps</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
+<span class="n">au_cells</span> <span class="o">=</span> <span class="n">cell_tags</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">au_tag</span><span class="p">)</span>
+<span class="n">bkg_cells</span> <span class="o">=</span> <span class="n">cell_tags</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">bkg_tag</span><span class="p">)</span>
+<span class="n">eps</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">au_cells</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span>
+    <span class="n">au_cells</span><span class="p">,</span> <span class="n">eps_au</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+<span class="n">eps</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">bkg_cells</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">bkg_cells</span><span class="p">,</span> <span class="n">eps_bkg</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+<span class="n">eps</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now define the characteristic parameters of our background field:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">wl0</span> <span class="o">=</span> <span class="mf">0.4</span>  <span class="c1"># Wavelength of the background field</span>
+<span class="n">k0</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">wl0</span>  <span class="c1"># Wavevector of the background field</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span>  <span class="c1"># Angle of incidence of the background field</span>
+<span class="n">m_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># list of harmonics</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>with <code class="docutils literal notranslate"><span class="pre">m_list</span></code> being a list containing the harmonic
+numbers we want to solve the problem for. For
+subwavelength structure (as in our case), we can limit
+the calculation to few harmonic numbers, i.e.
+<span class="math notranslate nohighlight">\(m = -1, 0, 1\)</span>. Besides, due to the symmetry
+of Bessel functions, the solutions for <span class="math notranslate nohighlight">\(m = \pm 1\)</span> are
+the same, and therefore we can just consider positive
+harmonic numbers.</p>
+<p>We can now define <code class="docutils literal notranslate"><span class="pre">eps_pml</span></code> and <code class="docutils literal notranslate"><span class="pre">mu_pml</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">pml_coords</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">as_vector</span><span class="p">((</span>
+    <span class="n">pml_coordinate</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">k0</span><span class="p">,</span> <span class="n">radius_dom</span><span class="p">,</span> <span class="n">radius_pml</span><span class="p">),</span>
+    <span class="n">pml_coordinate</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">k0</span><span class="p">,</span> <span class="n">radius_dom</span><span class="p">,</span> <span class="n">radius_pml</span><span class="p">)))</span>
+
+<span class="n">eps_pml</span><span class="p">,</span> <span class="n">mu_pml</span> <span class="o">=</span> <span class="n">create_eps_mu</span><span class="p">(</span><span class="n">pml_coords</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">eps_bkg</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now define other objects that will be used inside our
+solver loop:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Function spaces for saving the solution</span>
+<span class="n">V_dg</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span> <span class="n">degree</span><span class="p">))</span>
+<span class="n">V_lagr</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">FunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;Lagrange&quot;</span><span class="p">,</span> <span class="n">degree</span><span class="p">))</span>
+
+<span class="c1"># Function for saving the rho and z component of the electric field</span>
+<span class="n">Esh_rz_m_dg</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V_dg</span><span class="p">)</span>
+
+<span class="c1"># Total field</span>
+<span class="n">Eh_m</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">FacetNormal</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+<span class="n">n_3d</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">as_vector</span><span class="p">((</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">))</span>
+
+<span class="c1"># Geometrical cross section of the sphere, for efficiency calculation</span>
+<span class="n">gcs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">radius_sph</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="c1"># Marker functions for the scattering efficiency integral</span>
+<span class="n">marker</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
+<span class="n">scatt_facets</span> <span class="o">=</span> <span class="n">facet_tags</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">scatt_tag</span><span class="p">)</span>
+<span class="n">incident_cells</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">compute_incident_entities</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">scatt_facets</span><span class="p">,</span>
+                                                <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                                                <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+<span class="n">midpoints</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">compute_midpoints</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">incident_cells</span><span class="p">)</span>
+<span class="n">inner_cells</span> <span class="o">=</span> <span class="n">incident_cells</span><span class="p">[(</span><span class="n">midpoints</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+                              <span class="o">+</span> <span class="n">midpoints</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">radius_scatt</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">marker</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">inner_cells</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1"># Define integration domain for the gold sphere</span>
+<span class="n">dAu</span> <span class="o">=</span> <span class="n">dx</span><span class="p">(</span><span class="n">au_tag</span><span class="p">)</span>
+
+<span class="c1"># Define integration facet for the scattering efficiency</span>
+<span class="n">dS</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">Measure</span><span class="p">(</span><span class="s2">&quot;dS&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">subdomain_data</span><span class="o">=</span><span class="n">facet_tags</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now solve our problem for all the chosen harmonic numbers:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">m_list</span><span class="p">:</span>
+
+    <span class="c1"># Definition of Trial and Test functions</span>
+    <span class="n">Es_m</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TrialFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+    <span class="n">v_m</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">TestFunction</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+
+    <span class="c1"># Background field</span>
+    <span class="n">Eb_m</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+    <span class="n">f_rz</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">background_field_rz</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">n_bkg</span><span class="p">,</span> <span class="n">k0</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+    <span class="n">f_p</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">background_field_p</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">n_bkg</span><span class="p">,</span> <span class="n">k0</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+    <span class="n">Eb_m</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">f_rz</span><span class="p">)</span>
+    <span class="n">Eb_m</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">f_p</span><span class="p">)</span>
+
+    <span class="n">curl_Es_m</span> <span class="o">=</span> <span class="n">curl_axis</span><span class="p">(</span><span class="n">Es_m</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
+    <span class="n">curl_v_m</span> <span class="o">=</span> <span class="n">curl_axis</span><span class="p">(</span><span class="n">v_m</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
+
+    <span class="n">F</span> <span class="o">=</span> <span class="o">-</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">curl_Es_m</span><span class="p">,</span> <span class="n">curl_v_m</span><span class="p">)</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">dDom</span> \
+        <span class="o">+</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">k0</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">Es_m</span><span class="p">,</span> <span class="n">v_m</span><span class="p">)</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">dDom</span> \
+        <span class="o">+</span> <span class="n">k0</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">eps</span> <span class="o">-</span> <span class="n">eps_bkg</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">Eb_m</span><span class="p">,</span> <span class="n">v_m</span><span class="p">)</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">dDom</span> \
+        <span class="o">-</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">mu_pml</span><span class="p">)</span> <span class="o">*</span> <span class="n">curl_Es_m</span><span class="p">,</span> <span class="n">curl_v_m</span><span class="p">)</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">dPml</span> \
+        <span class="o">+</span> <span class="n">k0</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">eps_pml</span> <span class="o">*</span> <span class="n">Es_m</span><span class="p">,</span> <span class="n">v_m</span><span class="p">)</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">dPml</span>
+
+    <span class="n">a</span><span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">lhs</span><span class="p">(</span><span class="n">F</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">rhs</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">LinearProblem</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[],</span> <span class="n">petsc_options</span><span class="o">=</span><span class="p">{</span>
+                                      <span class="s2">&quot;ksp_type&quot;</span><span class="p">:</span> <span class="s2">&quot;preonly&quot;</span><span class="p">,</span> <span class="s2">&quot;pc_type&quot;</span><span class="p">:</span> <span class="s2">&quot;lu&quot;</span><span class="p">})</span>
+    <span class="n">Esh_m</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+    <span class="n">Esh_rz_m</span><span class="p">,</span> <span class="n">Esh_p_m</span> <span class="o">=</span> <span class="n">Esh_m</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="c1"># Interpolate over rho and z components over DG space</span>
+    <span class="n">Esh_rz_m_dg</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">Esh_rz_m</span><span class="p">)</span>
+
+    <span class="c1"># Save solutions</span>
+    <span class="k">with</span> <span class="n">VTXWriter</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;sols/Es_rz_</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">.bp&quot;</span><span class="p">,</span> <span class="n">Esh_rz_m_dg</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">VTXWriter</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;sols/Es_p_</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">.bp&quot;</span><span class="p">,</span> <span class="n">Esh_p_m</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="c1"># Define scattered magnetic field</span>
+    <span class="n">Hsh_m</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">curl_axis</span><span class="p">(</span><span class="n">Esh_m</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Z0</span> <span class="o">*</span> <span class="n">k0</span> <span class="o">*</span> <span class="n">n_bkg</span><span class="p">)</span>
+
+    <span class="c1"># Total electric field</span>
+    <span class="n">Eh_m</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">Eb_m</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">+</span> <span class="n">Esh_m</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span>
+
+    <span class="c1"># Efficiencies calculation</span>
+
+    <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># initialize and do not add 2 factor</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">Esh_m</span><span class="p">,</span> <span class="n">ufl</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">Hsh_m</span><span class="p">)),</span> <span class="n">n_3d</span><span class="p">)</span> <span class="o">*</span> <span class="n">marker</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">eps_au</span><span class="o">.</span><span class="n">imag</span> <span class="o">*</span> <span class="n">k0</span> <span class="o">*</span> <span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">Eh_m</span><span class="p">,</span> <span class="n">Eh_m</span><span class="p">))</span> <span class="o">/</span> <span class="n">Z0</span> <span class="o">/</span> <span class="n">n_bkg</span>
+
+        <span class="n">q_abs_fenics_proc</span> <span class="o">=</span> <span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span>
+                             <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">Q</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">dAu</span><span class="p">))</span> <span class="o">/</span> <span class="n">gcs</span> <span class="o">/</span> <span class="n">I0</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+        <span class="n">q_sca_fenics_proc</span> <span class="o">=</span> <span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span>
+                             <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">((</span><span class="n">P</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">P</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">))</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">dS</span><span class="p">(</span><span class="n">scatt_tag</span><span class="p">)))</span> <span class="o">/</span> <span class="n">gcs</span> <span class="o">/</span> <span class="n">I0</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+        <span class="n">q_abs_fenics</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">q_abs_fenics_proc</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
+        <span class="n">q_sca_fenics</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">q_sca_fenics_proc</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">m</span> <span class="o">==</span> <span class="n">m_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>  <span class="c1"># initialize and add 2 factor</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">Esh_m</span><span class="p">,</span>
+                                  <span class="n">ufl</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">Hsh_m</span><span class="p">)),</span> <span class="n">n_3d</span><span class="p">)</span> <span class="o">*</span> <span class="n">marker</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">eps_au</span><span class="o">.</span><span class="n">imag</span> <span class="o">*</span> <span class="n">k0</span> <span class="o">*</span> <span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">Eh_m</span><span class="p">,</span> <span class="n">Eh_m</span><span class="p">))</span> <span class="o">/</span> <span class="n">Z0</span> <span class="o">/</span> <span class="n">n_bkg</span>
+
+        <span class="n">q_abs_fenics_proc</span> <span class="o">=</span> <span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span>
+            <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">Q</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">dAu</span><span class="p">))</span> <span class="o">/</span> <span class="n">gcs</span> <span class="o">/</span> <span class="n">I0</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+        <span class="n">q_sca_fenics_proc</span> <span class="o">=</span> <span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span>
+                             <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">((</span><span class="n">P</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">P</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">))</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">dS</span><span class="p">(</span><span class="n">scatt_tag</span><span class="p">)))</span> <span class="o">/</span> <span class="n">gcs</span> <span class="o">/</span> <span class="n">I0</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+        <span class="n">q_abs_fenics</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">q_abs_fenics_proc</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
+        <span class="n">q_sca_fenics</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">q_sca_fenics_proc</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># do not initialize and add 2 factor</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">Esh_m</span><span class="p">,</span>
+                                  <span class="n">ufl</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">Hsh_m</span><span class="p">)),</span> <span class="n">n_3d</span><span class="p">)</span> <span class="o">*</span> <span class="n">marker</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">eps_au</span><span class="o">.</span><span class="n">imag</span> <span class="o">*</span> <span class="n">k0</span> <span class="o">*</span> <span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">Eh_m</span><span class="p">,</span> <span class="n">Eh_m</span><span class="p">))</span> <span class="o">/</span> <span class="n">Z0</span> <span class="o">/</span> <span class="n">n_bkg</span>
+
+        <span class="n">q_abs_fenics_proc</span> <span class="o">=</span> <span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span>
+            <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">Q</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">dAu</span><span class="p">))</span> <span class="o">/</span> <span class="n">gcs</span> <span class="o">/</span> <span class="n">I0</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+        <span class="n">q_sca_fenics_proc</span> <span class="o">=</span> <span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span>
+                             <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">((</span><span class="n">P</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">P</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">))</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">dS</span><span class="p">(</span><span class="n">scatt_tag</span><span class="p">)))</span> <span class="o">/</span> <span class="n">gcs</span> <span class="o">/</span> <span class="n">I0</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+        <span class="n">q_abs_fenics</span> <span class="o">+=</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">q_abs_fenics_proc</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
+        <span class="n">q_sca_fenics</span> <span class="o">+=</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">q_sca_fenics_proc</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
+
+<span class="n">q_ext_fenics</span> <span class="o">=</span> <span class="n">q_abs_fenics</span> <span class="o">+</span> <span class="n">q_sca_fenics</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING:py.warnings:/usr/local/lib/python3.10/dist-packages/ffcx/element_interface.py:81: UserWarning: Number of integration points per cell is: 961. Consider using &#39;quadrature_degree&#39; to reduce number.
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s compare the analytical and numerical efficiencies, and let’s print
+the results:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">q_abs_analyt</span> <span class="o">=</span> <span class="mf">0.9622728008329892</span>
+<span class="n">q_sca_analyt</span> <span class="o">=</span> <span class="mf">0.07770397394691526</span>
+<span class="n">q_ext_analyt</span> <span class="o">=</span> <span class="n">q_abs_analyt</span> <span class="o">+</span> <span class="n">q_sca_analyt</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Error calculation</span>
+<span class="n">err_abs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q_abs_analyt</span> <span class="o">-</span> <span class="n">q_abs_fenics</span><span class="p">)</span> <span class="o">/</span> <span class="n">q_abs_analyt</span>
+<span class="n">err_sca</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q_sca_analyt</span> <span class="o">-</span> <span class="n">q_sca_fenics</span><span class="p">)</span> <span class="o">/</span> <span class="n">q_sca_analyt</span>
+<span class="n">err_ext</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q_ext_analyt</span> <span class="o">-</span> <span class="n">q_ext_fenics</span><span class="p">)</span> <span class="o">/</span> <span class="n">q_ext_analyt</span>
+
+<span class="k">if</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The analytical absorption efficiency is </span><span class="si">{</span><span class="n">q_abs_analyt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The numerical absorption efficiency is </span><span class="si">{</span><span class="n">q_abs_fenics</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The error is </span><span class="si">{</span><span class="n">err_abs</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The analytical scattering efficiency is </span><span class="si">{</span><span class="n">q_sca_analyt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The numerical scattering efficiency is </span><span class="si">{</span><span class="n">q_sca_fenics</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The error is </span><span class="si">{</span><span class="n">err_sca</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The analytical extinction efficiency is </span><span class="si">{</span><span class="n">q_ext_analyt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The numerical extinction efficiency is </span><span class="si">{</span><span class="n">q_ext_fenics</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The error is </span><span class="si">{</span><span class="n">err_ext</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">err_abs</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
+    <span class="k">assert</span> <span class="n">err_sca</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
+    <span class="k">assert</span> <span class="n">err_ext</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The analytical absorption efficiency is 0.9622728008329892
+The numerical absorption efficiency is 1.2681563797682407
+The error is 31.787615598244507%
+
+The analytical scattering efficiency is 0.07770397394691526
+The numerical scattering efficiency is 0.1134279778270033
+The error is 45.974487616931235%
+
+The analytical extinction efficiency is 1.0399767747799045
+The numerical extinction efficiency is 1.381584357595244
+The error is 32.847616514093374%
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AssertionError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="nn">Input In [16],</span> in <span class="ni">&lt;cell line: 6&gt;</span><span class="nt">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">18</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The numerical extinction efficiency is </span><span class="si">{</span><span class="n">q_ext_fenics</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">19</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The error is </span><span class="si">{</span><span class="n">err_ext</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">21</span> <span class="k">assert</span> <span class="n">err_abs</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
+<span class="g g-Whitespace">     </span><span class="mi">22</span> <span class="k">assert</span> <span class="n">err_sca</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
+<span class="g g-Whitespace">     </span><span class="mi">23</span> <span class="k">assert</span> <span class="n">err_ext</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
+
+<span class="ne">AssertionError</span>: 
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3-complex",
+            path: "./chapter4"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3-complex'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="../chapter3/analytical_modes.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Analytical solutions for the half-loaded waveguide</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="mesh_sphere_axis.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">&lt;no title&gt;</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Michele Castriotta<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
