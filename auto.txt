@@ -4,9 +4,35 @@ curl $URL_SBC/demo_scattering_boundary_conditions.py -o chapter1/demo_scattering
 curl $URL_SBC/analytical_efficiencies_wire.py -o chapter1/analytical_efficiencies_wire.py
 curl $URL_SBC/mesh_wire.py -o chapter1/mesh_wire.py
 
+URL_PML=https://raw.githubusercontent.com/mikics/dolfinx/gsoc-demo-pml/python/demo/demo_pml
+curl $URL_PML/demo_pml.py -o chapter2/demo_pml.py
+curl $URL_PML/analytical_efficiencies_wire.py -o chapter2/analytical_efficiencies_wire.py
+curl $URL_PML/mesh_wire_pml.py -o chapter2/mesh_wire_pml.py
+
+URL_WVG=https://raw.githubusercontent.com/mikics/dolfinx/gsoc-demo-waveguide/python/demo/demo_waveguide
+curl $URL_WVG/demo_half_loaded_waveguide.py -o chapter3/demo_half_loaded_waveguide.py
+curl $URL_WVG/analytical_modes.py -o chapter3/analytical_modes.py
+
+URL_AXIS=https://raw.githubusercontent.com/mikics/dolfinx/gsoc-demo-axis/python/demo/demo_axis
+curl $URL_AXIS/demo_axis.py -o chapter4/demo_axis.py
+curl $URL_AXIS/mesh_sphere_axis.py -o chapter4/mesh_sphere_axis.py
+
 cd chapter1/
 jupytext --to ipynb demo_scattering_boundary_conditions.py
 jupytext --to ipynb analytical_efficiencies_wire.py
 jupytext --to ipynb mesh_wire.py
+
+cd chapter2/
+jupytext --to ipynb demo_pml.py
+jupytext --to ipynb analytical_efficiencies_wire.py
+jupytext --to ipynb mesh_wire_pml.py
+
+cd chapter3/
+jupytext --to ipynb demo_half_loaded_waveguide.py
+jupytext --to ipynb analytical_modes.py
+
+cd chapter4/
+jupytext --to ipynb demo_axis.py
+jupytext --to ipynb mesh_sphere_axis.py
 
 sudo chown -R $USER: ./
