@@ -810,7 +810,7 @@ function <code class="docutils literal notranslate"><span class="pre">generate_m
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Error   : Unknown mesh format &#39;/tmp/tmp8eu93ruw.json&#39;
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Error   : Unknown mesh format &#39;/tmp/tmpk0pcb457.json&#39;
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : Meshing 1D...
@@ -828,17 +828,17 @@ Info    : [ 80%] Meshing curve 11 (Line)
 Info    : [ 80%] Meshing curve 12 (Line)
 Info    : [ 90%] Meshing curve 13 (Line)
 Info    : [100%] Meshing curve 14 (Line)
-Info    : Done meshing 1D (Wall 0.0117124s, CPU 0.01124s)
+Info    : Done meshing 1D (Wall 0.0149514s, CPU 0.008006s)
 Info    : Meshing 2D...
 Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
 Info    : [ 20%] Meshing surface 2 (Plane, Frontal-Delaunay)
 Info    : [ 40%] Meshing surface 3 (Plane, Frontal-Delaunay)
 Info    : [ 60%] Meshing surface 4 (Plane, Frontal-Delaunay)
 Info    : [ 80%] Meshing surface 5 (Plane, Frontal-Delaunay)
-Info    : Done meshing 2D (Wall 0.18888s, CPU 0.186989s)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : 2402 nodes 4972 elements
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Info    : Done meshing 2D (Wall 0.205692s, CPU 0.203382s)
+Info    : 2402 nodes 4972 elements
 </pre></div>
 </div>
 </div>
@@ -868,12 +868,12 @@ by plotting them with PyVista:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Faint">2022-09-07 16:14:31.911 (   0.844s) [        63724480]    vtkExtractEdges.cxx:435   INFO| </span>Executing edge extractor: points are renumbered
-<span class=" -Color -Color-Faint">2022-09-07 16:14:31.916 (   0.849s) [        63724480]    vtkExtractEdges.cxx:551   INFO| </span>Created 6993 edges
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Faint">2022-09-07 16:24:58.803 (   0.979s) [        73479000]    vtkExtractEdges.cxx:435   INFO| </span>Executing edge extractor: points are renumbered
+<span class=" -Color -Color-Faint">2022-09-07 16:24:58.808 (   0.984s) [        73479000]    vtkExtractEdges.cxx:551   INFO| </span>Created 6993 edges
 </pre></div>
 </div>
 <script type="application/vnd.jupyter.widget-view+json">
-{"version_major": 2, "version_minor": 0, "model_id": "fd863af511ea4dc4ada8ea31a5a39dfa"}
+{"version_major": 2, "version_minor": 0, "model_id": "09b5a89447734493943e9404f351b545"}
 </script></div>
 </div>
 <p>We can now define our function space. For the <span class="math notranslate nohighlight">\(\hat{\rho}\)</span> and <span class="math notranslate nohighlight">\(\hat{z}\)</span>
@@ -1134,16 +1134,16 @@ the results:</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The analytical absorption efficiency is 0.9622728008329892
-The numerical absorption efficiency is 1.2681563797682407
-The error is 31.787615598244507%
+The numerical absorption efficiency is 1.2681563797689948
+The error is 31.787615598322866%
 
 The analytical scattering efficiency is 0.07770397394691526
-The numerical scattering efficiency is 0.1134279778270033
-The error is 45.974487616931235%
+The numerical scattering efficiency is 0.1134279778263946
+The error is 45.97448761614789%
 
 The analytical extinction efficiency is 1.0399767747799045
-The numerical extinction efficiency is 1.381584357595244
-The error is 32.847616514093374%
+The numerical extinction efficiency is 1.3815843575953894
+The error is 32.84761651410736%
 </pre></div>
 </div>
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
