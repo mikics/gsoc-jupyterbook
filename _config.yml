@@ -3,7 +3,7 @@
 
 title: GSoC 2022 - Expanding FEniCSx electromagnetic demos
 author: Michele Castriotta
-logo: logo.jpeg
+logo: logo.png
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
