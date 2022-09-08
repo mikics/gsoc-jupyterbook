@@ -8,7 +8,7 @@
   - <i class="fab fa-twitter"></i> [@castrimik](https://twitter.com/castrimik)
   - <i class="fab fa-discourse"></i> [CastriMik](https://fenicsproject.discourse.group/u/CastriMik)
   - <i class="fab fa-linkedin"></i> [Michele Castriotta](https://www.linkedin.com/in/michele-castriotta-18aa91a5)
-  - <i class="fab fa-envelope"></i> [mich.castriotta@gmail.com](mich.castriotta@gmail.com)
+  - <i class="fa fa-envelope"></i> [mich.castriotta@gmail.com](mich.castriotta@gmail.com)
 
 ## Contents
 ```{tableofcontents}
