@@ -32,6 +32,7 @@ Suggestion from Google:
 - Further remarks, what to improve, what I would do differently....
 - Summary of demos, tests, PRs and GH issues
 - Improve ipynb of demos: add title to mesh files, add visualization for waveguide demo and axis demo, add gifs, check why in Docker PyVista does not work.
+- Use extrude-rotate in pyvista for the axisymmetric plots
 
 ## Contacts
 
