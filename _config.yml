@@ -53,5 +53,12 @@ launch_buttons:
         which permits use, duplication, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source,
         provide a link to the Creative Commons license and indicate if changes were made.
     </div>
+    <div>
+	<script>
+	date = new Date().toLocaleDateString();
+	document.write(date);
+	</script>
+    </div>
+
 
 exclude_patterns: [README.md]
