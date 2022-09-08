@@ -13,4 +13,5 @@ USER root
 RUN chown -R ${NB_UID} ${HOME}
 
 USER ${NB_USER}
+RUN pip3 install notebook ipywidgets==7.7.2 nbconvert==6.5.3
 ENTRYPOINT []
