@@ -46,7 +46,7 @@ html:
 launch_buttons:
   binderhub_url: "https://mybinder.org"  # The URL for your BinderHub (e.g., https://mybinder.org)
 
-  extra_footer: |
+extra_footer: |
     <div>
         This webpage is an adaptation of <a href=https://jorgensd.github.io/fenics22-tutorial/intro.html>The FEniCSx tutorial for FEniCS 2022</a> and
         is distributed under the terms of the      <a href=http://creativecommons.org/licenses/by/4.0/>Creative Commons Attribution 4.0 International License  </a>
