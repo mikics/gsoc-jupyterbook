@@ -41,7 +41,7 @@ to pass the final rounds of reviews by FEniCSx reviewers.
 
 ### Pull Requests
 
-- [PR #2237](https://github.com/FEniCS/dolfinx/pull/2237) (open): this pull request
+- [PR #2237](https://github.com/FEniCS/dolfinx/pull/2237) (**open**): this pull request
 adds the demo showing how to set a time-harmonic electromagnetic problem
 with scattering boundary conditions:
   - `demo_scattering_boundary_conditions.py`: solves the time-harmonic problem
@@ -50,31 +50,31 @@ with scattering boundary conditions:
   - `mesh_wire.py`: generates the mesh for the demo;
   - `analytical_efficiencies_wire.py`: calculates the analytical efficiencies
   for a wire;
-- [PR #2276](https://github.com/FEniCS/dolfinx/pull/2276) (open): this pull request
+- [PR #2276](https://github.com/FEniCS/dolfinx/pull/2276) (**open**): this pull request
 adds the demo showing how to set a time-harmonic electromagnetic problem with perfectly matched layers:
   - `demo_pml.py`: demo for solving the time-harmonic problem of a TM-polarized plane wave scattered by a gold wire using perfectly matched layers;
   - `mesh_wire_pml.py`: generates the mesh for the demo;
   - `analytical_efficiencies_wire.py`: calculates the analytical efficiencies
   for a wire;
-- [PR #2338](https://github.com/FEniCS/dolfinx/pull/2338) (open): this pull request adds
+- [PR #2338](https://github.com/FEniCS/dolfinx/pull/2338) (**open**): this pull request adds
 the demo showing how to solve a time-harmonic electromagnetic eigenvalue problem problem with DOLFINx and SLEPc:
   - `demo_waveguide.py`: solves the eigenvalue problem associated with an electromagnetic half-loaded
   waveguide with SLEPc;
   - `analytical_modes.py`: verifies if FEniCSx modes satisfy the analytical equations for the
   half-loaded waveguide;
-- [PR #2339](https://github.com/FEniCS/dolfinx/pull/2339) (open): this pull request adds the demo
+- [PR #2339](https://github.com/FEniCS/dolfinx/pull/2339) (**open**): this pull request adds the demo
 showing how to solve a time-harmonic electromagnetic problem for axisymmetric geometry:
   - `demo_axis.py`: solves the time-harmonic problem of a plane wave scattered by a sphere
   within the axisymmetric approximation, using perfectly matched layers
   - `mesh_sphere_axis.py`: generates the mesh for the demo
-- [PR #2357](https://github.com/FEniCS/dolfinx/pull/2357) (merged): this pull request adds the line
+- [PR #2357](https://github.com/FEniCS/dolfinx/pull/2357) (**merged**): this pull request adds the line
 `from dolfinx.io import gmshio` in `python/io/__init__.py` so that `gmshio` is considered a module
 in DOLFINx. Besides, it also removes an unnecessary `gmshio` string in the `has_adios2` conditional
 block.
 
 ### Issues
 
-- [GH issue #2343](https://github.com/FEniCS/dolfinx/issues/2343) (closed as completed): issue
+- [GH issue #2343](https://github.com/FEniCS/dolfinx/issues/2343) (**closed as completed**): issue
 showing an inconsistency when solving problems with `MixedElement` having `Lagrange` elements. This
 issue arose during the writing for [PR #2339](https://github.com/FEniCS/dolfinx/pull/2339), when
 I noticed different DOLFINx outputs when changing the `degree` of `Lagrange` elements. The root of
