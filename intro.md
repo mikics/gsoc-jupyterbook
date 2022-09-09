@@ -9,24 +9,23 @@
 - [PR #2237](https://github.com/FEniCS/dolfinx/pull/2237) (open): this pull request
 adds the demo showing how to set a time-harmonic electromagnetic problem
 with scattering boundary conditions:
-  - aefeaf
-  - eafaef
-  - aefaef
+  - `demo_scattering_boundary_conditions.py`:
+  - `mesh_wire.py`:
+  - `analytical_efficiencies_wire.py`:
 - [PR #2276](https://github.com/FEniCS/dolfinx/pull/2276) (open): this pull request
 adds the demo showing how to set a time-harmonic electromagnetic problem with perfectly matched layers:
-  - aefeaf
-  - eafaef
-  - aefaef
+  - `demo_pml.py`:
+  - `mesh_wire_pml.py`:
+  - `analytical_efficiencies_wire.py`:
 - [PR #2338](https://github.com/FEniCS/dolfinx/pull/2338) (open): this pull request adds
 the demo showing how to solve an electromagnetic eigenvalue problem problem with DOLFINx and SLEPc:
-  - aefeaf
-  - eafaef
-  - aefaef
+  - `demo_waveguide.py`:
+  - `analytical_efficiencies_wire.py`:
 - [PR #2339](https://github.com/FEniCS/dolfinx/pull/2339) (open): this pull request adds the demo
 showing how to solve an time-harmonic electromagnetic problem for axisymmetric geometry:
-  - aefeaf
-  - eafaef
-  - aefaef
+  - `demo_scattering_boundary_conditions.py`:
+  - `mesh_wire.py`:
+  - `analytical_efficiencies_wire.py`:
 - [PR #2357](https://github.com/FEniCS/dolfinx/pull/2357) (merged): this pull request adds the line
 `from dolfinx.io import gmshio` in `python/io/__init__.py` so that `gmshio` is considered a module
 in DOLFINx. Besides, it also removes an unnecessary `gmshio` string in the `has_adios2` conditional
