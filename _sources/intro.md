@@ -97,6 +97,9 @@ particularly useful when solving parameterized problem as in the axisymmetric ca
 
 ## Challenges and final remarks
 
+- what to improve
+- what I would make differently....
+
 ## To put
 
 Suggestion from Google:
@@ -105,15 +108,7 @@ Suggestion from Google:
 
     ❗ This is the best option because it allows you to easily include a lot of information. This is good because it will clearly show what work you did, as well as make it easy for others to use and understand your code."
 
-- list of PR, with their current status
-- list of GH issue, with their current status
-- paraview animation
-- what's next
-- highlights and challenges
-- Further remarks, what to improve, what I would do differently....
-- Summary of demos, tests, PRs and GH issues
 - Improve ipynb of demos: add title to mesh files, add visualization for waveguide demo and axis demo, add gifs, check why in Docker PyVista does not work.
-- Use extrude-rotate in pyvista for the axisymmetric plots
 
 ## Contacts
 
