@@ -393,6 +393,16 @@ title="Print to PDF"
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#highlights-of-the-demos">
+   Highlights of the demos
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#challenges-and-final-remarks">
+   Challenges and final remarks
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#to-put">
    To put
   </a>
@@ -451,6 +461,16 @@ title="Print to PDF"
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#highlights-of-the-demos">
+   Highlights of the demos
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#challenges-and-final-remarks">
+   Challenges and final remarks
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#to-put">
    To put
   </a>
@@ -481,8 +501,37 @@ title="Print to PDF"
 <h1>GSoC 2022 - Expanding FEniCSx electromagnetic demos<a class="headerlink" href="#gsoc-2022-expanding-fenicsx-electromagnetic-demos" title="Permalink to this headline">#</a></h1>
 <p>In this website, I will provide an overview of my work as a GSoC 2022 contributor for
 the <a class="reference external" href="https://fenicsproject.org/">FEniCS project</a> (sponsored by <a class="reference external" href="https://numfocus.org/">NumFOCUS</a>)
-and its main environment <a class="reference external" href="https://github.com/FEniCS/dolfinx">DOLFINx</a>.</p>
-<p>The goal of the project was to expand DOLFIN</p>
+and its main environment <a class="reference external" href="https://github.com/FEniCS/dolfinx">DOLFINx</a>.
+The goal of the project was to expand DOLFINx electromagnetic demos, in order to
+promote the use of the FEniCSx environment for solving electromagnetic and photonic
+problems. During GSoC 2022, I have implemented demos showing how to:</p>
+<ul class="simple">
+<li><p>implement scattering boundary conditions;</p></li>
+<li><p>implement perfectly matched layers;</p></li>
+<li><p>solve electromagnetic eigenvalue problems;</p></li>
+<li><p>solve 3D electromagnetic problems for axisymmetric structures.</p></li>
+</ul>
+<p>All the problems are solved within the time-harmonic approximation, and use simple
+geometries, but can be easily generalized to more complicated study cases.
+The documentation for the demos has been provided under the form of Python
+comments that can be visualized as text and math formula in <a class="reference external" href="https://jupyter.org/">Jupyter notebook</a>
+by using <a class="reference external" href="https://jupytext.readthedocs.io/en/latest/install.html">Jupytext</a>. Besides,
+each demo contains tests for comparing the DOLFINx outputs with analytical results
+for each problem.</p>
+<p>This website has been built with Jupyterbook, and on the left-hand side you can find
+the Jupyter notebook of the demos I have built. In this way, you can directly
+visualize the mathematical documentation in the demos, the code, the outputs, and
+you can play with them by using Binder (just click on the <i class="fa fa-rocket"></i> icon).</p>
+<p>With respect to the original plan, we have not developed the demo showing how to
+handle complex numbers in DOLFINx, and the demo showing how to use the <code class="docutils literal notranslate"><span class="pre">MPI.COMM_SELF</span></code>
+communicator. In the first case, the demo was then considered unnecessary, since all the
+main features of complex numbers in DOLFINx naturally arises in all the developed electromagnetic demos, that
+widely implement them. In the second case, the demo has been substituted with the waveguide
+demo, which was not planned at first. However, I plan to work on the <code class="docutils literal notranslate"><span class="pre">MPI.COMM_SELF</span></code> demo
+in the weeks following the end of GSoC 2022.</p>
+<p>In my opinion, the original goal has been successfully reached. Indeed, even if many pull
+requests are still open, the main work for the demos have been done, and they just need
+to pass the final rounds of reviews by FEniCSx reviewers.</p>
 <section id="list-of-contributions">
 <h2>List of contributions<a class="headerlink" href="#list-of-contributions" title="Permalink to this headline">#</a></h2>
 <section id="pull-requests">
@@ -546,16 +595,22 @@ this issue was a wrong permutation inside <code class="docutils literal notransl
 <h3>What’s next<a class="headerlink" href="#whats-next" title="Permalink to this headline">#</a></h3>
 <p>The plan after the end of the Google Summer of Code is the following one:</p>
 <ul class="simple">
-<li><p>work on merging the open pull requests;</p></li>
-<li><p>develop a demo showing how to use the <code class="docutils literal notranslate"><span class="pre">MPI.COMM_SELF</span></code> communicator; this will be
+<li><p>Work on merging the open pull requests;</p></li>
+<li><p>Develop a demo showing how to use the <code class="docutils literal notranslate"><span class="pre">MPI.COMM_SELF</span></code> communicator; this will be
 particularly useful when solving parameterized problem as in the axisymmetric case, where
 <code class="docutils literal notranslate"><span class="pre">MPI.COMM_SELF</span></code> would allow us to split the multiple harmonic numbers over multiple processors;</p></li>
-<li><p>animate DOLFINx solutions with PyVista;</p></li>
-<li><p>project axisymmetric solutions in 3D using PyVista (e.g. by using <a class="reference external" href="https://docs.pyvista.org/examples/01-filter/extrude-rotate.html">extrude rotation</a>);</p></li>
-<li><p>develop more complicated demos (e.g. demos involving periodic boundary conditions);</p></li>
-<li><p>join more discussions on <a class="reference external" href="https://fenicsproject.discourse.group/">discourse</a>.</p></li>
+<li><p>Animate DOLFINx solutions with PyVista;</p></li>
+<li><p>Project axisymmetric solutions in 3D using PyVista (e.g. by using <a class="reference external" href="https://docs.pyvista.org/examples/01-filter/extrude-rotate.html">extrude rotation</a>);</p></li>
+<li><p>Develop more complicated demos (e.g. demos involving periodic boundary conditions);</p></li>
+<li><p>Join more discussions on <a class="reference external" href="https://fenicsproject.discourse.group/">discourse</a>.</p></li>
 </ul>
 </section>
+</section>
+<section id="highlights-of-the-demos">
+<h2>Highlights of the demos<a class="headerlink" href="#highlights-of-the-demos" title="Permalink to this headline">#</a></h2>
+</section>
+<section id="challenges-and-final-remarks">
+<h2>Challenges and final remarks<a class="headerlink" href="#challenges-and-final-remarks" title="Permalink to this headline">#</a></h2>
 </section>
 <section id="to-put">
 <h2>To put<a class="headerlink" href="#to-put" title="Permalink to this headline">#</a></h2>
