@@ -27,6 +27,7 @@ Suggestion from Google:
 
 - list of PR, with their current status
 - list of GH issue, with their current status
+- paraview animation
 - what's next
 - highlights and challenges
 - Further remarks, what to improve, what I would do differently....
