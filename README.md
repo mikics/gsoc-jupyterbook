@@ -1,19 +1,16 @@
-# FEniCSx Tutorial @ [FEniCS 2022](https://fenicsproject.org/fenics-2022/) in San Diego.
+# Final Product Submission for GSoC 2022 - Michele Castriotta
 
-This repository contains the material that was used for the FEniCSx tutorial at the FEniCS 2022 conference.
+This repository contains a Jupyterbook-powered website providing an overview over
+my work for the FEniCS project during the Google Summer of Code 2022.
 
-All the resources from this tutorial can be found in [this Jupyter book](https://jorgensd.github.io/fenics22-tutorial).
+This website is an adaptation of [the FEniCSx tutorial @ FEniCS 2022](https://jorgensd.github.io/fenics22-tutorial),
+by @jorgensd.
 
-## Developer notes
+## Other useful information
 
 ### Rendering the HTML presentation files directly on Github
-Use [githack](https://raw.githack.com/) and add the link to the relevant presentation.
 
-Example:
-- [Example page](https://raw.githack.com/jorgensd/fenics22-tutorial/main/presentation-example.html#/)
-- [Time dependent problem](https://raw.githack.com/jorgensd/fenics22-tutorial/main/presentation-heat_eq.html#/)
-- [Helmholtz](https://raw.githack.com/jorgensd/fenics22-tutorial/main/presentation-helmholtz.html#/)
-- [Stokes](https://raw.githack.com/jorgensd/fenics22-tutorial/main/presentation-comparing_elements.html#/)
+Use [githack](https://raw.githack.com/) and add the link to the relevant presentation.
 
 ### Adding a tutorial to the book
 
@@ -21,6 +18,7 @@ Add a chapter to `_toc.yml`.
 
 Inside the Jupyter notebook, go to `Property Inspector` (the two cogwheels in the top right corner of JupyterLab)
 and add the following as notebook metadata:
+
 ```yml
  {
   "jupytext": {
@@ -45,9 +43,11 @@ and add the following as notebook metadata:
   }
  }
 ```
+
 This will choose the default kernel in the `dolfinx/lab` docker image, and automatically convert the notebooks to a `.py` file at saving.
 
 If you want to use complex numbers, change:
+
 ```bash
  "kernelspec": {
    "display_name": "Python 3 (ipykernel)",
@@ -55,7 +55,9 @@ If you want to use complex numbers, change:
    "name": "python3"
   },
 ```
+
 to
+
 ```bash
   "kernelspec": {
    "display_name": "Python 3 (DOLFINx complex)",
@@ -64,11 +66,11 @@ to
   },
 ```
 
-
 ### Create slides from your notebook
 
 You can use `nbconvert` (`pip3 install nbconvert`) to convert the `.ipynb` to a presentation.
 The command to run is:
+
 ```bash
 jupyter nbconvert example.ipynb --to html --template reveal
 ```
@@ -83,19 +85,24 @@ If you want a sub-slide, i.e. navigating downwards with arrows when rendering th
 If a cell should be ignored in presentation mode, set it to `Notes`.
 
 ### Hiding cells/output
-See https://jupyterbook.org/en/stable/interactive/hiding.htm for more details. The setting is also in advanced tools on the RHS of the Jupyterlab interface
+
+See <https://jupyterbook.org/en/stable/interactive/hiding.htm> for more details. The setting is also in advanced tools on the RHS of the Jupyterlab interface
 
 ### Automatically generate slides
-By adding the following file to the (`jupyter_server_config.py`) `.jupyter` folder on your system. 
+
+By adding the following file to the (`jupyter_server_config.py`) `.jupyter` folder on your system.
 You might need to rename it to `jupyter_notebook_config.py`.
 To check the config paths, call:
+
 ```bash
 jupyter server --show-config
 jupyter notebook --show-config
 ```
 
 If you run the code with `dolfinx/lab:v0.5.0` using for instance:
+
 ```bash
 docker run -ti -p 8888:8888 --rm -v $(pwd):/root/shared -w /root/shared dolfinx/lab:v0.5.0
 ```
+
 no copying is required.
