@@ -95,10 +95,17 @@ particularly useful when solving parameterized problem as in the axisymmetric ca
 
 ## Highlights of the demos
 
+### Demo #1: Scattering Boundary Conditions
+### Demo #2: Perfectly Matched Layers
+### Demo #3: Half-loaded waveguide with SLEPc
+### Demo #4: Maxwell's equations for axisymmetric geometries
+### Bonus tutorial: how to animate solutions in Paraview
+
 ## Challenges and final remarks
 
 - what to improve
 - what I would make differently....
+- ringraziamenti
 
 ## To put
 
