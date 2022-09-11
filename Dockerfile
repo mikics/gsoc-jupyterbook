@@ -1,4 +1,5 @@
-FROM dolfinx/lab:nightly
+FROM dolfinx/lab:v0.5.1
+RUN PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false
 
 # create user with a home directory
 ARG NB_USER
