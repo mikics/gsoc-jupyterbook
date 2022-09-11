@@ -96,10 +96,165 @@ particularly useful when solving parameterized problem as in the axisymmetric ca
 ## Highlights of the demos
 
 ### Demo #1: Scattering Boundary Conditions
+
+This demo shows how to implement scattering boundary conditions for a time-harmonic
+electromagnetic problem. In particular, we show how to use scattering boundary
+conditions to calculate the scattering of a TM-polarized plane wave from an infinite
+gold wire. The demo can also be considered an introductory demo for
+electromagnetic problems, since it also shows how to derive the weak
+form of the corresponding Maxwell's equations. Indeed, we start from
+these equations (Maxwell's equations + scattering boundary conditions):
+
+$$
+-\nabla \times \nabla \times \mathbf{E}_s+\varepsilon_{r} k_{0}^{2}
+\mathbf{E}_s
++k_{0}^{2}\left(\varepsilon_{r}-\varepsilon_{b}\right)
+\mathbf{E}_{\mathrm{b}}=0 \textrm{ in } \Omega
+$$
+
+$$\mathbf{n} \times
+\nabla \times \mathbf{E}_s+\left(j k_{0}n_b + \frac{1}{2r}
+\right) \mathbf{n} \times \mathbf{E}_s
+\times \mathbf{n}=0\quad \textrm{ on } \partial \Omega
+$$
+
+and arrive at this weak form:
+
+$$
+\begin{align}
+& \int_{\Omega}-(\nabla \times \mathbf{E}_s) \cdot (\nabla \times
+\bar{\mathbf{v}})+\varepsilon_{r} k_{0}^{2} \mathbf{E}_s \cdot
+\bar{\mathbf{v}}+k_{0}^{2}\left(\varepsilon_{r}-\varepsilon_b\right)
+\mathbf{E}_b \cdot \bar{\mathbf{v}}~\mathrm{d}x \\ +&\int_{\partial \Omega}
+\left(j n_bk_{0}+\frac{1}{2r}\right)( \mathbf{n} \times \mathbf{E}_s \times
+\mathbf{n}) \cdot \bar{\mathbf{v}} ~\mathrm{d} s = 0.
+\end{align}
+$$
+
+which we implement in DOLFINx in the following way:
+
+```
+F = - ufl.inner(ufl.curl(Es), ufl.curl(v)) * dDom \
+    + eps * (k0**2) * ufl.inner(Es, v) * dDom \
+    + (k0**2) * (eps - eps_bkg) * ufl.inner(Eb, v) * dDom \
+    + (1j * k0 * n_bkg + 1 / (2 * r)) \
+    * ufl.inner(ufl.cross(Es_3d, n_3d), ufl.cross(v_3d, n_3d)) * dsbc
+```
+
+Besides, we also show how to implement the background field $ \mathbf{E}_b = -\sin\theta e^{j (k_xx+k_yy)}\hat{\mathbf{u}}_xv+ \cos\theta e^{j (k_xx+k_yy)}\hat{\mathbf{u}}_y$:
+
+```
+class BackgroundElectricField:
+
+    def __init__(self, theta, n_b, k0):
+        self.theta = theta
+        self.k0 = k0
+        self.n_b = n_b
+
+    def eval(self, x):
+
+        kx = self.n_b * self.k0 * np.cos(self.theta)
+        ky = self.n_b * self.k0 * np.sin(self.theta)
+        phi = kx * x[0] + ky * x[1]
+
+        ax = np.sin(self.theta)
+        ay = np.cos(self.theta)
+
+        return (-ax * np.exp(1j * phi), ay * np.exp(1j * phi))
+```
+
+and how to calculate the efficiencies:
+$$
+\begin{align}
+
+& Q_{abs} = \operatorname{Re}\left(\int_{\Omega_{m}} \frac{1}{2}
+
+\frac{\operatorname{Im}(\varepsilon_m)k_0}{Z_0n_b}
+
+\mathbf{E}\cdot\hat{\mathbf{E}}dx\right) \\
+
+& Q_{sca} = \operatorname{Re}\left(\int_{\partial\Omega} \frac{1}{2}
+
+\left(\mathbf{E}_s\times\bar{\mathbf{H}}_s\right)
+
+\cdot\mathbf{n}ds\right)\\ \\
+
+& Q_{ext} = Q_{abs} + Q_{sca}, \\
+
+& q_{abs} = \frac{Q_{abs}}{I_0\sigma_{gcs}} \\
+
+& q_{sca} = \frac{Q_{sca}}{I_0\sigma_{gcs}} \\
+
+& q_{ext} = q_{abs} + q_{sca}, \\
+
+\end{align}
+$$
+
+```
+Z0 = np.sqrt(mu_0 / epsilon_0)
+
+# Magnetic field H
+Hsh_3d = -1j * curl_2d(Esh) / (Z0 * k0 * n_bkg)
+
+Esh_3d = ufl.as_vector((Esh[0], Esh[1], 0))
+E_3d = ufl.as_vector((E[0], E[1], 0))
+
+# Intensity of the electromagnetic fields I0 = 0.5*E0**2/Z0
+# E0 = np.sqrt(ax**2 + ay**2) = 1, see background_electric_field
+I0 = 0.5 / Z0
+
+# Geometrical cross section of the wire
+gcs = 2 * radius_wire
+
+# Quantities for the calculation of efficiencies
+P = 0.5 * ufl.inner(ufl.cross(Esh_3d, ufl.conj(Hsh_3d)), n_3d)
+Q = 0.5 * np.imag(eps_au) * k0 * (ufl.inner(E_3d, E_3d)) / Z0 / n_bkg
+
+# Define integration domain for the wire
+dAu = dx(au_tag)
+
+# Normalized absorption efficiency
+q_abs_fenics_proc = (fem.assemble_scalar(fem.form(Q * dAu)) / gcs / I0).real
+# Sum results from all MPI processes
+q_abs_fenics = domain.comm.allreduce(q_abs_fenics_proc, op=MPI.SUM)
+
+# Normalized scattering efficiency
+q_sca_fenics_proc = (fem.assemble_scalar(fem.form(P * dsbc)) / gcs / I0).real
+
+# Sum results from all MPI processes
+q_sca_fenics = domain.comm.allreduce(q_sca_fenics_proc, op=MPI.SUM)
+```
+
+We compared these efficiencies with analytical ones (defined by a function in `analytical_efficiencies_wire.py`) to test our demo. In the end, we get
+an error much smaller than $1\%$, as certified by the final output,and
+therefore we can say that our demo works correctly:
+
+```
+The analytical absorption efficiency is 1.2115253567863489
+The numerical absorption efficiency is 1.210977254477182
+The error is 0.04524067994918296%
+
+The analytical scattering efficiency is 0.9481819974744393
+The numerical scattering efficiency is 0.947864860367565
+The error is 0.033446860172311944%
+
+The analytical extinction efficiency is 2.1597073542607883
+The numerical extinction efficiency is 2.158842114844747
+The error is 0.040062808247346045%
+```
+
+Here below I show the animation of the DOLFINx solution post-processed in
+paraview:
+
+![afeaf](images/animation_sbc.gif "Electric field, x-component, real part")
+
 ### Demo #2: Perfectly Matched Layers
+
 ### Demo #3: Half-loaded waveguide with SLEPc
+
 ### Demo #4: Maxwell's equations for axisymmetric geometries
-### Bonus tutorial: how to animate solutions in Paraview
+
+### Bonus tutorial:Hhow to animate solutions in Paraview
 
 ## Challenges and final remarks
 
