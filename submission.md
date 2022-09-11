@@ -164,29 +164,19 @@ class BackgroundElectricField:
 ```
 
 and how to calculate the efficiencies:
+
 $$
 \begin{align}
-
 & Q_{abs} = \operatorname{Re}\left(\int_{\Omega_{m}} \frac{1}{2}
-
 \frac{\operatorname{Im}(\varepsilon_m)k_0}{Z_0n_b}
-
 \mathbf{E}\cdot\hat{\mathbf{E}}dx\right) \\
-
 & Q_{sca} = \operatorname{Re}\left(\int_{\partial\Omega} \frac{1}{2}
-
 \left(\mathbf{E}_s\times\bar{\mathbf{H}}_s\right)
-
 \cdot\mathbf{n}ds\right)\\ \\
-
 & Q_{ext} = Q_{abs} + Q_{sca}, \\
-
 & q_{abs} = \frac{Q_{abs}}{I_0\sigma_{gcs}} \\
-
 & q_{sca} = \frac{Q_{sca}}{I_0\sigma_{gcs}} \\
-
 & q_{ext} = q_{abs} + q_{sca}, \\
-
 \end{align}
 $$
 
@@ -225,7 +215,7 @@ q_sca_fenics_proc = (fem.assemble_scalar(fem.form(P * dsbc)) / gcs / I0).real
 q_sca_fenics = domain.comm.allreduce(q_sca_fenics_proc, op=MPI.SUM)
 ```
 
-We compared these efficiencies with analytical ones (defined by a function in `analytical_efficiencies_wire.py`) to test our demo. In the end, we get
+We compared these efficiencies with analytical ones (calculated by a function in `analytical_efficiencies_wire.py`) to test our demo. In the end, we get
 an error much smaller than $1\%$, as certified by the final output,and
 therefore we can say that our demo works correctly:
 
@@ -243,12 +233,190 @@ The numerical extinction efficiency is 2.158842114844747
 The error is 0.040062808247346045%
 ```
 
-Here below I show the animation of the DOLFINx solution post-processed in
+As a final treat, here below you can see the animation of the DOLFINx solution post-processed in
 paraview:
 
 ![afeaf](images/animation_sbc.gif "Electric field, x-component, real part")
 
 ### Demo #2: Perfectly Matched Layers
+
+In the second demo, we show how to implement perfectly matched layers (shortly PMLs) for
+the same problem solved in the first demo, i.e. the
+scattering of a TM-polarized plane wave by an infinite gold wire. Perfectly
+matched layers are artificial layers that gradually absorb outgoing waves impinging on them, and are extensively used in time-harmonic electromagnetic
+problems for domain truncation. However, their mathematical implementation can
+be quite tricky, and therefore showing the math and the corresponding DOLFINx
+implementation is crucial for allowing users to quickly apply the FEniCSx environment to their electromagnetic problems.
+
+For this demo, we chose to use a square PML layer. In order to define PML, we
+implement in the PML domain a complex coordinate transformation of this kind:
+
+$$
+\begin{align}
+& x^\prime= x\left\{1+j\frac{\alpha}{k_0}\left[\frac{|x|-l_{dom}/2}
+{(l_{pml}/2 - l_{dom}/2)^2}\right] \right\}\\
+
+& y^\prime= y\left\{1+j\frac{\alpha}{k_0}\left[\frac{|y|-l_{dom}/2}
+{(l_{pml}/2 - l_{dom}/2)^2}\right] \right\}\\
+\end{align}
+$$
+
+We then calculate the Jacobian associated with this transformation:
+
+$$
+\mathbf{J}=\mathbf{A}^{-1}= \nabla\boldsymbol{x}^
+\prime(\boldsymbol{x}) =
+\left[\begin{array}{ccc}
+\frac{\partial x^{\prime}}{\partial x} &
+\frac{\partial y^{\prime}}{\partial x} &
+\frac{\partial z^{\prime}}{\partial x} \\
+\frac{\partial x^{\prime}}{\partial y} &
+\frac{\partial y^{\prime}}{\partial y} &
+\frac{\partial z^{\prime}}{\partial y} \\
+\frac{\partial x^{\prime}}{\partial z} &
+\frac{\partial y^{\prime}}{\partial z} &
+\frac{\partial z^{\prime}}{\partial z}
+\end{array}\right]=\left[\begin{array}{ccc}
+\frac{\partial x^{\prime}}{\partial x} & 0 & 0 \\
+0 & \frac{\partial y^{\prime}}{\partial y} & 0 \\
+0 & 0 & \frac{\partial z^{\prime}}{\partial z}
+\end{array}\right]=\left[\begin{array}{ccc}
+J_{11} & 0 & 0 \\
+0 & J_{22} & 0 \\
+0 & 0 & 1
+\end{array}\right]
+$$
+
+Finally, we can express the complex coordinate transformation as a material
+transformation within the PML, therefore having the following anisotropic,
+inhomogeneous, and complex relative permittivity $\boldsymbol{\varepsilon}_{pml}$ and permeability
+$\boldsymbol{\mu}_{pml}$:
+
+$$
+\begin{align}
+& {\boldsymbol{\varepsilon}_{pml}} =
+\det(\mathbf{A}^{-1}) \mathbf{A} {\boldsymbol{\varepsilon}_b}\mathbf{A}^{T},\\
+& {\boldsymbol{\mu}_{pml}} =
+\det(\mathbf{A}^{-1}) \mathbf{A} {\boldsymbol{\mu}_b}\mathbf{A}^{T},
+\end{align}
+$$
+
+All these steps have been defined in DOLFINx using the following functions:
+
+```
+def pml_coordinates(x, alpha: float, k0: complex,
+                    l_dom: float, l_pml: float):
+    return (x + 1j * alpha / k0 * x
+            * (algebra.Abs(x) - l_dom / 2)
+            / (l_pml / 2 - l_dom / 2)**2
+
+def create_eps_mu(pml, eps_bkg, mu_bkg):
+
+    J = grad(pml)
+
+    # Transform the 2x2 Jacobian into a 3x3 matrix.
+    J = as_matrix(((J[0, 0], 0, 0),
+                   (0, J[1, 1], 0),
+                   (0, 0, 1)))
+
+    A = inv(J)
+    eps_pml = det(J) * A * eps_bkg * transpose(A)
+    mu_pml = det(J) * A * mu_bkg * transpose(A)
+    return eps_pml, mu_pml
+
+# PML corners
+xy_pml = as_vector((pml_coordinates(x[0], alpha, k0, l_dom, l_pml),
+                    pml_coordinates(x[1], alpha, k0, l_dom, l_pml)))
+
+# PML rectangles along x
+x_pml = as_vector((pml_coordinates(x[0], alpha, k0, l_dom, l_pml), x[1]))
+
+# PML rectangles along y
+y_pml = as_vector((x[0], pml_coordinates(x[1], alpha, k0, l_dom, l_pml)))
+
+eps_x, mu_x = create_eps_mu(x_pml, eps_bkg, 1)
+eps_y, mu_y = create_eps_mu(y_pml, eps_bkg, 1)
+eps_xy, mu_xy = create_eps_mu(xy_pml, eps_bkg, 1)
+```
+
+We need to define multiple coordinate transformation since in the corners of the PML both coordinates are transformed, while in the rest of the PML just
+one of them is. In the end, we can implement the weak form in DOLFINx in this way:
+
+$$
+\begin{align}
+&\int_{\Omega_{pml}}\left[\boldsymbol{\mu}^{-1}_{pml} \nabla \times \mathbf{E}
+\right]\cdot \nabla \times \bar{\mathbf{v}}-k_{0}^{2}
+\left[\boldsymbol{\varepsilon}_{pml} \mathbf{E} \right]\cdot
+\bar{\mathbf{v}}~ d x  \\
++ &\int_{\Omega_m\cup\Omega_b}-(\nabla \times \mathbf{E}_s)
+\cdot (\nabla \times \bar{\mathbf{v}})+\varepsilon_{r} k_{0}^{2}
+\mathbf{E}_s \cdot \bar{\mathbf{v}}+k_{0}^{2}\left(\varepsilon_{r}
+-\varepsilon_b\right)\mathbf{E}_b \cdot \bar{\mathbf{v}}~\mathrm{d}x.
+= 0.
+\end{align}
+$$
+
+```
+F = - inner(curl_2d(Es), curl_2d(v)) * dDom \
+    + eps * k0 ** 2 * inner(Es, v) * dDom \
+    + k0 ** 2 * (eps - eps_bkg) * inner(Eb, v) * dDom \
+    - inner(inv(mu_x) * curl_2d(Es), curl_2d(v)) * dPml_x \
+    - inner(inv(mu_y) * curl_2d(Es), curl_2d(v)) * dPml_y \
+    - inner(inv(mu_xy) * curl_2d(Es), curl_2d(v)) * dPml_xy \
+    + k0 ** 2 * inner(eps_x * Es_3d, v_3d) * dPml_x \
+    + k0 ** 2 * inner(eps_y * Es_3d, v_3d) * dPml_y \
+    + k0 ** 2 * inner(eps_xy * Es_3d, v_3d) * dPml_x
+```
+
+Then, as in the first demo, we calculated the efficiencies and compared them with analytical ones. For scattering efficiencies, we needed to define
+the integration line slightly differently with respect to demo #1, since
+we have to deal with an inner facet:
+
+```
+marker = fem.Function(D)
+scatt_facets = facet_tags.find(scatt_tag)
+incident_cells = mesh.compute_incident_entities(domain, scatt_facets,
+                                                domain.topology.dim - 1,
+                                                domain.topology.dim)
+
+midpoints = mesh.compute_midpoints(domain, domain.topology.dim, incident_cells)
+inner_cells = incident_cells[(midpoints[:, 0]**2
+                              + midpoints[:, 1]**2) < (l_scatt)**2]
+
+marker.x.array[inner_cells] = 1
+
+# Quantities for the calculation of efficiencies
+P = 0.5 * inner(cross(Esh_3d, conj(Hsh_3d)), n_3d) * marker
+
+# Define integration facet for the scattering efficiency
+dS = Measure("dS", domain, subdomain_data=facet_tags)
+
+# Normalized scattering efficiency
+q_sca_fenics_proc = (fem.assemble_scalar(
+    fem.form((P('+') + P('-')) * dS(scatt_tag))) / gcs / I0).real
+
+```
+
+As in the first demo, even in this case the error is under $1\%$:
+
+```
+The analytical absorption efficiency is 0.9089500187622276
+The numerical absorption efficiency is 0.9075812357239408
+The error is 0.1505894724718481%
+
+The analytical scattering efficiency is 0.8018061316558375
+The numerical scattering efficiency is 0.7996621815340356
+The error is 0.2673900880970269%
+
+The analytical extinction efficiency is 1.710756150418065
+The numerical extinction efficiency is 1.7072434172579762
+The error is 0.2053321953120203%
+```
+
+Here below, you can see the time-harmonic animation of the scattered
+electric field norm obtained in DOLFINx and post-processed in Paraview:
+
+![afeaf](images/animation_pml.gif "Norm of Electric field")
 
 ### Demo #3: Half-loaded waveguide with SLEPc
 
