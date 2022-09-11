@@ -963,6 +963,159 @@ electric field norm obtained in DOLFINx and post-processed in Paraview:</p>
 </section>
 <section id="demo-3-half-loaded-waveguide-with-slepc">
 <h3>Demo #3: Half-loaded waveguide with SLEPc<a class="headerlink" href="#demo-3-half-loaded-waveguide-with-slepc" title="Permalink to this headline">#</a></h3>
+<p>The third demo shows how to solve an eigenvalue electromagnetic problem
+in DOLFINx with the SLEPc library. In particular, we solve the eigenvalue problem of a half-loaded electromagnetic waveguide with perfect
+electric conducting walls. The equations for our problem are:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+&amp;\nabla \times \frac{1}{\mu_{r}} \nabla \times \mathbf{E}-k_{0}^{2}
+\epsilon_{r} \mathbf{E}=0 \quad &amp;\text { in } \Omega\\
+&amp;\hat{n}\times\mathbf{E} = 0 &amp;\text { on } \Gamma
+\end{align}
+\end{split}\]</div>
+<p>The final weak form can be found by considering a known <span class="math notranslate nohighlight">\(z\)</span> dependance of
+the electric field:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{E}(x, y, z)=\left[\mathbf{E}_{t}(x, y)+\hat{z} E_{z}(x, y)\right]
+e^{-jk_z z}
+\]</div>
+<p>and by using the following substitution:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+&amp; \mathbf{e}_t = k_z\mathbf{E}_t\\
+&amp; e_z = -jE_z
+\end{align}
+\end{split}\]</div>
+<p>In the end, we get the following equation:
+$<span class="math notranslate nohighlight">\(
+\begin{aligned}
+F_{k_z}(\mathbf{e})=\int_{\Omega} &amp;\left(\nabla_{t} \times
+\mathbf{e}_{t}\right) \cdot\left(\nabla_{t} \times
+\bar{\mathbf{v}}_{t}\right) -k_{o}^{2} \epsilon_{r} \mathbf{e}_{t} \cdot
+\bar{\mathbf{v}}_{t} \\
+&amp;+k_z^{2}\left[\left(\nabla_{t} e_{z}+\mathbf{e}_{t}\right)
+\cdot\left(\nabla_{t} \bar{v}_{z}+\bar{\mathbf{v}}_{t}\right)-k_{o}^{2}
+\epsilon_{r} e_{z} \bar{v}_{z}\right] \mathrm{d} x = 0
+\end{aligned}
+\)</span>$</p>
+<p>which we can write in a more compact form as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[\begin{array}{cc}
+A_{t t} &amp; 0 \\
+0 &amp; 0
+\end{array}\right]\left\{\begin{array}{l}
+\mathbf{e}_{t} \\
+e_{z}
+\end{array}\right\}=-k_z^{2}\left[\begin{array}{ll}
+B_{t t} &amp; B_{t z} \\
+B_{z t} &amp; B_{z z}
+\end{array}\right]\left\{\begin{array}{l}
+\mathbf{e}_{t} \\
+e_{z}
+\end{array}\right\}
+\end{split}\]</div>
+<p>This problem is a <em>generalized eigenvalue problem</em>, where the eigenvalues are all the possible <span class="math notranslate nohighlight">\(-k_z^2\)</span> and <span class="math notranslate nohighlight">\(\mathbf{e}_t, e_z\)</span> substained by the structure.</p>
+<p>The weak form in DOLFINx can be written in this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a_tt</span> <span class="o">=</span> <span class="p">(</span><span class="n">inner</span><span class="p">(</span><span class="n">curl</span><span class="p">(</span><span class="n">et</span><span class="p">),</span> <span class="n">curl</span><span class="p">(</span><span class="n">vt</span><span class="p">))</span> <span class="o">-</span> <span class="n">k0</span>
+        <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">et</span><span class="p">,</span> <span class="n">vt</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">b_tt</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">et</span><span class="p">,</span> <span class="n">vt</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">b_tz</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">et</span><span class="p">,</span> <span class="n">grad</span><span class="p">(</span><span class="n">vz</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">b_zt</span> <span class="o">=</span> <span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">ez</span><span class="p">),</span> <span class="n">vt</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span>
+<span class="n">b_zz</span> <span class="o">=</span> <span class="p">(</span><span class="n">inner</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">ez</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">vz</span><span class="p">))</span> <span class="o">-</span> <span class="n">k0</span>
+        <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">ez</span><span class="p">,</span> <span class="n">vz</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">a_tt</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">b_tt</span> <span class="o">+</span> <span class="n">b_tz</span> <span class="o">+</span> <span class="n">b_zt</span> <span class="o">+</span> <span class="n">b_zz</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>While for the perfect electric conductor condition we used these commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bc_facets</span> <span class="o">=</span> <span class="n">exterior_facet_indices</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
+
+<span class="n">bc_dofs</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bc_facets</span><span class="p">)</span>
+
+<span class="n">u_bc</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">u_bc</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">localForm</span><span class="p">()</span> <span class="k">as</span> <span class="n">loc</span><span class="p">:</span>
+    <span class="n">loc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">bc</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">dirichletbc</span><span class="p">(</span><span class="n">u_bc</span><span class="p">,</span> <span class="n">bc_dofs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then, we assembled the <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> matrices with PETSc:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
+<span class="n">A</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">petsc</span><span class="o">.</span><span class="n">assemble_matrix</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="p">[</span><span class="n">bc</span><span class="p">])</span>
+<span class="n">B</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>These matrices are the inputs SLEPc needs to solve our problem, as shown in the next snippet:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span> <span class="o">=</span> <span class="n">SLEPc</span><span class="o">.</span><span class="n">EPS</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="p">)</span>
+
+<span class="n">eps</span><span class="o">.</span><span class="n">setOperators</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then, we need to tweak some SLEPc settings, to guarantee the convergence of the solver, as shown below. For this problem, we need to use a spectral transformation to solve the problem, and getting our eigenvalue(s). In particular, spectral transformation techniques map the eigenvalues in other portion of the spectrum, to make the algorithm more efficient. We then need to set a target value for our eigenvalue, the number of eigenvalues we want to find, and we can finally solve the problem. It is worth highlighting that solving eigenvalue problems can be tricky, and therefore finding the correct eigenvalues of the problem may require a lot of tweaking.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set the tolerance for the solution</span>
+<span class="n">eps</span><span class="o">.</span><span class="n">setTolerances</span><span class="p">(</span><span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
+
+<span class="c1"># Set solver type</span>
+<span class="n">eps</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">SLEPc</span><span class="o">.</span><span class="n">EPS</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">KRYLOVSCHUR</span><span class="p">)</span>
+
+<span class="c1"># Set spectral transformation</span>
+<span class="n">st</span> <span class="o">=</span> <span class="n">eps</span><span class="o">.</span><span class="n">getST</span><span class="p">()</span>
+<span class="n">st</span><span class="o">.</span><span class="n">setType</span><span class="p">(</span><span class="n">SLEPc</span><span class="o">.</span><span class="n">ST</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">SINVERT</span><span class="p">)</span>
+
+<span class="c1"># Set type of target</span>
+<span class="n">eps</span><span class="o">.</span><span class="n">setWhichEigenpairs</span><span class="p">(</span><span class="n">SLEPc</span><span class="o">.</span><span class="n">EPS</span><span class="o">.</span><span class="n">Which</span><span class="o">.</span><span class="n">TARGET_REAL</span><span class="p">)</span>
+
+<span class="c1"># Set target</span>
+<span class="n">eps</span><span class="o">.</span><span class="n">setTarget</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">k0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Set number of eigenvalues</span>
+<span class="n">eps</span><span class="o">.</span><span class="n">setDimensions</span><span class="p">(</span><span class="n">nev</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Solve</span>
+<span class="n">eps</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Then, we verify if the solutions from SLEPc are consistent with the analytical formula for the half-loaded waveguide modes, which are:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\textrm{For TE}_x \textrm{ modes}:
+\begin{cases}
+&amp;k_{x d}^{2}+\left(\frac{n \pi}{b}\right)^{2}+k_{z}^{2}=k_0^{2}
+\varepsilon_{d} \\
+&amp;k_{x v}^{2}+\left(\frac{n \pi}{b}\right)^{2}+k_{z}^{2}=k_0^{2}
+\varepsilon_{v} \\
+&amp; k_{x d} \cot k_{x d} d + k_{x v} \cot \left[k_{x v}(h-d)\right] = 0
+\end{cases}
+\end{aligned}
+\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\textrm{For TM}_x \textrm{ modes}:
+\begin{cases}
+&amp;k_{x d}^{2}+\left(\frac{n \pi}{b}\right)^{2}+k_{z}^{2}=
+k_0^{2} \varepsilon_{d} \\
+&amp;k_{x v}^{2}+\left(\frac{n \pi}{b}\right)^{2}+k_{z}^{2}=
+k_0^{2} \varepsilon_{v} \\
+&amp; \frac{k_{x d}}{\varepsilon_{d}} \tan k_{x d} d +
+\frac{k_{x v}}{\varepsilon_{v}} \tan \left[k_{x v}(h-d)\right] = 0
+\end{cases}
+\end{aligned}
+\end{split}\]</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">analytical_modes.py</span></code> file defines the functions for doing the verification.</p>
+<p>In the end, we get the following eigenvalue, and the corresponding <span class="math notranslate nohighlight">\(k_z\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">eigenvalue</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.6924040028250327</span><span class="o">+</span><span class="mf">1.3702668664033287e-14</span><span class="n">j</span><span class="p">)</span>
+<span class="n">kz</span><span class="p">:</span> <span class="p">(</span><span class="mf">1.3009242878911258</span><span class="o">-</span><span class="mf">5.266512736973384e-15</span><span class="n">j</span><span class="p">)</span>
+<span class="n">kz</span><span class="o">/</span><span class="n">k0</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.4658591947638973</span><span class="o">-</span><span class="mf">1.885930953627917e-15</span><span class="n">j</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The eigenvalue successfuly passes the verification step, and therefore it satisfies the mode equations (up to a certain threshold).</p>
 </section>
 <section id="demo-4-maxwells-equations-for-axisymmetric-geometries">
 <h3>Demo #4: Maxwell’s equations for axisymmetric geometries<a class="headerlink" href="#demo-4-maxwells-equations-for-axisymmetric-geometries" title="Permalink to this headline">#</a></h3>
