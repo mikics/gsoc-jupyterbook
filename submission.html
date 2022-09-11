@@ -52,6 +52,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Scattering from a wire with scattering boundary conditions" href="chapter1/demo_scattering_boundary_conditions.html" />
@@ -418,8 +420,8 @@ title="Print to PDF"
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#bonus-tutorial-how-to-animate-solutions-in-paraview">
-     Bonus tutorial: how to animate solutions in Paraview
+    <a class="reference internal nav-link" href="#bonus-tutorial-hhow-to-animate-solutions-in-paraview">
+     Bonus tutorial:Hhow to animate solutions in Paraview
     </a>
    </li>
   </ul>
@@ -513,8 +515,8 @@ title="Print to PDF"
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#bonus-tutorial-how-to-animate-solutions-in-paraview">
-     Bonus tutorial: how to animate solutions in Paraview
+    <a class="reference internal nav-link" href="#bonus-tutorial-hhow-to-animate-solutions-in-paraview">
+     Bonus tutorial:Hhow to animate solutions in Paraview
     </a>
    </li>
   </ul>
@@ -573,7 +575,7 @@ by using <a class="reference external" href="https://jupytext.readthedocs.io/en/
 each demo contains tests for comparing the DOLFINx outputs with analytical results
 for each problem.</p>
 <p>This website has been built with Jupyterbook, and on the left-hand side you can find
-the Jupyter notebook of the demos I have built. In this way, you can directly
+the Jupyter notebook of the demos I have written. In this way, you can directly
 visualize the mathematical documentation in the demos, the code, the outputs, and
 you can play with them by using Binder (just click on the <i class="fa fa-rocket"></i> icon).</p>
 <p>With respect to the original plan, we have not developed the demo showing how to
@@ -664,6 +666,146 @@ particularly useful when solving parameterized problem as in the axisymmetric ca
 <h2>Highlights of the demos<a class="headerlink" href="#highlights-of-the-demos" title="Permalink to this headline">#</a></h2>
 <section id="demo-1-scattering-boundary-conditions">
 <h3>Demo #1: Scattering Boundary Conditions<a class="headerlink" href="#demo-1-scattering-boundary-conditions" title="Permalink to this headline">#</a></h3>
+<p>This demo shows how to implement scattering boundary conditions for a time-harmonic
+electromagnetic problem. In particular, we show how to use scattering boundary
+conditions to calculate the scattering of a TM-polarized plane wave from an infinite
+gold wire. The demo can also be considered an introductory demo for
+electromagnetic problems, since it also shows how to derive the weak
+form of the corresponding Maxwell’s equations. Indeed, we start from
+these equations (Maxwell’s equations + scattering boundary conditions):</p>
+<div class="math notranslate nohighlight">
+\[
+-\nabla \times \nabla \times \mathbf{E}_s+\varepsilon_{r} k_{0}^{2}
+\mathbf{E}_s
++k_{0}^{2}\left(\varepsilon_{r}-\varepsilon_{b}\right)
+\mathbf{E}_{\mathrm{b}}=0 \textrm{ in } \Omega
+\]</div>
+<div class="math notranslate nohighlight">
+\[\mathbf{n} \times
+\nabla \times \mathbf{E}_s+\left(j k_{0}n_b + \frac{1}{2r}
+\right) \mathbf{n} \times \mathbf{E}_s
+\times \mathbf{n}=0\quad \textrm{ on } \partial \Omega
+\]</div>
+<p>and arrive at this weak form:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+&amp; \int_{\Omega}-(\nabla \times \mathbf{E}_s) \cdot (\nabla \times
+\bar{\mathbf{v}})+\varepsilon_{r} k_{0}^{2} \mathbf{E}_s \cdot
+\bar{\mathbf{v}}+k_{0}^{2}\left(\varepsilon_{r}-\varepsilon_b\right)
+\mathbf{E}_b \cdot \bar{\mathbf{v}}~\mathrm{d}x \\ +&amp;\int_{\partial \Omega}
+\left(j n_bk_{0}+\frac{1}{2r}\right)( \mathbf{n} \times \mathbf{E}_s \times
+\mathbf{n}) \cdot \bar{\mathbf{v}} ~\mathrm{d} s = 0.
+\end{align}
+\end{split}\]</div>
+<p>which we implement in DOLFINx in the following way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F</span> <span class="o">=</span> <span class="o">-</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">curl</span><span class="p">(</span><span class="n">Es</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">curl</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">dDom</span> \
+    <span class="o">+</span> <span class="n">eps</span> <span class="o">*</span> <span class="p">(</span><span class="n">k0</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">Es</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dDom</span> \
+    <span class="o">+</span> <span class="p">(</span><span class="n">k0</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">eps</span> <span class="o">-</span> <span class="n">eps_bkg</span><span class="p">)</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">Eb</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dDom</span> \
+    <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">k0</span> <span class="o">*</span> <span class="n">n_bkg</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">r</span><span class="p">))</span> \
+    <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">Es_3d</span><span class="p">,</span> <span class="n">n_3d</span><span class="p">),</span> <span class="n">ufl</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">v_3d</span><span class="p">,</span> <span class="n">n_3d</span><span class="p">))</span> <span class="o">*</span> <span class="n">dsbc</span>
+</pre></div>
+</div>
+<p>Besides, we also show how to implement the background field <span class="math notranslate nohighlight">\( \mathbf{E}_b = -\sin\theta e^{j (k_xx+k_yy)}\hat{\mathbf{u}}_xv+ \cos\theta e^{j (k_xx+k_yy)}\hat{\mathbf{u}}_y\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BackgroundElectricField</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">n_b</span><span class="p">,</span> <span class="n">k0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k0</span> <span class="o">=</span> <span class="n">k0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_b</span> <span class="o">=</span> <span class="n">n_b</span>
+
+    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+
+        <span class="n">kx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_b</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">k0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">ky</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_b</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">k0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">kx</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">ky</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">ay</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">ax</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">phi</span><span class="p">),</span> <span class="n">ay</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">phi</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>and how to calculate the efficiencies:
+$$</p>
+<div class="amsmath math notranslate nohighlight" id="equation-6e7344be-1b6f-4179-a74e-32ca53389992">
+<span class="eqno">(1)<a class="headerlink" href="#equation-6e7344be-1b6f-4179-a74e-32ca53389992" title="Permalink to this equation">#</a></span>\[\begin{align}
+
+&amp; Q_{abs} = \operatorname{Re}\left(\int_{\Omega_{m}} \frac{1}{2}
+
+\frac{\operatorname{Im}(\varepsilon_m)k_0}{Z_0n_b}
+
+\mathbf{E}\cdot\hat{\mathbf{E}}dx\right) \\
+
+&amp; Q_{sca} = \operatorname{Re}\left(\int_{\partial\Omega} \frac{1}{2}
+
+\left(\mathbf{E}_s\times\bar{\mathbf{H}}_s\right)
+
+\cdot\mathbf{n}ds\right)\\ \\
+
+&amp; Q_{ext} = Q_{abs} + Q_{sca}, \\
+
+&amp; q_{abs} = \frac{Q_{abs}}{I_0\sigma_{gcs}} \\
+
+&amp; q_{sca} = \frac{Q_{sca}}{I_0\sigma_{gcs}} \\
+
+&amp; q_{ext} = q_{abs} + q_{sca}, \\
+
+\end{align}\]</div>
+<p>$$</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Z0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mu_0</span> <span class="o">/</span> <span class="n">epsilon_0</span><span class="p">)</span>
+
+<span class="c1"># Magnetic field H</span>
+<span class="n">Hsh_3d</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">curl_2d</span><span class="p">(</span><span class="n">Esh</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Z0</span> <span class="o">*</span> <span class="n">k0</span> <span class="o">*</span> <span class="n">n_bkg</span><span class="p">)</span>
+
+<span class="n">Esh_3d</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">as_vector</span><span class="p">((</span><span class="n">Esh</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Esh</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">E_3d</span> <span class="o">=</span> <span class="n">ufl</span><span class="o">.</span><span class="n">as_vector</span><span class="p">((</span><span class="n">E</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">E</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">))</span>
+
+<span class="c1"># Intensity of the electromagnetic fields I0 = 0.5*E0**2/Z0</span>
+<span class="c1"># E0 = np.sqrt(ax**2 + ay**2) = 1, see background_electric_field</span>
+<span class="n">I0</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="n">Z0</span>
+
+<span class="c1"># Geometrical cross section of the wire</span>
+<span class="n">gcs</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">radius_wire</span>
+
+<span class="c1"># Quantities for the calculation of efficiencies</span>
+<span class="n">P</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">Esh_3d</span><span class="p">,</span> <span class="n">ufl</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">Hsh_3d</span><span class="p">)),</span> <span class="n">n_3d</span><span class="p">)</span>
+<span class="n">Q</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">eps_au</span><span class="p">)</span> <span class="o">*</span> <span class="n">k0</span> <span class="o">*</span> <span class="p">(</span><span class="n">ufl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">E_3d</span><span class="p">,</span> <span class="n">E_3d</span><span class="p">))</span> <span class="o">/</span> <span class="n">Z0</span> <span class="o">/</span> <span class="n">n_bkg</span>
+
+<span class="c1"># Define integration domain for the wire</span>
+<span class="n">dAu</span> <span class="o">=</span> <span class="n">dx</span><span class="p">(</span><span class="n">au_tag</span><span class="p">)</span>
+
+<span class="c1"># Normalized absorption efficiency</span>
+<span class="n">q_abs_fenics_proc</span> <span class="o">=</span> <span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">Q</span> <span class="o">*</span> <span class="n">dAu</span><span class="p">))</span> <span class="o">/</span> <span class="n">gcs</span> <span class="o">/</span> <span class="n">I0</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+<span class="c1"># Sum results from all MPI processes</span>
+<span class="n">q_abs_fenics</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">q_abs_fenics_proc</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
+
+<span class="c1"># Normalized scattering efficiency</span>
+<span class="n">q_sca_fenics_proc</span> <span class="o">=</span> <span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">dsbc</span><span class="p">))</span> <span class="o">/</span> <span class="n">gcs</span> <span class="o">/</span> <span class="n">I0</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+
+<span class="c1"># Sum results from all MPI processes</span>
+<span class="n">q_sca_fenics</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">q_sca_fenics_proc</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We compared these efficiencies with analytical ones (defined by a function in <code class="docutils literal notranslate"><span class="pre">analytical_efficiencies_wire.py</span></code>) to test our demo. In the end, we get
+an error much smaller than <span class="math notranslate nohighlight">\(1\%\)</span>, as certified by the final output,and
+therefore we can say that our demo works correctly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">analytical</span> <span class="n">absorption</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">1.2115253567863489</span>
+<span class="n">The</span> <span class="n">numerical</span> <span class="n">absorption</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">1.210977254477182</span>
+<span class="n">The</span> <span class="n">error</span> <span class="ow">is</span> <span class="mf">0.04524067994918296</span><span class="o">%</span>
+
+<span class="n">The</span> <span class="n">analytical</span> <span class="n">scattering</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">0.9481819974744393</span>
+<span class="n">The</span> <span class="n">numerical</span> <span class="n">scattering</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">0.947864860367565</span>
+<span class="n">The</span> <span class="n">error</span> <span class="ow">is</span> <span class="mf">0.033446860172311944</span><span class="o">%</span>
+
+<span class="n">The</span> <span class="n">analytical</span> <span class="n">extinction</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">2.1597073542607883</span>
+<span class="n">The</span> <span class="n">numerical</span> <span class="n">extinction</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">2.158842114844747</span>
+<span class="n">The</span> <span class="n">error</span> <span class="ow">is</span> <span class="mf">0.040062808247346045</span><span class="o">%</span>
+</pre></div>
+</div>
+<p>Here below I show the animation of the DOLFINx solution post-processed in
+paraview:</p>
+<p><img alt="afeaf" src="_images/animation_sbc.gif" /></p>
 </section>
 <section id="demo-2-perfectly-matched-layers">
 <h3>Demo #2: Perfectly Matched Layers<a class="headerlink" href="#demo-2-perfectly-matched-layers" title="Permalink to this headline">#</a></h3>
@@ -674,8 +816,8 @@ particularly useful when solving parameterized problem as in the axisymmetric ca
 <section id="demo-4-maxwells-equations-for-axisymmetric-geometries">
 <h3>Demo #4: Maxwell’s equations for axisymmetric geometries<a class="headerlink" href="#demo-4-maxwells-equations-for-axisymmetric-geometries" title="Permalink to this headline">#</a></h3>
 </section>
-<section id="bonus-tutorial-how-to-animate-solutions-in-paraview">
-<h3>Bonus tutorial: how to animate solutions in Paraview<a class="headerlink" href="#bonus-tutorial-how-to-animate-solutions-in-paraview" title="Permalink to this headline">#</a></h3>
+<section id="bonus-tutorial-hhow-to-animate-solutions-in-paraview">
+<h3>Bonus tutorial:Hhow to animate solutions in Paraview<a class="headerlink" href="#bonus-tutorial-hhow-to-animate-solutions-in-paraview" title="Permalink to this headline">#</a></h3>
 </section>
 </section>
 <section id="challenges-and-final-remarks">
