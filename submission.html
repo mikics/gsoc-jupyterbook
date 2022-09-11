@@ -726,33 +726,22 @@ these equations (Maxwell’s equations + scattering boundary conditions):</p>
         <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">ax</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">phi</span><span class="p">),</span> <span class="n">ay</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">phi</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>and how to calculate the efficiencies:
-$$</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5f31c05e-f194-476c-b1c4-dedb100347b8">
-<span class="eqno">(1)<a class="headerlink" href="#equation-5f31c05e-f194-476c-b1c4-dedb100347b8" title="Permalink to this equation">#</a></span>\[\begin{align}
-
+<p>and how to calculate the efficiencies:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
 &amp; Q_{abs} = \operatorname{Re}\left(\int_{\Omega_{m}} \frac{1}{2}
-
 \frac{\operatorname{Im}(\varepsilon_m)k_0}{Z_0n_b}
-
 \mathbf{E}\cdot\hat{\mathbf{E}}dx\right) \\
-
 &amp; Q_{sca} = \operatorname{Re}\left(\int_{\partial\Omega} \frac{1}{2}
-
 \left(\mathbf{E}_s\times\bar{\mathbf{H}}_s\right)
-
 \cdot\mathbf{n}ds\right)\\ \\
-
 &amp; Q_{ext} = Q_{abs} + Q_{sca}, \\
-
 &amp; q_{abs} = \frac{Q_{abs}}{I_0\sigma_{gcs}} \\
-
 &amp; q_{sca} = \frac{Q_{sca}}{I_0\sigma_{gcs}} \\
-
 &amp; q_{ext} = q_{abs} + q_{sca}, \\
-
-\end{align}\]</div>
-<p>$$</p>
+\end{align}
+\end{split}\]</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Z0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mu_0</span> <span class="o">/</span> <span class="n">epsilon_0</span><span class="p">)</span>
 
 <span class="c1"># Magnetic field H</span>
@@ -787,7 +776,7 @@ $$</p>
 <span class="n">q_sca_fenics</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">q_sca_fenics_proc</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We compared these efficiencies with analytical ones (defined by a function in <code class="docutils literal notranslate"><span class="pre">analytical_efficiencies_wire.py</span></code>) to test our demo. In the end, we get
+<p>We compared these efficiencies with analytical ones (calculated by a function in <code class="docutils literal notranslate"><span class="pre">analytical_efficiencies_wire.py</span></code>) to test our demo. In the end, we get
 an error much smaller than <span class="math notranslate nohighlight">\(1\%\)</span>, as certified by the final output,and
 therefore we can say that our demo works correctly:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">analytical</span> <span class="n">absorption</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">1.2115253567863489</span>
@@ -803,12 +792,174 @@ therefore we can say that our demo works correctly:</p>
 <span class="n">The</span> <span class="n">error</span> <span class="ow">is</span> <span class="mf">0.040062808247346045</span><span class="o">%</span>
 </pre></div>
 </div>
-<p>Here below I show the animation of the DOLFINx solution post-processed in
+<p>As a final treat, here below you can see the animation of the DOLFINx solution post-processed in
 paraview:</p>
 <p><img alt="afeaf" src="_images/animation_sbc.gif" /></p>
 </section>
 <section id="demo-2-perfectly-matched-layers">
 <h3>Demo #2: Perfectly Matched Layers<a class="headerlink" href="#demo-2-perfectly-matched-layers" title="Permalink to this headline">#</a></h3>
+<p>In the second demo, we show how to implement perfectly matched layers (shortly PMLs) for
+the same problem solved in the first demo, i.e. the
+scattering of a TM-polarized plane wave by an infinite gold wire. Perfectly
+matched layers are artificial layers that gradually absorb outgoing waves impinging on them, and are extensively used in time-harmonic electromagnetic
+problems for domain truncation. However, their mathematical implementation can
+be quite tricky, and therefore showing the math and the corresponding DOLFINx
+implementation is crucial for allowing users to quickly apply the FEniCSx environment to their electromagnetic problems.</p>
+<p>For this demo, we chose to use a square PML layer. In order to define PML, we
+implement in the PML domain a complex coordinate transformation of this kind:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{split}
+\begin{align}
+&amp; x^\prime= x\left\{1+j\frac{\alpha}{k_0}\left[\frac{|x|-l_{dom}/2}
+{(l_{pml}/2 - l_{dom}/2)^2}\right] \right\}\\\end{split}\\\begin{split}&amp; y^\prime= y\left\{1+j\frac{\alpha}{k_0}\left[\frac{|y|-l_{dom}/2}
+{(l_{pml}/2 - l_{dom}/2)^2}\right] \right\}\\
+\end{align}
+\end{split}\end{aligned}\end{align} \]</div>
+<p>We then calculate the Jacobian associated with this transformation:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathbf{J}=\mathbf{A}^{-1}= \nabla\boldsymbol{x}^
+\prime(\boldsymbol{x}) =
+\left[\begin{array}{ccc}
+\frac{\partial x^{\prime}}{\partial x} &amp;
+\frac{\partial y^{\prime}}{\partial x} &amp;
+\frac{\partial z^{\prime}}{\partial x} \\
+\frac{\partial x^{\prime}}{\partial y} &amp;
+\frac{\partial y^{\prime}}{\partial y} &amp;
+\frac{\partial z^{\prime}}{\partial y} \\
+\frac{\partial x^{\prime}}{\partial z} &amp;
+\frac{\partial y^{\prime}}{\partial z} &amp;
+\frac{\partial z^{\prime}}{\partial z}
+\end{array}\right]=\left[\begin{array}{ccc}
+\frac{\partial x^{\prime}}{\partial x} &amp; 0 &amp; 0 \\
+0 &amp; \frac{\partial y^{\prime}}{\partial y} &amp; 0 \\
+0 &amp; 0 &amp; \frac{\partial z^{\prime}}{\partial z}
+\end{array}\right]=\left[\begin{array}{ccc}
+J_{11} &amp; 0 &amp; 0 \\
+0 &amp; J_{22} &amp; 0 \\
+0 &amp; 0 &amp; 1
+\end{array}\right]
+\end{split}\]</div>
+<p>Finally, we can express the complex coordinate transformation as a material
+transformation within the PML, therefore having the following anisotropic,
+inhomogeneous, and complex relative permittivity <span class="math notranslate nohighlight">\(\boldsymbol{\varepsilon}_{pml}\)</span> and permeability
+<span class="math notranslate nohighlight">\(\boldsymbol{\mu}_{pml}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+&amp; {\boldsymbol{\varepsilon}_{pml}} =
+\det(\mathbf{A}^{-1}) \mathbf{A} {\boldsymbol{\varepsilon}_b}\mathbf{A}^{T},\\
+&amp; {\boldsymbol{\mu}_{pml}} =
+\det(\mathbf{A}^{-1}) \mathbf{A} {\boldsymbol{\mu}_b}\mathbf{A}^{T},
+\end{align}
+\end{split}\]</div>
+<p>All these steps have been defined in DOLFINx using the following functions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pml_coordinates</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">k0</span><span class="p">:</span> <span class="nb">complex</span><span class="p">,</span>
+                    <span class="n">l_dom</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">l_pml</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">/</span> <span class="n">k0</span> <span class="o">*</span> <span class="n">x</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">algebra</span><span class="o">.</span><span class="n">Abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">l_dom</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">l_pml</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">l_dom</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="k">def</span> <span class="nf">create_eps_mu</span><span class="p">(</span><span class="n">pml</span><span class="p">,</span> <span class="n">eps_bkg</span><span class="p">,</span> <span class="n">mu_bkg</span><span class="p">):</span>
+
+    <span class="n">J</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">pml</span><span class="p">)</span>
+
+    <span class="c1"># Transform the 2x2 Jacobian into a 3x3 matrix.</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">as_matrix</span><span class="p">(((</span><span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                   <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">J</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">),</span>
+                   <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+
+    <span class="n">A</span> <span class="o">=</span> <span class="n">inv</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+    <span class="n">eps_pml</span> <span class="o">=</span> <span class="n">det</span><span class="p">(</span><span class="n">J</span><span class="p">)</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="n">eps_bkg</span> <span class="o">*</span> <span class="n">transpose</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">mu_pml</span> <span class="o">=</span> <span class="n">det</span><span class="p">(</span><span class="n">J</span><span class="p">)</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="n">mu_bkg</span> <span class="o">*</span> <span class="n">transpose</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">eps_pml</span><span class="p">,</span> <span class="n">mu_pml</span>
+
+<span class="c1"># PML corners</span>
+<span class="n">xy_pml</span> <span class="o">=</span> <span class="n">as_vector</span><span class="p">((</span><span class="n">pml_coordinates</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">k0</span><span class="p">,</span> <span class="n">l_dom</span><span class="p">,</span> <span class="n">l_pml</span><span class="p">),</span>
+                    <span class="n">pml_coordinates</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">k0</span><span class="p">,</span> <span class="n">l_dom</span><span class="p">,</span> <span class="n">l_pml</span><span class="p">)))</span>
+
+<span class="c1"># PML rectangles along x</span>
+<span class="n">x_pml</span> <span class="o">=</span> <span class="n">as_vector</span><span class="p">((</span><span class="n">pml_coordinates</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">k0</span><span class="p">,</span> <span class="n">l_dom</span><span class="p">,</span> <span class="n">l_pml</span><span class="p">),</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="c1"># PML rectangles along y</span>
+<span class="n">y_pml</span> <span class="o">=</span> <span class="n">as_vector</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pml_coordinates</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">k0</span><span class="p">,</span> <span class="n">l_dom</span><span class="p">,</span> <span class="n">l_pml</span><span class="p">)))</span>
+
+<span class="n">eps_x</span><span class="p">,</span> <span class="n">mu_x</span> <span class="o">=</span> <span class="n">create_eps_mu</span><span class="p">(</span><span class="n">x_pml</span><span class="p">,</span> <span class="n">eps_bkg</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">eps_y</span><span class="p">,</span> <span class="n">mu_y</span> <span class="o">=</span> <span class="n">create_eps_mu</span><span class="p">(</span><span class="n">y_pml</span><span class="p">,</span> <span class="n">eps_bkg</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">eps_xy</span><span class="p">,</span> <span class="n">mu_xy</span> <span class="o">=</span> <span class="n">create_eps_mu</span><span class="p">(</span><span class="n">xy_pml</span><span class="p">,</span> <span class="n">eps_bkg</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We need to define multiple coordinate transformation since in the corners of the PML both coordinates are transformed, while in the rest of the PML just
+one of them is. In the end, we can implement the weak form in DOLFINx in this way:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+&amp;\int_{\Omega_{pml}}\left[\boldsymbol{\mu}^{-1}_{pml} \nabla \times \mathbf{E}
+\right]\cdot \nabla \times \bar{\mathbf{v}}-k_{0}^{2}
+\left[\boldsymbol{\varepsilon}_{pml} \mathbf{E} \right]\cdot
+\bar{\mathbf{v}}~ d x  \\
++ &amp;\int_{\Omega_m\cup\Omega_b}-(\nabla \times \mathbf{E}_s)
+\cdot (\nabla \times \bar{\mathbf{v}})+\varepsilon_{r} k_{0}^{2}
+\mathbf{E}_s \cdot \bar{\mathbf{v}}+k_{0}^{2}\left(\varepsilon_{r}
+-\varepsilon_b\right)\mathbf{E}_b \cdot \bar{\mathbf{v}}~\mathrm{d}x.
+= 0.
+\end{align}
+\end{split}\]</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F</span> <span class="o">=</span> <span class="o">-</span> <span class="n">inner</span><span class="p">(</span><span class="n">curl_2d</span><span class="p">(</span><span class="n">Es</span><span class="p">),</span> <span class="n">curl_2d</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">dDom</span> \
+    <span class="o">+</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">k0</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">Es</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dDom</span> \
+    <span class="o">+</span> <span class="n">k0</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">eps</span> <span class="o">-</span> <span class="n">eps_bkg</span><span class="p">)</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">Eb</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">dDom</span> \
+    <span class="o">-</span> <span class="n">inner</span><span class="p">(</span><span class="n">inv</span><span class="p">(</span><span class="n">mu_x</span><span class="p">)</span> <span class="o">*</span> <span class="n">curl_2d</span><span class="p">(</span><span class="n">Es</span><span class="p">),</span> <span class="n">curl_2d</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">dPml_x</span> \
+    <span class="o">-</span> <span class="n">inner</span><span class="p">(</span><span class="n">inv</span><span class="p">(</span><span class="n">mu_y</span><span class="p">)</span> <span class="o">*</span> <span class="n">curl_2d</span><span class="p">(</span><span class="n">Es</span><span class="p">),</span> <span class="n">curl_2d</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">dPml_y</span> \
+    <span class="o">-</span> <span class="n">inner</span><span class="p">(</span><span class="n">inv</span><span class="p">(</span><span class="n">mu_xy</span><span class="p">)</span> <span class="o">*</span> <span class="n">curl_2d</span><span class="p">(</span><span class="n">Es</span><span class="p">),</span> <span class="n">curl_2d</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">*</span> <span class="n">dPml_xy</span> \
+    <span class="o">+</span> <span class="n">k0</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">eps_x</span> <span class="o">*</span> <span class="n">Es_3d</span><span class="p">,</span> <span class="n">v_3d</span><span class="p">)</span> <span class="o">*</span> <span class="n">dPml_x</span> \
+    <span class="o">+</span> <span class="n">k0</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">eps_y</span> <span class="o">*</span> <span class="n">Es_3d</span><span class="p">,</span> <span class="n">v_3d</span><span class="p">)</span> <span class="o">*</span> <span class="n">dPml_y</span> \
+    <span class="o">+</span> <span class="n">k0</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">eps_xy</span> <span class="o">*</span> <span class="n">Es_3d</span><span class="p">,</span> <span class="n">v_3d</span><span class="p">)</span> <span class="o">*</span> <span class="n">dPml_x</span>
+</pre></div>
+</div>
+<p>Then, as in the first demo, we calculated the efficiencies and compared them with analytical ones. For scattering efficiencies, we needed to define
+the integration line slightly differently with respect to demo #1, since
+we have to deal with an inner facet:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">marker</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
+<span class="n">scatt_facets</span> <span class="o">=</span> <span class="n">facet_tags</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">scatt_tag</span><span class="p">)</span>
+<span class="n">incident_cells</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">compute_incident_entities</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">scatt_facets</span><span class="p">,</span>
+                                                <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                                                <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+
+<span class="n">midpoints</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">compute_midpoints</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">incident_cells</span><span class="p">)</span>
+<span class="n">inner_cells</span> <span class="o">=</span> <span class="n">incident_cells</span><span class="p">[(</span><span class="n">midpoints</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+                              <span class="o">+</span> <span class="n">midpoints</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">l_scatt</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="n">marker</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">inner_cells</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1"># Quantities for the calculation of efficiencies</span>
+<span class="n">P</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">cross</span><span class="p">(</span><span class="n">Esh_3d</span><span class="p">,</span> <span class="n">conj</span><span class="p">(</span><span class="n">Hsh_3d</span><span class="p">)),</span> <span class="n">n_3d</span><span class="p">)</span> <span class="o">*</span> <span class="n">marker</span>
+
+<span class="c1"># Define integration facet for the scattering efficiency</span>
+<span class="n">dS</span> <span class="o">=</span> <span class="n">Measure</span><span class="p">(</span><span class="s2">&quot;dS&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">subdomain_data</span><span class="o">=</span><span class="n">facet_tags</span><span class="p">)</span>
+
+<span class="c1"># Normalized scattering efficiency</span>
+<span class="n">q_sca_fenics_proc</span> <span class="o">=</span> <span class="p">(</span><span class="n">fem</span><span class="o">.</span><span class="n">assemble_scalar</span><span class="p">(</span>
+    <span class="n">fem</span><span class="o">.</span><span class="n">form</span><span class="p">((</span><span class="n">P</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">P</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">))</span> <span class="o">*</span> <span class="n">dS</span><span class="p">(</span><span class="n">scatt_tag</span><span class="p">)))</span> <span class="o">/</span> <span class="n">gcs</span> <span class="o">/</span> <span class="n">I0</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+
+</pre></div>
+</div>
+<p>As in the first demo, even in this case the error is under <span class="math notranslate nohighlight">\(1\%\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">analytical</span> <span class="n">absorption</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">0.9089500187622276</span>
+<span class="n">The</span> <span class="n">numerical</span> <span class="n">absorption</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">0.9075812357239408</span>
+<span class="n">The</span> <span class="n">error</span> <span class="ow">is</span> <span class="mf">0.1505894724718481</span><span class="o">%</span>
+
+<span class="n">The</span> <span class="n">analytical</span> <span class="n">scattering</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">0.8018061316558375</span>
+<span class="n">The</span> <span class="n">numerical</span> <span class="n">scattering</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">0.7996621815340356</span>
+<span class="n">The</span> <span class="n">error</span> <span class="ow">is</span> <span class="mf">0.2673900880970269</span><span class="o">%</span>
+
+<span class="n">The</span> <span class="n">analytical</span> <span class="n">extinction</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">1.710756150418065</span>
+<span class="n">The</span> <span class="n">numerical</span> <span class="n">extinction</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">1.7072434172579762</span>
+<span class="n">The</span> <span class="n">error</span> <span class="ow">is</span> <span class="mf">0.2053321953120203</span><span class="o">%</span>
+</pre></div>
+</div>
+<p>Here below, you can see the time-harmonic animation of the scattered
+electric field norm obtained in DOLFINx and post-processed in Paraview:</p>
+<p><img alt="afeaf" src="_images/animation_pml.gif" /></p>
 </section>
 <section id="demo-3-half-loaded-waveguide-with-slepc">
 <h3>Demo #3: Half-loaded waveguide with SLEPc<a class="headerlink" href="#demo-3-half-loaded-waveguide-with-slepc" title="Permalink to this headline">#</a></h3>
