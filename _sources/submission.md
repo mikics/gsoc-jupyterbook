@@ -254,7 +254,7 @@ paraview:
 
 ### Demo #4: Maxwell's equations for axisymmetric geometries
 
-### Bonus tutorial:Hhow to animate solutions in Paraview
+### Bonus tutorial: How to animate solutions in Paraview
 
 ## Challenges and final remarks
 
@@ -262,13 +262,7 @@ paraview:
 - what I would make differently....
 - ringraziamenti
 
-## To put
-
-Suggestion from Google:
-
-    "Create a blog post or web page or public GitHub gist that describes the work you've done and links to the commits you've made and repositories you've worked on. If there is still work to be done on the project, include that too. You can also share highlights or challenging pieces.
-
-    ❗ This is the best option because it allows you to easily include a lot of information. This is good because it will clearly show what work you did, as well as make it easy for others to use and understand your code."
+## To do
 
 - Improve ipynb of demos: add title to mesh files, add visualization for waveguide demo and axis demo, add gifs, check why in Docker PyVista does not work.
 
