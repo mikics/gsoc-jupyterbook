@@ -21,7 +21,7 @@ each demo contains tests for comparing the DOLFINx outputs with analytical resul
 for each problem.
 
 This website has been built with Jupyterbook, and on the left-hand side you can find
-the Jupyter notebook of the demos I have built. In this way, you can directly
+the Jupyter notebook of the demos I have written. In this way, you can directly
 visualize the mathematical documentation in the demos, the code, the outputs, and
 you can play with them by using Binder (just click on the <i class="fa fa-rocket"></i> icon).
 
