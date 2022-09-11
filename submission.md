@@ -420,6 +420,180 @@ electric field norm obtained in DOLFINx and post-processed in Paraview:
 
 ### Demo #3: Half-loaded waveguide with SLEPc
 
+The third demo shows how to solve an eigenvalue electromagnetic problem
+in DOLFINx with the SLEPc library. In particular, we solve the eigenvalue problem of a half-loaded electromagnetic waveguide with perfect
+electric conducting walls. The equations for our problem are:
+
+$$
+\begin{align}
+&\nabla \times \frac{1}{\mu_{r}} \nabla \times \mathbf{E}-k_{0}^{2}
+\epsilon_{r} \mathbf{E}=0 \quad &\text { in } \Omega\\
+&\hat{n}\times\mathbf{E} = 0 &\text { on } \Gamma
+\end{align}
+$$
+
+The final weak form can be found by considering a known $z$ dependance of
+the electric field:
+
+$$
+\mathbf{E}(x, y, z)=\left[\mathbf{E}_{t}(x, y)+\hat{z} E_{z}(x, y)\right]
+e^{-jk_z z}
+$$
+
+and by using the following substitution:
+
+$$
+\begin{align}
+& \mathbf{e}_t = k_z\mathbf{E}_t\\
+& e_z = -jE_z
+\end{align}
+$$
+
+In the end, we get the following equation:
+$$
+\begin{aligned}
+F_{k_z}(\mathbf{e})=\int_{\Omega} &\left(\nabla_{t} \times
+\mathbf{e}_{t}\right) \cdot\left(\nabla_{t} \times
+\bar{\mathbf{v}}_{t}\right) -k_{o}^{2} \epsilon_{r} \mathbf{e}_{t} \cdot
+\bar{\mathbf{v}}_{t} \\
+&+k_z^{2}\left[\left(\nabla_{t} e_{z}+\mathbf{e}_{t}\right)
+\cdot\left(\nabla_{t} \bar{v}_{z}+\bar{\mathbf{v}}_{t}\right)-k_{o}^{2}
+\epsilon_{r} e_{z} \bar{v}_{z}\right] \mathrm{d} x = 0
+\end{aligned}
+$$
+
+which we can write in a more compact form as:
+
+$$
+\left[\begin{array}{cc}
+A_{t t} & 0 \\
+0 & 0
+\end{array}\right]\left\{\begin{array}{l}
+\mathbf{e}_{t} \\
+e_{z}
+\end{array}\right\}=-k_z^{2}\left[\begin{array}{ll}
+B_{t t} & B_{t z} \\
+B_{z t} & B_{z z}
+\end{array}\right]\left\{\begin{array}{l}
+\mathbf{e}_{t} \\
+e_{z}
+\end{array}\right\}
+$$
+
+This problem is a *generalized eigenvalue problem*, where the eigenvalues are all the possible $-k_z^2$ and $\mathbf{e}_t, e_z$ substained by the structure.
+
+The weak form in DOLFINx can be written in this way:
+
+```
+a_tt = (inner(curl(et), curl(vt)) - k0
+        ** 2 * eps * inner(et, vt)) * dx
+b_tt = inner(et, vt) * dx
+b_tz = inner(et, grad(vz)) * dx
+b_zt = inner(grad(ez), vt) * dx
+b_zz = (inner(grad(ez), grad(vz)) - k0
+        ** 2 * eps * inner(ez, vz)) * dx
+
+a = fem.form(a_tt)
+b = fem.form(b_tt + b_tz + b_zt + b_zz)
+```
+
+While for the perfect electric conductor condition we used these commands:
+
+```
+bc_facets = exterior_facet_indices(domain.topology)
+
+bc_dofs = fem.locate_dofs_topological(V, domain.topology.dim - 1, bc_facets)
+
+u_bc = fem.Function(V)
+with u_bc.vector.localForm() as loc:
+    loc.set(0)
+bc = fem.dirichletbc(u_bc, bc_dofs)
+```
+
+Then, we assembled the $A$ and $B$ matrices with PETSc:
+
+```
+A = fem.petsc.assemble_matrix(a, bcs=[bc])
+A.assemble()
+B = fem.petsc.assemble_matrix(b, bcs=[bc])
+B.assemble()
+```
+
+These matrices are the inputs SLEPc needs to solve our problem, as shown in the next snippet:
+
+```
+eps = SLEPc.EPS().create(domain.comm)
+
+eps.setOperators(A, B)
+```
+
+Then, we need to tweak some SLEPc settings, to guarantee the convergence of the solver, as shown below. For this problem, we need to use a spectral transformation to solve the problem, and getting our eigenvalue(s). In particular, spectral transformation techniques map the eigenvalues in other portion of the spectrum, to make the algorithm more efficient. We then need to set a target value for our eigenvalue, the number of eigenvalues we want to find, and we can finally solve the problem. It is worth highlighting that solving eigenvalue problems can be tricky, and therefore finding the correct eigenvalues of the problem may require a lot of tweaking.
+
+```
+# Set the tolerance for the solution
+eps.setTolerances(tol=tol)
+
+# Set solver type
+eps.setType(SLEPc.EPS.Type.KRYLOVSCHUR)
+
+# Set spectral transformation
+st = eps.getST()
+st.setType(SLEPc.ST.Type.SINVERT)
+
+# Set type of target
+eps.setWhichEigenpairs(SLEPc.EPS.Which.TARGET_REAL)
+
+# Set target
+eps.setTarget(-(0.5 * k0)**2)
+
+# Set number of eigenvalues
+eps.setDimensions(nev=1)
+
+# Solve
+eps.solve()
+```
+
+Then, we verify if the solutions from SLEPc are consistent with the analytical formula for the half-loaded waveguide modes, which are:
+
+$$
+\begin{aligned}
+\textrm{For TE}_x \textrm{ modes}:
+\begin{cases}
+&k_{x d}^{2}+\left(\frac{n \pi}{b}\right)^{2}+k_{z}^{2}=k_0^{2}
+\varepsilon_{d} \\
+&k_{x v}^{2}+\left(\frac{n \pi}{b}\right)^{2}+k_{z}^{2}=k_0^{2}
+\varepsilon_{v} \\
+& k_{x d} \cot k_{x d} d + k_{x v} \cot \left[k_{x v}(h-d)\right] = 0
+\end{cases}
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\textrm{For TM}_x \textrm{ modes}:
+\begin{cases}
+&k_{x d}^{2}+\left(\frac{n \pi}{b}\right)^{2}+k_{z}^{2}=
+k_0^{2} \varepsilon_{d} \\
+&k_{x v}^{2}+\left(\frac{n \pi}{b}\right)^{2}+k_{z}^{2}=
+k_0^{2} \varepsilon_{v} \\
+& \frac{k_{x d}}{\varepsilon_{d}} \tan k_{x d} d +
+\frac{k_{x v}}{\varepsilon_{v}} \tan \left[k_{x v}(h-d)\right] = 0
+\end{cases}
+\end{aligned}
+$$
+
+The `analytical_modes.py` file defines the functions for doing the verification.
+
+In the end, we get the following eigenvalue, and the corresponding $k_z$:
+
+```
+eigenvalue: (-1.6924040028250327+1.3702668664033287e-14j)
+kz: (1.3009242878911258-5.266512736973384e-15j)
+kz/k0: (0.4658591947638973-1.885930953627917e-15j)
+```
+
+The eigenvalue successfuly passes the verification step, and therefore it satisfies the mode equations (up to a certain threshold).
+
 ### Demo #4: Maxwell's equations for axisymmetric geometries
 
 ### Bonus tutorial: How to animate solutions in Paraview
