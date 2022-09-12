@@ -691,7 +691,7 @@ block.</p></li>
 showing an inconsistency when solving problems with <code class="docutils literal notranslate"><span class="pre">MixedElement</span></code> having <code class="docutils literal notranslate"><span class="pre">Lagrange</span></code> elements. This
 issue arose during the writing for <a class="reference external" href="https://github.com/FEniCS/dolfinx/pull/2339">PR #2339</a>, when
 I noticed different DOLFINx outputs when changing the <code class="docutils literal notranslate"><span class="pre">degree</span></code> of <code class="docutils literal notranslate"><span class="pre">Lagrange</span></code> elements. The root of
-this issue was a wrong permutation inside <code class="docutils literal notranslate"><span class="pre">MixedElement</span></code>, which was then fixed with <a class="reference external" href="https://github.com/FEniCS/dolfinx/pull/2347">PR #2347</a>.</p></li>
+this issue was a wrong permutation inside <code class="docutils literal notranslate"><span class="pre">MixedElement</span></code>, which was then fixed by <a class="reference external" href="https://github.com/FEniCS/dolfinx/pull/2347">PR #2347</a>.</p></li>
 </ul>
 </section>
 <section id="whats-next">
@@ -1041,8 +1041,8 @@ e^{-jk_z z}
 \end{split}\]</div>
 <p>In the end, we get the following equation:
 $$</p>
-<div class="amsmath math notranslate nohighlight" id="equation-af794aa6-6aad-40c4-80bc-b5c6f278f414">
-<span class="eqno">(1)<a class="headerlink" href="#equation-af794aa6-6aad-40c4-80bc-b5c6f278f414" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-f3f7c822-ee26-425b-abdb-d59574b01447">
+<span class="eqno">(1)<a class="headerlink" href="#equation-f3f7c822-ee26-425b-abdb-d59574b01447" title="Permalink to this equation">#</a></span>\[\begin{align}
 F_{k_z}(\mathbf{e})=\int_{\Omega} &amp;\left(\nabla_{t} \times
 \mathbf{e}_{t}\right) \cdot\left(\nabla_{t} \times
 \bar{\mathbf{v}}_{t}\right) -k_{o}^{2} \epsilon_{r} \mathbf{e}_{t} \cdot
