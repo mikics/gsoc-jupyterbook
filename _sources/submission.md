@@ -452,8 +452,9 @@ $$
 $$
 
 In the end, we get the following equation:
+
 $$
-\begin{align}
+\begin{aligned}
 F_{k_z}(\mathbf{e})=\int_{\Omega} &\left(\nabla_{t} \times
 \mathbf{e}_{t}\right) \cdot\left(\nabla_{t} \times
 \bar{\mathbf{v}}_{t}\right) -k_{o}^{2} \epsilon_{r} \mathbf{e}_{t} \cdot
@@ -461,7 +462,7 @@ F_{k_z}(\mathbf{e})=\int_{\Omega} &\left(\nabla_{t} \times
 &+k_z^{2}\left[\left(\nabla_{t} e_{z}+\mathbf{e}_{t}\right)
 \cdot\left(\nabla_{t} \bar{v}_{z}+\bar{\mathbf{v}}_{t}\right)-k_{o}^{2}
 \epsilon_{r} e_{z} \bar{v}_{z}\right] \mathrm{d} x = 0
-\end{align}
+\end{aligned}
 $$
 
 which we can write in a more compact form as:
