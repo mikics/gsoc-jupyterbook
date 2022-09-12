@@ -2,40 +2,41 @@
 
 In this website, I will provide an overview of my work as a GSoC 2022 contributor for
 the [FEniCS project](https://fenicsproject.org/) (sponsored by [NumFOCUS](https://numfocus.org/))
-and its main environment [DOLFINx](https://github.com/FEniCS/dolfinx).
+and its main repository [DOLFINx](https://github.com/FEniCS/dolfinx).
 The goal of the project was to expand DOLFINx electromagnetic demos, in order to
 promote the use of the FEniCSx environment for solving electromagnetic and photonic
-problems. During GSoC 2022, I have implemented demos showing how to:
+problems. During GSoC 2022, I have developed demos showing how to:
 
 - implement scattering boundary conditions;
 - implement perfectly matched layers;
 - solve electromagnetic eigenvalue problems;
 - solve 3D electromagnetic problems for axisymmetric structures.
 
-All the problems are solved within the time-harmonic approximation, and use simple
+All the problems are solved within the time-harmonic approximation for simple
 geometries, but can be easily generalized to more complicated study cases.
 The documentation for the demos has been provided under the form of Python
 comments that can be visualized as text and math formula in [Jupyter notebook](https://jupyter.org/)
-by using [Jupytext](https://jupytext.readthedocs.io/en/latest/install.html). Besides,
-each demo contains tests for comparing the DOLFINx outputs with analytical results
+by converting the `.py` files with [Jupytext](https://jupytext.readthedocs.io/en/latest/install.html). Besides,
+each demo contains tests for comparing the DOLFINx outputs with the analytical results
 for each problem.
 
-This website has been built with Jupyterbook, and on the left-hand side you can find
-the Jupyter notebook of the demos I have written. In this way, you can directly
+This website has been built with [Jupyter book](https://jupyterbook.org/en/stable/intro.html), and on the left-hand side you can find
+the Jupyter notebooks of the demos I developed. In this way, you can directly
 visualize the mathematical documentation in the demos, the code, the outputs, and
-you can play with them by using Binder (just click on the <i class="fa fa-rocket"></i> icon).
+you can play with the settings by using Binder (just click on the <i class="fa fa-rocket"></i> icon).
 
 With respect to the original plan, we have not developed the demo showing how to
 handle complex numbers in DOLFINx, and the demo showing how to use the `MPI.COMM_SELF`
-communicator. In the first case, the demo was then considered unnecessary, since all the
-main features of complex numbers in DOLFINx naturally arises in all the developed electromagnetic demos, that
-widely implement them. In the second case, the demo has been substituted with the waveguide
+communicator. In the first case, the demo was considered unnecessary, since all the
+main features of complex numbers in DOLFINx naturally arises in all electromagnetic demos, which
+widely implement them. In the second case, the demo was substituted with the eigenvalue
 demo, which was not planned at first. However, I plan to work on the `MPI.COMM_SELF` demo
 in the weeks following the end of GSoC 2022.
 
 In my opinion, the original goal has been successfully reached. Indeed, even if many pull
 requests are still open, the main work for the demos have been done, and they just need
-to pass the final rounds of reviews by FEniCSx reviewers.
+to pass the final rounds of reviews by FEniCSx reviewers to be finally merged into
+the `main` DOLFINx branch.
 
 ## List of contributions
 
@@ -52,16 +53,16 @@ with scattering boundary conditions:
   for a wire;
 - [PR #2276](https://github.com/FEniCS/dolfinx/pull/2276) (**open**): this pull request
 adds the demo showing how to set a time-harmonic electromagnetic problem with perfectly matched layers:
-  - `demo_pml.py`: demo for solving the time-harmonic problem of a TM-polarized plane wave scattered by a gold wire using perfectly matched layers;
+  - `demo_pml.py`: solves the time-harmonic problem of a TM-polarized plane wave scattered by a gold wire using perfectly matched layers;
   - `mesh_wire_pml.py`: generates the mesh for the demo;
   - `analytical_efficiencies_wire.py`: calculates the analytical efficiencies
   for a wire;
 - [PR #2338](https://github.com/FEniCS/dolfinx/pull/2338) (**open**): this pull request adds
-the demo showing how to solve a time-harmonic electromagnetic eigenvalue problem problem with DOLFINx and SLEPc:
+the demo showing how to solve a time-harmonic electromagnetic eigenvalue problem with DOLFINx and SLEPc:
   - `demo_waveguide.py`: solves the eigenvalue problem associated with an electromagnetic half-loaded
   waveguide with SLEPc;
-  - `analytical_modes.py`: verifies if FEniCSx modes satisfy the analytical equations for the
-  half-loaded waveguide;
+  - `analytical_modes.py`: verifies if FEniCSx modes are consistent with the equations
+  for the analytical modes;
 - [PR #2339](https://github.com/FEniCS/dolfinx/pull/2339) (**open**): this pull request adds the demo
 showing how to solve a time-harmonic electromagnetic problem for axisymmetric geometry:
   - `demo_axis.py`: solves the time-harmonic problem of a plane wave scattered by a sphere
@@ -78,11 +79,11 @@ block.
 showing an inconsistency when solving problems with `MixedElement` having `Lagrange` elements. This
 issue arose during the writing for [PR #2339](https://github.com/FEniCS/dolfinx/pull/2339), when
 I noticed different DOLFINx outputs when changing the `degree` of `Lagrange` elements. The root of
-this issue was a wrong permutation inside `MixedElement`, which has been then fixed with [PR #2347](https://github.com/FEniCS/dolfinx/pull/2347).
+this issue was a wrong permutation inside `MixedElement`, which was then fixed with [PR #2347](https://github.com/FEniCS/dolfinx/pull/2347).
 
 ### What's next
 
-The plan after the end of the Google Summer of Code is the following one:
+The plan after the end of the Google Summer of Code is the following:
 
 - Work on merging the open pull requests;
 - Develop a demo showing how to use the `MPI.COMM_SELF` communicator; this will be
@@ -118,7 +119,7 @@ $$\mathbf{n} \times
 \times \mathbf{n}=0\quad \textrm{ on } \partial \Omega
 $$
 
-and arrive at this weak form:
+and show all the steps to arrive at the final weak form:
 
 $$
 \begin{align}
@@ -215,9 +216,9 @@ q_sca_fenics_proc = (fem.assemble_scalar(fem.form(P * dsbc)) / gcs / I0).real
 q_sca_fenics = domain.comm.allreduce(q_sca_fenics_proc, op=MPI.SUM)
 ```
 
-We compared these efficiencies with analytical ones (calculated by a function in `analytical_efficiencies_wire.py`) to test our demo. In the end, we get
+We compared these efficiencies with analytical ones (by means of a function in `analytical_efficiencies_wire.py`) to test our demo. In the end, we get
 an error much smaller than $1\%$, as certified by the final output,and
-therefore we can say that our demo works correctly:
+therefore we can say that our demo works correctly.
 
 ```
 The analytical absorption efficiency is 1.2115253567863489
@@ -243,13 +244,14 @@ paraview:
 In the second demo, we show how to implement perfectly matched layers (shortly PMLs) for
 the same problem solved in the first demo, i.e. the
 scattering of a TM-polarized plane wave by an infinite gold wire. Perfectly
-matched layers are artificial layers that gradually absorb outgoing waves impinging on them, and are extensively used in time-harmonic electromagnetic
-problems for domain truncation. However, their mathematical implementation can
+matched layers are artificial layers surrounding the domain that gradually absorb outgoing waves impinging on them, and are extensively used in time-harmonic electromagnetic
+problems to solve the corresponding PDE within a finite domain. However, their mathematical implementation can
 be quite tricky, and therefore showing the math and the corresponding DOLFINx
-implementation is crucial for allowing users to quickly apply the FEniCSx environment to their electromagnetic problems.
+implementation is crucial for allowing users to quickly use FEniCSx to solve
+photonic problems.
 
-For this demo, we chose to use a square PML layer. In order to define PML, we
-implement in the PML domain a complex coordinate transformation of this kind:
+For this demo, we chose to use a square PML layer. In order to define PML equation, we
+use a complex coordinate transformation of this kind in the PML domain:
 
 $$
 \begin{align}
@@ -339,7 +341,7 @@ eps_y, mu_y = create_eps_mu(y_pml, eps_bkg, 1)
 eps_xy, mu_xy = create_eps_mu(xy_pml, eps_bkg, 1)
 ```
 
-We need to define multiple coordinate transformation since in the corners of the PML both coordinates are transformed, while in the rest of the PML just
+We need to define multiple coordinate transformation `xy_pml`, `x_pml` and `y_pml` since in the corners of the PML both coordinates are transformed, while in the rest of the PML just
 one of them is. In the end, we can implement the weak form in DOLFINx in this way:
 
 $$
@@ -369,7 +371,7 @@ F = - inner(curl_2d(Es), curl_2d(v)) * dDom \
 ```
 
 Then, as in the first demo, we calculated the efficiencies and compared them with analytical ones. For scattering efficiencies, we needed to define
-the integration line slightly differently with respect to demo #1, since
+the integration domain slightly differently with respect to demo #1, since
 we have to deal with an inner facet:
 
 ```
@@ -397,7 +399,7 @@ q_sca_fenics_proc = (fem.assemble_scalar(
 
 ```
 
-As in the first demo, even in this case the error is under $1\%$:
+As in the first demo, also in this case the error is smaller than $1\%$:
 
 ```
 The analytical absorption efficiency is 0.9089500187622276
@@ -416,13 +418,14 @@ The error is 0.2053321953120203%
 Here below, you can see the time-harmonic animation of the scattered
 electric field norm obtained in DOLFINx and post-processed in Paraview:
 
-![pml](images/animation_pml.gif "Norm of Electric field")
+![pml](images/animation_pml.gif "Norm of Electric field (pretty cool, eh?")
 
 ### Demo #3: Half-loaded waveguide with SLEPc
 
 The third demo shows how to solve an eigenvalue electromagnetic problem
 in DOLFINx with the SLEPc library. In particular, we solve the eigenvalue problem of a half-loaded electromagnetic waveguide with perfect
-electric conducting walls. The equations for our problem are:
+electric conducting walls (PEC conditions). The equations for our problem are the
+Maxwell's equation and the PEC equation:
 
 $$
 \begin{align}
@@ -480,7 +483,7 @@ e_{z}
 \end{array}\right\}
 $$
 
-This problem is a *generalized eigenvalue problem*, where the eigenvalues are all the possible $-k_z^2$ and $\mathbf{e}_t, e_z$ substained by the structure.
+A problem of this form is commonly known as a *generalized eigenvalue problem*, where the eigenvalue is $-k_z^2$ and the eigenvector is $\mathbf{e}_t, e_z$.
 
 The weak form in DOLFINx can be written in this way:
 
@@ -527,7 +530,8 @@ eps = SLEPc.EPS().create(domain.comm)
 eps.setOperators(A, B)
 ```
 
-Then, we need to tweak some SLEPc settings, to guarantee the convergence of the solver, as shown below. For this problem, we need to use a spectral transformation to solve the problem, and getting our eigenvalue(s). In particular, spectral transformation techniques map the eigenvalues in other portion of the spectrum, to make the algorithm more efficient. We then need to set a target value for our eigenvalue, the number of eigenvalues we want to find, and we can finally solve the problem. It is worth highlighting that solving eigenvalue problems can be tricky, and therefore finding the correct eigenvalues of the problem may require a lot of tweaking.
+Then, we need to tweak some SLEPc settings, to guarantee the convergence of the solver, as shown below. For this problem, we need to use a spectral transformation to solve the problem, and getting our eigenvalue(s). In particular, spectral transformation techniques map the eigenvalues in other portion of the spectrum, to make the algorithm more efficient. We then need to set a target value for our eigenvalue, the number of eigenvalues we want to find, and we can finally solve the problem. It is worth highlighting that solving eigenvalue problems can be tricky, and therefore finding the correct eigenvalues of the problem may require a lot of tweaking. For this problem,
+the following settings worked well:
 
 ```
 # Set the tolerance for the solution
@@ -553,7 +557,61 @@ eps.setDimensions(nev=1)
 eps.solve()
 ```
 
-Then, we verify if the solutions from SLEPc are consistent with the analytical formula for the half-loaded waveguide modes, which are:
+We then get and save the solutions in this way:
+
+```
+vals = [(i, np.sqrt(-eps.getEigenvalue(i))) for i in range(eps.getConverged())]
+
+vals.sort(key=lambda x: x[1].real)
+
+eh = fem.Function(V)
+
+kz_list = []
+
+for i, kz in vals:
+
+    # Save eigenvector in eh
+    eps.getEigenpair(i, eh.vector)
+
+    # Compute error for i-th eigenvalue
+    error = eps.computeError(i, SLEPc.EPS.ErrorType.RELATIVE)
+
+    # Verify, save and visualize solution
+    if error < tol and np.isclose(kz.imag, 0, atol=tol):
+
+        kz_list.append(kz)
+
+        # Verify if kz satisfy the analytical equations for the modes
+        assert verify_mode(kz, w, h, d, lmbd0, eps_d, eps_v, threshold=1e-4)
+
+        print(f"eigenvalue: {-kz**2}")
+        print(f"kz: {kz}")
+        print(f"kz/k0: {kz/k0}")
+
+        eh.x.scatter_forward()
+
+        eth, ezh = eh.split()
+
+        # Transform eth, ezh into Et and Ez
+        eth.x.array[:] = eth.x.array[:] / kz
+        ezh.x.array[:] = ezh.x.array[:] * 1j
+
+        V_dg = fem.VectorFunctionSpace(domain, ("DQ", degree))
+        Et_dg = fem.Function(V_dg)
+        Et_dg.interpolate(eth)
+
+        with io.VTXWriter(domain.comm, f"sols/Et_{i}.bp", Et_dg) as f:
+            f.write(0.0)
+
+        with io.VTXWriter(domain.comm, f"sols/Ez_{i}.bp", ezh) as f:
+            f.write(0.0)
+```
+
+It is worth highlighting that we filtered out the solutions that do not
+satisfy the tolerance requirements set in SLEPc, and that have a corresponding $k_z$ with an imaginary
+part different from zero, since we are only interested in propagating solutions (i.e. real $k_z$)
+
+Then, we verify that our SLEPc solutions are consistent with the analytical formula for the half-loaded waveguide modes, which are:
 
 $$
 \begin{aligned}
@@ -572,9 +630,9 @@ $$
 \begin{aligned}
 \textrm{For TM}_x \textrm{ modes}:
 \begin{cases}
-&k_{x d}^{2}+\left(\frac{n \pi}{b}\right)^{2}+k_{z}^{2}=
+&k_{x d}^{2}+\left(\frac{n \pi}{w}\right)^{2}+k_{z}^{2}=
 k_0^{2} \varepsilon_{d} \\
-&k_{x v}^{2}+\left(\frac{n \pi}{b}\right)^{2}+k_{z}^{2}=
+&k_{x v}^{2}+\left(\frac{n \pi}{w}\right)^{2}+k_{z}^{2}=
 k_0^{2} \varepsilon_{v} \\
 & \frac{k_{x d}}{\varepsilon_{d}} \tan k_{x d} d +
 \frac{k_{x v}}{\varepsilon_{v}} \tan \left[k_{x v}(h-d)\right] = 0
@@ -582,9 +640,48 @@ k_0^{2} \varepsilon_{v} \\
 \end{aligned}
 $$
 
-The `analytical_modes.py` file defines the functions for doing the verification.
+The `analytical_modes.py` file defines these formula:
 
-In the end, we get the following eigenvalue, and the corresponding $k_z$:
+```
+def TMx_condition(kx_d, kx_v, eps_d, eps_v, d, h):
+    return (kx_d / eps_d * np.tan(kx_d * d)
+            + kx_v / eps_v * np.tan(kx_v * (h - d))
+
+def TEx_condition(kx_d, kx_v, d, h):
+    return kx_d / np.tan(kx_d * d) + kx_v / np.tan(kx_v * (h - d))
+
+def verify_mode(
+        kz, w, h, d, lmbd0, eps_d, eps_v, threshold):
+
+    k0 = 2 * np.pi / lmbd0
+
+    n = 1
+    ky = n * np.pi / w
+
+    kx_d_target = np.sqrt(k0**2 * eps_d - ky**2 + - kz**2 + 0j)
+
+    alpha = kx_d_target**2
+
+    beta = alpha - k0**2 * (eps_d - eps_v)
+
+    kx_v = np.sqrt(beta)
+    kx_d = np.sqrt(alpha)
+
+    f_tm = TMx_condition(kx_d, kx_v, eps_d, eps_v, d, h)
+    f_te = TEx_condition(kx_d, kx_v, d, h)
+
+    return np.isclose(
+        f_tm, 0, atol=threshold) or np.isclose(
+        f_te, 0, atol=threshold)
+```
+
+The `verify_mode` function takes a $k_z$ value, finds the corresponding
+$k_{xd}$ and $k_{xv}$, and verify if for these values either the $\text{TM}_x$ or
+the $\text{TE}_x$ equations are close to zero (within a certain range of confidence).
+For the sake of simplicity, we just considered the fundamental mode for $k_y = n\pi/w = \pi/w$. For a more general approach, one should run this verification for multiple
+harmonic numbers $n$.
+
+In the end, we get the following eigenvalue, which successfully passes our test:
 
 ```
 eigenvalue: (-1.6924040028250327+1.3702668664033287e-14j)
@@ -592,11 +689,9 @@ kz: (1.3009242878911258-5.266512736973384e-15j)
 kz/k0: (0.4658591947638973-1.885930953627917e-15j)
 ```
 
-The eigenvalue successfuly passes the verification step, and therefore it satisfies the mode equations (up to a certain threshold).
-
 ### Demo #4: Maxwell's equations for axisymmetric geometries
 
-The fourth demo shows how to solve Maxwell's equations for a simple three-dimensional axisymmetric geometry, i.e. a sphere. Generally, solving three-dimensional electromagnetic problems is computationally expensive, and it may result in prohibitive memory and time requirements. However, if the three-dimensional geometry has an axisymmetry, the full wave problem can be decomposed in few two-dimensional problems, with an overall much lower computational cost.
+The fourth demo shows how to solve Maxwell's equations for a simple three-dimensional axisymmetric scattering structure, i.e. a sphere. Generally, solving three-dimensional electromagnetic problems is computationally expensive, and it may result in prohibitive memory and time requirements. However, if the three-dimensional geometry has an axisymmetry, the full wave problem can be decomposed in few two-dimensional problems, with an overall much lower computational cost.
 
 We start from the weak form for Maxwell's equations and PML equations:
 
@@ -644,7 +739,7 @@ Therefore, the original problem can be solved for each cylindrical harmonic over
 
 In the demo we present and implement a lof of concepts that we need for axisymmetric problems. We list them in the following sections.
 
-#### $\nabla\times$ operator for cylindrical coordinates
+#### $\nabla\times$ operator in cylindrical coordinates
 
 In cylindrical coordinates, the curl operator becomes:
 
@@ -796,11 +891,15 @@ eps_pml, mu_pml = create_eps_mu(pml_coords, rho, eps_bkg, 1)
 
 #### Solving the problem
 
-The problem needs to be solved over many $m\in \mathbb{Z}$. Thanks to Bessel functions parities,
+In DOLFINx, we need to solve as many weak form as the harmonic numbers $m\in \mathbb{Z}$. Thanks to Bessel functions parities,
 we can only solve for $m\geq0$, and adding a $2$ factor to solutions for $m\geq1$.
-Another question is: where do we stop the expansion? For deeply sub-wavelength particles, as in our case, few cylindrical harmonics ($m = 0, 1$) are usually enough to reach a good accuracy.
+But... where do we stop the expansion? Theoretically, the expansion in cylindrical
+harmonics has infinite terms, and it goes without saying that we cannot
+consider all of them. However, a good rule of thumb is that for deeply sub-wavelength particles, as in our case, few cylindrical harmonics (e.g. $m = 0, 1$) are usually enough to reach a good accuracy. The bigger the particle, the bigger the expansion,
+since we need more cylindrical harmonics to construct a plane wave in bigger domains.
 
-Therefore, the problem can be solved in DOLFINx with a loop over the $m$:
+Finally, the problem can be solved in DOLFINx with a loop over the $m$ in the
+following way:
 
 ```
 m_list = [0, 1]
@@ -862,11 +961,11 @@ x = 2*np.pi*radius_sph/wl0*n_bkg
 q_ext, q_sca, q_abs = scattnlay(np.array([x], dtype=np.complex128), np.array([m], dtype=np.complex128))[1:4]
 ```
 
-The calculation of the numerical efficiencies is similar to what we did in
+The procedure for numerical efficiencies is similar to what we already did in
 demo #2, with the only difference that we need to add a $2$ factor for the
 efficiencies resulting from $m\geq1$ harmonics.
 
-The final error for all efficiencies is well below $1\%$, as shown by the final output in the demo, and therefore we can safely say that the problem in DOLFINx is well
+The comparison between analytical and numerical results shows an error well below $1\%$, and therefore we can safely say that the problem in DOLFINx is well
 set:
 
 ```
@@ -891,11 +990,11 @@ scattered field:
 ## Challenges and final remarks
 
 The most challenging aspect of GSoC was dealing with unexpected results and
-troubleshooting. Indeed, debugging was one of the most important skill I needed to improve during GSoC, since it never happens to run the code at the first try without problems, and therefore one should be able to quickly understand how to approach
+troubleshooting. Indeed, debugging was one of the most important skill I needed to improve during GSoC, since it never happened to run a demo at the first try without problems, and therefore I needed to quickly understand how to approach
 and solve these situations.
 
-For all demos I needed a certain degree of debugging, but for demo #4 it was particularly tough. Indeed, I had to deal with an unexpected behaviour of the demo:
-whenever I used `degree = 3` (or higher) discretization elements, the error for the efficiencies increased, and DOLFINx solutions had some nasty artifacts, as shown in
+For all demos I needed quite a lof of time just for debugging purposes, but for demo #4 this time was much higher. Indeed, I had to deal with an unexpected behaviour of the demo:
+whenever I used discretization elements with `degree = 3` (or higher), the error for the efficiencies unexpectedly increased, and the corresponding DOLFINx solutions had some nasty artifacts, as shown in
 the image below.
 
 ![error](images/error.png "Artifacts in the field for high degree elements")
@@ -910,16 +1009,17 @@ behavior, and was consistent with the background field I implemented
 for the same problem in legacy DOLFIN (extensively tested up to `degree = 5`). Therefore, I was reasonably sure that PML and
 the background field were implemented correctly. What I tried to do next was
 comparing my legacy DOLFIN demo with my new DOLFINx demo for different
-harmonic numbers. What I noticed was that for `m = 0` both demos output the
+harmonic numbers. What I noticed was that for `m = 0` the outputs for both demos had the
 same efficiencies whatever the degree, while these efficiencies diverged for
-`m = 1` solutions. Therefore, something happened when passing from `m = 0` and
+`m = 1`. Therefore, something happened when passing from `m = 0` and
 `m = 1`. The only two Python objects affected by the harmonic numbers were the
 `background_field_rz`, `background_field_p`, and the `curl_axis` functions. As
 already said, the background field functions were doing their job correctly, and
 it was then clear that something wrong was happening within `curl_axis`, and
-in particular for the terms activated by `m = 1`. At this point, the problem
+in particular for the terms activated by `m = 1`. Since the mathematical
+implementation of `curl_axis` was correct, the problem
 was clearly something wrong in the DOLFINx codebase, and together with my
-mentors I decided to open a GitHub issue and to "pass the ball" to more
+mentors I decided to open [a GitHub issue]((https://github.com/FEniCS/dolfinx/issues/2343)) and to "pass the ball" to more
 experienced developers. It turned out that there was a bug in the permuation
 inside `MixedElement`, solved by [PR #2347](https://github.com/FEniCS/dolfinx/pull/2347).
 
@@ -940,12 +1040,13 @@ for helping other users, mainly because answering many of the posted questions r
 technical knowledge about the FEniCSx environment that I have not gained yet. However,
 I have also understood that solving other users' problems is a great way to better understand FEniCSx, and therefore I will be for sure more active in the future.
 
-Last but not least, I would like to thank my mentors Jørgen S. Dokken, Igor Baratta and Jack Hale for their patience and help over the 12 weeks. Discussing and working with them has been great since the beginning, and I could not have wished for a better
+Last but not least, I would like to thank my mentors Jørgen S. Dokken, Igor Baratta and Jack S. Hale for their patience and help over the 12 weeks. Discussing and working with them has been great since the beginning, and I could not have wished for a better
 mentors/mentee relationship. I would also like to thank my supervisor Cristian
 Ciracì, which introduced me to FEniCS and which helped me so much when solving
 the problems I show in the demo.
 
-And, if you arrived here, I would like to thank you too!
+And, if you arrived here, I would like to thank you too for reading about this
+amazing journey!
 
 ## Contacts
 
