@@ -596,9 +596,9 @@ The eigenvalue successfuly passes the verification step, and therefore it satisf
 
 ### Demo #4: Maxwell's equations for axisymmetric geometries
 
-The fourth demo shows how to solve Maxwell's equations for three-dimensional axisymmetric geometries. Generally, solving three-dimensional electromagnetic problems is computationally expensive, and it may result in prohibitive memory and time requirements. However, if the three-dimensional geometry has an axisymmetry, the full wave problem can be decomposed in few two-dimensional problems, with much an overall much lower computational cost.
+The fourth demo shows how to solve Maxwell's equations for a simple three-dimensional axisymmetric geometry, i.e. a sphere. Generally, solving three-dimensional electromagnetic problems is computationally expensive, and it may result in prohibitive memory and time requirements. However, if the three-dimensional geometry has an axisymmetry, the full wave problem can be decomposed in few two-dimensional problems, with an overall much lower computational cost.
 
-In a nutshell, we start from the weak form for Maxwell's equations and PML equations:
+We start from the weak form for Maxwell's equations and PML equations:
 
 $$
 \begin{align}
@@ -613,7 +613,7 @@ $$
 \end{align}
 $$
 
-We decompose the fields in cylindrical harmonics:
+We then decompose the fields in cylindrical harmonics:
 
 $$
 \begin{align}
@@ -624,7 +624,7 @@ $$
 \end{align}
 $$
 
-and arrive at the final weak form that shows 1) that the problem is formulated over a two-dimensional domain, and 2) that the cylindrical harmonics propagate independently:
+and with few other steps (that we are going to skip here but are extensively explained in the demo) we arrive at the final weak form, showing 1) that the problem is formulated over a two-dimensional domain, and 2) that the different cylindrical harmonics propagate independently:
 
 $$
 \begin{align}
@@ -642,7 +642,7 @@ $$
 
 Therefore, the original problem can be solved for each cylindrical harmonic over a 2D cross-section of the original domain. For the sake of simplicity, we choose this cross-section to be the one at $\phi = 0$.
 
-In the demo we present a lof of concepts needed for axisymmetric problems, which we list in the following sections.
+In the demo we present and implement a lof of concepts that we need for axisymmetric problems. We list them in the following sections.
 
 #### $\nabla\times$ operator for cylindrical coordinates
 
@@ -693,6 +693,7 @@ $$
 
 In DOLFINx, the corresponding implementation is:
 
+```
 def background_field_rz(theta: float, n_bkg: float, k0: float, m: int, x):
 
     k = k0 * n_bkg
@@ -714,6 +715,157 @@ def background_field_p(theta: float, n_bkg: float, k0: float, m: int, x):
            * (1j)**(-m) * jv(m, k * x[0] * np.sin(theta)))
 
     return a_p
+```
+
+#### Axisymmetric PMLs
+
+For axisymmetric structure, we need an axisymmetric complex coordinate transformation
+for PML. One possible choice is:
+
+$$
+\begin{split}
+\begin{align}
+& \rho^{\prime} = \rho\left[1 +j \alpha/k_0 \left(\frac{r
+
+- r_{dom}}{r~r_{pml}}\right)\right] \\
+& z^{\prime} = z\left[1 +j \alpha/k_0 \left(\frac{r
+- r_{dom}}{r~r_{pml}}\right)\right] \\
+& \phi^{\prime} = \phi \\
+\end{align}
+\end{split}
+$$
+
+and the corresponding Jacobian is:
+
+$$
+\begin{split}
+\mathbf{J}=\mathbf{A}^{-1}= \nabla\boldsymbol{\rho}^
+\prime(\boldsymbol{\rho}) =
+\left[\begin{array}{ccc}
+\frac{\partial \rho^{\prime}}{\partial \rho} &
+\frac{\partial z^{\prime}}{\partial \rho} &
+0 \\
+\frac{\partial \rho^{\prime}}{\partial z} &
+\frac{\partial z^{\prime}}{\partial z} &
+0 \\
+0 &
+0 &
+\frac{\rho^\prime}{\rho}\frac{\partial \phi^{\prime}}{\partial \phi}
+\end{array}\right]=\left[\begin{array}{ccc}
+J_{11} & J_{12} & 0 \\
+J_{21} & J_{22} & 0 \\
+0 & 0 & J_{33}
+\end{array}\right]
+\end{split}
+$$
+
+In DOLFINx, similarly to what we did for demo #2, we can define these functions
+as:
+
+```
+def pml_coordinate(
+        x, r, alpha: float, k0: float, radius_dom: float, radius_pml: float):
+
+    return (x + 1j * alpha / k0 * x * (r - radius_dom) / (radius_pml * r))
+
+
+def create_eps_mu(pml, rho, eps_bkg, mu_bkg):
+
+    J = ufl.grad(pml)
+
+    # Transform the 2x2 Jacobian into a 3x3 matrix.
+    J = ufl.as_matrix(((J[0, 0], J[0, 1], 0),
+                       (J[1, 0], J[1, 1], 0),
+                       (0, 0, pml[0] / rho)))
+
+    A = ufl.inv(J)
+    eps_pml = ufl.det(J) * A * eps_bkg * ufl.transpose(A)
+    mu_pml = ufl.det(J) * A * mu_bkg * ufl.transpose(A)
+    return eps_pml, mu_pml
+
+rho, z = ufl.SpatialCoordinate(domain)
+alpha = 5
+r = ufl.sqrt(rho**2 + z**2)
+
+pml_coords = ufl.as_vector((
+    pml_coordinate(rho, r, alpha, k0, radius_dom, radius_pml),
+    pml_coordinate(z, r, alpha, k0, radius_dom, radius_pml)))
+
+eps_pml, mu_pml = create_eps_mu(pml_coords, rho, eps_bkg, 1)
+
+```
+
+#### Solving the problem
+
+The problem needs to be solved over many $m\in \Z$. Thanks to Bessel functions parities,
+we can only solve for $m\geq0$, and adding a $2$ factor to solutions for $m\geq1$.
+Another question is: where do we stop the expansion? For deeply sub-wavelength particles, as in our case, few cylindrical harmonics ($m = 0, 1$) are usually enough to reach a good accuracy.
+
+Therefore, the problem can be solved in DOLFINx with a loop over the $m$:
+
+```
+m_list = [0, 1]
+
+for m in m_list:
+
+    # Definition of Trial and Test functions
+    Es_m = ufl.TrialFunction(V)
+    v_m = ufl.TestFunction(V)
+
+    # Background field
+    Eb_m = fem.Function(V)
+    f_rz = partial(background_field_rz, theta, n_bkg, k0, m)
+    f_p = partial(background_field_p, theta, n_bkg, k0, m)
+    Eb_m.sub(0).interpolate(f_rz)
+    Eb_m.sub(1).interpolate(f_p)
+
+    curl_Es_m = curl_axis(Es_m, m, rho)
+    curl_v_m = curl_axis(v_m, m, rho)
+
+    F = - ufl.inner(curl_Es_m, curl_v_m) * rho * dDom \
+        + eps * k0 ** 2 * ufl.inner(Es_m, v_m) * rho * dDom \
+        + k0 ** 2 * (eps - eps_bkg) * ufl.inner(Eb_m, v_m) * rho * dDom \
+        - ufl.inner(ufl.inv(mu_pml) * curl_Es_m, curl_v_m) * rho * dPml \
+        + k0 ** 2 * ufl.inner(eps_pml * Es_m, v_m) * rho * dPml
+
+    a, L = ufl.lhs(F), ufl.rhs(F)
+
+    problem = fem.petsc.LinearProblem(a, L, bcs=[], petsc_options={
+                                      "ksp_type": "preonly", "pc_type": "lu"})
+    Esh_m = problem.solve()
+
+    if m == 0:
+
+        Esh.x.array[:] = Esh_m.x.array[:] * np.exp(- 1j * m * phi)
+
+    elif m == m_list[0]:
+
+        Esh.x.array[:] = 2 * Esh_m.x.array[:] * np.exp(- 1j * m * phi)
+
+    else:
+
+        Esh.x.array[:] += 2 * Esh_m.x.array[:] * np.exp(- 1j * m * phi)
+```
+
+#### Test
+
+The DOLFINx solution was tested by calculating the numerical efficiencies and
+comparing them with the analytical efficiencies. The analytical efficiencies were
+calculated with the [scattnlay](https://github.com/ovidiopr/scattnlay) library,
+with the following call:
+
+```
+from scattnlay import scattnlay
+
+m = np.sqrt(eps_au)/n_bkg
+x = 2*np.pi*radius_sph/wl0*n_bkg
+
+q_ext, q_sca, q_abs = scattnlay(np.array([x], dtype=np.complex128), np.array([m], dtype=np.complex128))[1:4]
+```
+
+The calculation of the numerical efficiencies is similar to what we did in
+demo #2, with the only difference that we need to add a $2$ factor for the
+efficiency resulting from the $m\geq1$ harmonics.
 
 ### Bonus tutorial: How to animate solutions in Paraview
 
