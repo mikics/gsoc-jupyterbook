@@ -452,21 +452,11 @@ title="Print to PDF"
      </li>
     </ul>
    </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#bonus-tutorial-how-to-animate-solutions-in-paraview">
-     Bonus tutorial: How to animate solutions in Paraview
-    </a>
-   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#challenges-and-final-remarks">
    Challenges and final remarks
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#to-do">
-   To do
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -580,21 +570,11 @@ title="Print to PDF"
      </li>
     </ul>
    </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#bonus-tutorial-how-to-animate-solutions-in-paraview">
-     Bonus tutorial: How to animate solutions in Paraview
-    </a>
-   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#challenges-and-final-remarks">
    Challenges and final remarks
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#to-do">
-   To do
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -1456,23 +1436,57 @@ scattered field:</p>
 <p><img alt="axis" src="_images/axis.png" /></p>
 </section>
 </section>
-<section id="bonus-tutorial-how-to-animate-solutions-in-paraview">
-<h3>Bonus tutorial: How to animate solutions in Paraview<a class="headerlink" href="#bonus-tutorial-how-to-animate-solutions-in-paraview" title="Permalink to this headline">#</a></h3>
-</section>
 </section>
 <section id="challenges-and-final-remarks">
 <h2>Challenges and final remarks<a class="headerlink" href="#challenges-and-final-remarks" title="Permalink to this headline">#</a></h2>
-<ul class="simple">
-<li><p>what to improve</p></li>
-<li><p>what I would make differently…</p></li>
-<li><p>ringraziamenti</p></li>
-</ul>
-</section>
-<section id="to-do">
-<h2>To do<a class="headerlink" href="#to-do" title="Permalink to this headline">#</a></h2>
-<ul class="simple">
-<li><p>Improve ipynb of demos: add title to mesh files, add visualization for waveguide demo and axis demo, add gifs, check why in Docker PyVista does not work.</p></li>
-</ul>
+<p>The most challenging aspect of GSoC was dealing with unexpected results and
+troubleshooting. Indeed, debugging was one of the most important skill I needed to improve during GSoC, since it never happens to run the code at the first try without problems, and therefore one should be able to quickly understand how to approach
+and solve these situations.</p>
+<p>For all demos I needed a certain degree of debugging, but for demo #4 it was particularly tough. Indeed, I had to deal with an unexpected behaviour of the demo:
+whenever I used <code class="docutils literal notranslate"><span class="pre">degree</span> <span class="pre">=</span> <span class="pre">3</span></code> (or higher) discretization elements, the error for the efficiencies increased, and DOLFINx solutions had some nasty artifacts, as shown in
+the image below.</p>
+<p><img alt="error" src="_images/error.png" /></p>
+<p>In order to understand the error, I tried to isolate the problem and collect as much
+information as possible. The first thing that came to my mind was a bug in the
+functions I wrote for the demo. Therefore I substituted PML with scattering
+boundary conditions, and verified if the background field showed the same artifacts
+of the output field. However, scattering boundary conditions did not change the
+output (high errors, same nasty artifacts), and the background field had no strange
+behavior, and was consistent with the background field I implemented
+for the same problem in legacy DOLFIN (extensively tested up to <code class="docutils literal notranslate"><span class="pre">degree</span> <span class="pre">=</span> <span class="pre">5</span></code>). Therefore, I was reasonably sure that PML and
+the background field were implemented correctly. What I tried to do next was
+comparing my legacy DOLFIN demo with my new DOLFINx demo for different
+harmonic numbers. What I noticed was that for <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">0</span></code> both demos output the
+same efficiencies whatever the degree, while these efficiencies diverged for
+<code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">1</span></code> solutions. Therefore, something happened when passing from <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">0</span></code> and
+<code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">1</span></code>. The only two Python objects affected by the harmonic numbers were the
+<code class="docutils literal notranslate"><span class="pre">background_field_rz</span></code>, <code class="docutils literal notranslate"><span class="pre">background_field_p</span></code>, and the <code class="docutils literal notranslate"><span class="pre">curl_axis</span></code> functions. As
+already said, the background field functions were doing their job correctly, and
+it was then clear that something wrong was happening within <code class="docutils literal notranslate"><span class="pre">curl_axis</span></code>, and
+in particular for the terms activated by <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">1</span></code>. At this point, the problem
+was clearly something wrong in the DOLFINx codebase, and together with my
+mentors I decided to open a GitHub issue and to “pass the ball” to more
+experienced developers. It turned out that there was a bug in the permuation
+inside <code class="docutils literal notranslate"><span class="pre">MixedElement</span></code>, solved by <a class="reference external" href="https://github.com/FEniCS/dolfinx/pull/2347">PR #2347</a>.</p>
+<p>When dealing with these issues, it was particularly important to not get frustrated,
+and to build a strong communications with my mentors. Therefore, my suggestions for new
+GSoC contributors are: 1) do not work on an issue if you are too much tired, rather take
+some time off and try again after few hours or the next day, and 2) ask for help if
+you are running out of ideas!</p>
+<p>In the end, the GSoC has been the best professional experience of my life, since I have
+learnt
+so much in 12 weeks that I can hardly recall everything. Just to name a few: I have learnt how to run and manage Docker containers, I have a deeper knowledge of the
+FEniCSx environment, I can now run and build static websites as the one you are reading now, I have a deeper understanding of how a big project as FEniCSx is managed, and I have
+gained much more confidence in using git and GitHub tools.</p>
+<p>My only regret is that I have not been too much active on the <a class="reference external" href="https://fenicsproject.discourse.group/">FEniCS discourse group</a>
+for helping other users, mainly because answering many of the posted questions require a deep
+technical knowledge about the FEniCSx environment that I have not gained yet. However,
+I have also understood that solving other users’ problems is a great way to better understand FEniCSx, and therefore I will be for sure more active in the future.</p>
+<p>Last but not least, I would like to thank my mentors Jørgen S. Dokken, Igor Baratta and Jack Hale for their patience and help over the 12 weeks. Discussing and working with them has been great since the beginning, and I could not have wished for a better
+mentors/mentee relationship. I would also like to thank my supervisor Cristian
+Ciracì, which introduced me to FEniCS and which helped me so much when solving
+the problems I show in the demo.</p>
+<p>And, if you arrived here, I would like to thank you too!</p>
 </section>
 <section id="contacts">
 <h2>Contacts<a class="headerlink" href="#contacts" title="Permalink to this headline">#</a></h2>
