@@ -726,7 +726,6 @@ $$
 \begin{split}
 \begin{align}
 & \rho^{\prime} = \rho\left[1 +j \alpha/k_0 \left(\frac{r
-
 - r_{dom}}{r~r_{pml}}\right)\right] \\
 & z^{\prime} = z\left[1 +j \alpha/k_0 \left(\frac{r
 - r_{dom}}{r~r_{pml}}\right)\right] \\
@@ -797,7 +796,7 @@ eps_pml, mu_pml = create_eps_mu(pml_coords, rho, eps_bkg, 1)
 
 #### Solving the problem
 
-The problem needs to be solved over many $m\in \Z$. Thanks to Bessel functions parities,
+The problem needs to be solved over many $m\in \mathbb{Z}$. Thanks to Bessel functions parities,
 we can only solve for $m\geq0$, and adding a $2$ factor to solutions for $m\geq1$.
 Another question is: where do we stop the expansion? For deeply sub-wavelength particles, as in our case, few cylindrical harmonics ($m = 0, 1$) are usually enough to reach a good accuracy.
 
