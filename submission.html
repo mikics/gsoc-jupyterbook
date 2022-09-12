@@ -860,7 +860,7 @@ therefore we can say that our demo works correctly:</p>
 </div>
 <p>As a final treat, here below you can see the animation of the DOLFINx solution post-processed in
 paraview:</p>
-<p><img alt="afeaf" src="_images/animation_sbc.gif" /></p>
+<p><img alt="sbc" src="_images/animation_sbc.gif" /></p>
 </section>
 <section id="demo-2-perfectly-matched-layers">
 <h3>Demo #2: Perfectly Matched Layers<a class="headerlink" href="#demo-2-perfectly-matched-layers" title="Permalink to this headline">#</a></h3>
@@ -1025,7 +1025,7 @@ we have to deal with an inner facet:</p>
 </div>
 <p>Here below, you can see the time-harmonic animation of the scattered
 electric field norm obtained in DOLFINx and post-processed in Paraview:</p>
-<p><img alt="afeaf" src="_images/animation_pml.gif" /></p>
+<p><img alt="pml" src="_images/animation_pml.gif" /></p>
 </section>
 <section id="demo-3-half-loaded-waveguide-with-slepc">
 <h3>Demo #3: Half-loaded waveguide with SLEPc<a class="headerlink" href="#demo-3-half-loaded-waveguide-with-slepc" title="Permalink to this headline">#</a></h3>
@@ -1435,7 +1435,25 @@ with the following call:</p>
 </div>
 <p>The calculation of the numerical efficiencies is similar to what we did in
 demo #2, with the only difference that we need to add a <span class="math notranslate nohighlight">\(2\)</span> factor for the
-efficiency resulting from the <span class="math notranslate nohighlight">\(m\geq1\)</span> harmonics.</p>
+efficiencies resulting from <span class="math notranslate nohighlight">\(m\geq1\)</span> harmonics.</p>
+<p>The final error for all efficiencies is well below <span class="math notranslate nohighlight">\(1\%\)</span>, as shown by the final output in the demo, and therefore we can safely say that the problem in DOLFINx is well
+set:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">analytical</span> <span class="n">absorption</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">0.9622728008329892</span>
+<span class="n">The</span> <span class="n">numerical</span> <span class="n">absorption</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">0.9583126377885698</span>
+<span class="n">The</span> <span class="n">error</span> <span class="ow">is</span> <span class="mf">0.41154265619804153</span><span class="o">%</span>
+
+<span class="n">The</span> <span class="n">analytical</span> <span class="n">scattering</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">0.07770397394691526</span>
+<span class="n">The</span> <span class="n">numerical</span> <span class="n">scattering</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">0.07737655859424392</span>
+<span class="n">The</span> <span class="n">error</span> <span class="ow">is</span> <span class="mf">0.4213624297967401</span><span class="o">%</span>
+
+<span class="n">The</span> <span class="n">analytical</span> <span class="n">extinction</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">1.0399767747799045</span>
+<span class="n">The</span> <span class="n">numerical</span> <span class="n">extinction</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">1.0356891963828136</span>
+<span class="n">The</span> <span class="n">error</span> <span class="ow">is</span> <span class="mf">0.4122763604983602</span><span class="o">%</span>
+</pre></div>
+</div>
+<p>As a final example, here below we show the magnitude of the real part of the (total)
+scattered field:</p>
+<p><img alt="axis" src="_images/axis.png" /></p>
 </section>
 </section>
 <section id="bonus-tutorial-how-to-animate-solutions-in-paraview">
