@@ -1040,8 +1040,9 @@ e^{-jk_z z}
 \end{align}
 \end{split}\]</div>
 <p>In the end, we get the following equation:
-$<span class="math notranslate nohighlight">\(
-\begin{aligned}
+$$</p>
+<div class="amsmath math notranslate nohighlight" id="equation-a017cb74-ffc8-4633-8988-4fd2d131d6b3">
+<span class="eqno">(1)<a class="headerlink" href="#equation-a017cb74-ffc8-4633-8988-4fd2d131d6b3" title="Permalink to this equation">#</a></span>\[\begin{align}
 F_{k_z}(\mathbf{e})=\int_{\Omega} &amp;\left(\nabla_{t} \times
 \mathbf{e}_{t}\right) \cdot\left(\nabla_{t} \times
 \bar{\mathbf{v}}_{t}\right) -k_{o}^{2} \epsilon_{r} \mathbf{e}_{t} \cdot
@@ -1049,25 +1050,23 @@ F_{k_z}(\mathbf{e})=\int_{\Omega} &amp;\left(\nabla_{t} \times
 &amp;+k_z^{2}\left[\left(\nabla_{t} e_{z}+\mathbf{e}_{t}\right)
 \cdot\left(\nabla_{t} \bar{v}_{z}+\bar{\mathbf{v}}_{t}\right)-k_{o}^{2}
 \epsilon_{r} e_{z} \bar{v}_{z}\right] \mathrm{d} x = 0
-\end{aligned}
-\)</span>$</p>
-<p>which we can write in a more compact form as:</p>
+\end{align}\]</div>
 <div class="math notranslate nohighlight">
-\[\begin{split}
-\left[\begin{array}{cc}
-A_{t t} &amp; 0 \\
+\[which we can write in a more compact form as:\]</div>
+<p>\left[\begin{array}{cc}
+A_{t t} &amp; 0 \
 0 &amp; 0
-\end{array}\right]\left\{\begin{array}{l}
-\mathbf{e}_{t} \\
-e_{z}
-\end{array}\right\}=-k_z^{2}\left[\begin{array}{ll}
-B_{t t} &amp; B_{t z} \\
+\end{array}\right]\left{\begin{array}{l}
+\mathbf{e}<em>{t} \
+e</em>{z}
+\end{array}\right}=-k_z^{2}\left[\begin{array}{ll}
+B_{t t} &amp; B_{t z} \
 B_{z t} &amp; B_{z z}
-\end{array}\right]\left\{\begin{array}{l}
-\mathbf{e}_{t} \\
-e_{z}
-\end{array}\right\}
-\end{split}\]</div>
+\end{array}\right]\left{\begin{array}{l}
+\mathbf{e}<em>{t} \
+e</em>{z}
+\end{array}\right}
+$$</p>
 <p>A problem of this form is commonly known as a <em>generalized eigenvalue problem</em>, where the eigenvalue is <span class="math notranslate nohighlight">\(-k_z^2\)</span> and the eigenvector is <span class="math notranslate nohighlight">\(\mathbf{e}_t, e_z\)</span>.</p>
 <p>The weak form in DOLFINx can be written in this way:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a_tt</span> <span class="o">=</span> <span class="p">(</span><span class="n">inner</span><span class="p">(</span><span class="n">curl</span><span class="p">(</span><span class="n">et</span><span class="p">),</span> <span class="n">curl</span><span class="p">(</span><span class="n">vt</span><span class="p">))</span> <span class="o">-</span> <span class="n">k0</span>
