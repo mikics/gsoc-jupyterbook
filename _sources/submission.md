@@ -1018,7 +1018,7 @@ it was then clear that something wrong was happening within `curl_axis`, and
 in particular for the terms activated by `m = 1`. Since the mathematical
 implementation of `curl_axis` was correct, the problem
 was clearly something wrong in the DOLFINx codebase, and together with my
-mentors I decided to open [a GitHub issue]((https://github.com/FEniCS/dolfinx/issues/2343)) and to "pass the ball" to more
+mentors I decided to open [a GitHub issue](https://github.com/FEniCS/dolfinx/issues/2343) and to "pass the ball" to more
 experienced developers. It turned out that there was a bug in the permuation
 inside `MixedElement`, solved by [PR #2347](https://github.com/FEniCS/dolfinx/pull/2347).
 
