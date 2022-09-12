@@ -653,7 +653,7 @@ if have_pyvista:
     V_grid = pyvista.UnstructuredGrid(V_cells, V_types, V_x)
     Esh_r_values = np.zeros((V_x.shape[0], 3), dtype=np.float64)
     Esh_r_values[:, :domain.topology.dim] = \
-        Esh_r_dg.x.array.reshape(V_x.shape[0], domain.topology.dim).real
+        Esh_rz_dg.x.array.reshape(V_x.shape[0], domain.topology.dim).real
 
     V_grid.point_data["u"] = Esh_r_values
 

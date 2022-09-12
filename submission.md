@@ -598,6 +598,123 @@ The eigenvalue successfuly passes the verification step, and therefore it satisf
 
 The fourth demo shows how to solve Maxwell's equations for three-dimensional axisymmetric geometries. Generally, solving three-dimensional electromagnetic problems is computationally expensive, and it may result in prohibitive memory and time requirements. However, if the three-dimensional geometry has an axisymmetry, the full wave problem can be decomposed in few two-dimensional problems, with much an overall much lower computational cost.
 
+In a nutshell, we start from the weak form for Maxwell's equations and PML equations:
+
+$$
+\begin{align}
+&\int_{\Omega_m\cup\Omega_b}-(\nabla \times \mathbf{E}_s)
+\cdot (\nabla \times \bar{\mathbf{v}})+\varepsilon_{r} k_{0}^{2}
+\mathbf{E}*s \cdot \bar{\mathbf{v}}+k*{0}^{2}\left(\varepsilon_{r}
+-\varepsilon_b\right)\mathbf{E}_b \cdot \bar{\mathbf{v}}~\mathrm{d} x\\
++&\int_{\Omega_{pml}}\left[\boldsymbol{\mu}^{-1}_{pml} \nabla \times \mathbf{E}_s
+\right]\cdot \nabla \times \bar{\mathbf{v}}-k_{0}^{2}
+\left[\boldsymbol{\varepsilon}_{pml} \mathbf{E}_s \right]\cdot
+\bar{\mathbf{v}}~ d x=0
+\end{align}
+$$
+
+We decompose the fields in cylindrical harmonics:
+
+$$
+\begin{align}
+& \mathbf{E}_s(\rho, z, \phi) = \sum_m\mathbf{E}^{(m)}_s(\rho, z)e^{-im\phi} \\
+& \mathbf{E}_b(\rho, z, \phi) = \sum_m\mathbf{E}^{(m)}_b(\rho, z)e^{-im\phi} \\
+& \bar{\mathbf{v}}(\rho, z, \phi) =
+\sum_m\bar{\mathbf{v}}^{(m)}(\rho, z)e^{+im\phi}\\
+\end{align}
+$$
+
+and arrive at the final weak form that shows 1) that the problem is formulated over a two-dimensional domain, and 2) that the cylindrical harmonics propagate independently:
+
+$$
+\begin{align}
+\sum_{m}\int_{\Omega_{cs}}&-(\nabla \times \mathbf{E}^{(m)}_s)
+\cdot (\nabla \times \bar{\mathbf{v}}^{(m)})+\varepsilon_{r} k_{0}^{2}
+\mathbf{E}^{(m)}_s \cdot \bar{\mathbf{v}}^{(m)}
++k_{0}^{2}\left(\varepsilon_{r}
+-\varepsilon_b\right)\mathbf{E}^{(m)}_b \cdot \bar{\mathbf{v}}^{(m)}\\
+&+\left(\boldsymbol{\mu}^{-1}_{pml} \nabla \times \mathbf{E}^{(m)}_s
+\right)\cdot \nabla \times \bar{\mathbf{v}}^{(m)}-k_{0}^{2}
+\left(\boldsymbol{\varepsilon}_{pml} \mathbf{E}^{(m)}_s \right)\cdot
+\bar{\mathbf{v}}^{(m)}~ \rho d\rho dz =0
+\end{align}
+$$
+
+Therefore, the original problem can be solved for each cylindrical harmonic over a 2D cross-section of the original domain. For the sake of simplicity, we choose this cross-section to be the one at $\phi = 0$.
+
+In the demo we present a lof of concepts needed for axisymmetric problems, which we list in the following sections.
+
+#### $\nabla\times$ operator for cylindrical coordinates
+
+In cylindrical coordinates, the curl operator becomes:
+
+$$
+\begin{align}
+\left(\nabla \times \mathbf{a}^{(m)}\right) = &\left[\hat{\rho}
+\left(-\frac{\partial a_{\phi}^{(m)}}{\partial z}
+-i \frac{m}{\rho} a_{z}^{(m)}\right)+\\ \hat{\phi}
+\left(\frac{\partial a_{\rho}^{(m)}}{\partial z}
+-\frac{\partial a_{z}^{(m)}}{\partial \rho}\right)+\right.\\
+&\left.+\hat{z}\left(\frac{a_{\phi}^{(m)}}{\rho}
++\frac{\partial a_{\phi}^{(m)}}{\partial \rho}
++i \frac{m}{\rho} a_{\rho}^{(m)}\right)\right]
+\end{align}
+$$
+
+The corresponding DOLFINx implementation is:
+
+```
+def curl_axis(a, m: int, rho):
+
+    curl_r = -a[2].dx(1) - 1j * m / rho * a[1]
+    curl_z = a[2] / rho + a[2].dx(0) + 1j * m / rho * a[0]
+    curl_p = a[0].dx(1) - a[1].dx(0)
+
+    return ufl.as_vector((curl_r, curl_z, curl_p))
+```
+
+#### Cylindrical harmonic expansion for $\mathbf{E}^{(m)}_b$
+
+The $m$-th harmonic for the background field can be expressed in terms of Bessel functions as:
+
+$$
+\begin{split}
+\begin{align}
+\mathbf{E}^{(m)}_b = &\hat{\rho} \left(E_{0} \cos \theta
+e^{i k z \cos \theta} i^{-m+1} J_{m}^{\prime}\left(k_{0} \rho \sin
+\theta\right)\right)\\
++&\hat{z} \left(E_{0} \sin \theta e^{i k z \cos \theta}i^{-m} J_{m}
+\left(k \rho \sin \theta\right)\right)\\
++&\hat{\phi} \left(\frac{E_{0} \cos \theta}{k \rho \sin \theta}
+e^{i k z \cos \theta} i^{-m} J_{m}\left(k \rho \sin \theta\right)\right)
+\end{align}
+\end{split}
+$$
+
+In DOLFINx, the corresponding implementation is:
+
+def background_field_rz(theta: float, n_bkg: float, k0: float, m: int, x):
+
+    k = k0 * n_bkg
+
+    a_r = (np.cos(theta) * np.exp(1j * k * x[1] * np.cos(theta))
+           * (1j)**(-m + 1) * jvp(m, k * x[0] * np.sin(theta), 1))
+
+    a_z = (np.sin(theta) * np.exp(1j * k * x[1] * np.cos(theta))
+           * (1j)**-m * jv(m, k * x[0] * np.sin(theta)))
+
+    return (a_r, a_z)
+
+def background_field_p(theta: float, n_bkg: float, k0: float, m: int, x):
+
+    k = k0 * n_bkg
+
+    a_p = (np.cos(theta) / (k * x[0] * np.sin(theta))
+           * np.exp(1j * k * x[1] * np.cos(theta)) * m
+           * (1j)**(-m) * jv(m, k * x[0] * np.sin(theta)))
+
+    return a_p
+
 ### Bonus tutorial: How to animate solutions in Paraview
 
 ## Challenges and final remarks
