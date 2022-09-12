@@ -856,13 +856,14 @@ photonic problems.</p>
 <p>For this demo, we chose to use a square PML layer. In order to define PML equation, we
 use a complex coordinate transformation of this kind in the PML domain:</p>
 <div class="math notranslate nohighlight">
-\[ \begin{align}\begin{aligned}\begin{split}
+\[\begin{split}
 \begin{align}
 &amp; x^\prime= x\left\{1+j\frac{\alpha}{k_0}\left[\frac{|x|-l_{dom}/2}
-{(l_{pml}/2 - l_{dom}/2)^2}\right] \right\}\\\end{split}\\\begin{split}&amp; y^\prime= y\left\{1+j\frac{\alpha}{k_0}\left[\frac{|y|-l_{dom}/2}
+{(l_{pml}/2 - l_{dom}/2)^2}\right] \right\}\\
+&amp; y^\prime= y\left\{1+j\frac{\alpha}{k_0}\left[\frac{|y|-l_{dom}/2}
 {(l_{pml}/2 - l_{dom}/2)^2}\right] \right\}\\
 \end{align}
-\end{split}\end{aligned}\end{align} \]</div>
+\end{split}\]</div>
 <p>We then calculate the Jacobian associated with this transformation:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}

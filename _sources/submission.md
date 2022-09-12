@@ -257,7 +257,6 @@ $$
 \begin{align}
 & x^\prime= x\left\{1+j\frac{\alpha}{k_0}\left[\frac{|x|-l_{dom}/2}
 {(l_{pml}/2 - l_{dom}/2)^2}\right] \right\}\\
-
 & y^\prime= y\left\{1+j\frac{\alpha}{k_0}\left[\frac{|y|-l_{dom}/2}
 {(l_{pml}/2 - l_{dom}/2)^2}\right] \right\}\\
 \end{align}
