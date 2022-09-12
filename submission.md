@@ -79,7 +79,7 @@ block.
 showing an inconsistency when solving problems with `MixedElement` having `Lagrange` elements. This
 issue arose during the writing for [PR #2339](https://github.com/FEniCS/dolfinx/pull/2339), when
 I noticed different DOLFINx outputs when changing the `degree` of `Lagrange` elements. The root of
-this issue was a wrong permutation inside `MixedElement`, which was then fixed with [PR #2347](https://github.com/FEniCS/dolfinx/pull/2347).
+this issue was a wrong permutation inside `MixedElement`, which was then fixed by [PR #2347](https://github.com/FEniCS/dolfinx/pull/2347).
 
 ### What's next
 
