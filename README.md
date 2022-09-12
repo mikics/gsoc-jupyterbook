@@ -4,7 +4,7 @@ This repository contains a Jupyterbook-powered website providing an overview ove
 my work for the FEniCS project during the Google Summer of Code 2022.
 
 This website is an adaptation of [the FEniCSx tutorial @ FEniCS 2022](https://jorgensd.github.io/fenics22-tutorial),
-by @jorgensd.
+by Jørgen S. Dokken (@jorgensd on GitHub).
 
 ## Other useful information
 
