@@ -596,6 +596,8 @@ The eigenvalue successfuly passes the verification step, and therefore it satisf
 
 ### Demo #4: Maxwell's equations for axisymmetric geometries
 
+The fourth demo shows how to solve Maxwell's equations for three-dimensional axisymmetric geometries. Generally, solving three-dimensional electromagnetic problems is computationally expensive, and it may result in prohibitive memory and time requirements. However, if the three-dimensional geometry has an axisymmetry, the full wave problem can be decomposed in few two-dimensional problems, with much an overall much lower computational cost.
+
 ### Bonus tutorial: How to animate solutions in Paraview
 
 ## Challenges and final remarks
