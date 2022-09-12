@@ -1023,7 +1023,7 @@ experienced developers. It turned out that there was a bug in the permuation
 inside `MixedElement`, solved by [PR #2347](https://github.com/FEniCS/dolfinx/pull/2347).
 
 When dealing with these issues, it was particularly important to not get frustrated,
-and to build a strong communications with my mentors. Therefore, my suggestions for new
+and to have built a strong communication with my mentors. Therefore, my suggestions for new
 GSoC contributors are: 1) do not work on an issue if you are too much tired, rather take
 some time off and try again after few hours or the next day, and 2) ask for help if
 you are running out of ideas!
