@@ -236,7 +236,7 @@ The error is 0.040062808247346045%
 As a final treat, here below you can see the animation of the DOLFINx solution post-processed in
 paraview:
 
-![afeaf](images/animation_sbc.gif "Electric field, x-component, real part")
+![sbc](images/animation_sbc.gif "Electric field, x-component, real part")
 
 ### Demo #2: Perfectly Matched Layers
 
@@ -416,7 +416,7 @@ The error is 0.2053321953120203%
 Here below, you can see the time-harmonic animation of the scattered
 electric field norm obtained in DOLFINx and post-processed in Paraview:
 
-![afeaf](images/animation_pml.gif "Norm of Electric field")
+![pml](images/animation_pml.gif "Norm of Electric field")
 
 ### Demo #3: Half-loaded waveguide with SLEPc
 
@@ -865,7 +865,29 @@ q_ext, q_sca, q_abs = scattnlay(np.array([x], dtype=np.complex128), np.array([m]
 
 The calculation of the numerical efficiencies is similar to what we did in
 demo #2, with the only difference that we need to add a $2$ factor for the
-efficiency resulting from the $m\geq1$ harmonics.
+efficiencies resulting from $m\geq1$ harmonics.
+
+The final error for all efficiencies is well below $1\%$, as shown by the final output in the demo, and therefore we can safely say that the problem in DOLFINx is well
+set:
+
+```
+The analytical absorption efficiency is 0.9622728008329892
+The numerical absorption efficiency is 0.9583126377885698
+The error is 0.41154265619804153%
+
+The analytical scattering efficiency is 0.07770397394691526
+The numerical scattering efficiency is 0.07737655859424392
+The error is 0.4213624297967401%
+
+The analytical extinction efficiency is 1.0399767747799045
+The numerical extinction efficiency is 1.0356891963828136
+The error is 0.4122763604983602%
+```
+
+As a final example, here below we show the magnitude of the real part of the (total)
+scattered field:
+
+![axis](images/axis.png "Magnitude of the real part of the scattered electric field")
 
 ### Bonus tutorial: How to animate solutions in Paraview
 
