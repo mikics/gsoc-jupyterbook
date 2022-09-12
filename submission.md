@@ -889,17 +889,64 @@ scattered field:
 
 ![axis](images/axis.png "Magnitude of the real part of the scattered electric field")
 
-### Bonus tutorial: How to animate solutions in Paraview
-
 ## Challenges and final remarks
 
-- what to improve
-- what I would make differently....
-- ringraziamenti
+The most challenging aspect of GSoC was dealing with unexpected results and
+troubleshooting. Indeed, debugging was one of the most important skill I needed to improve during GSoC, since it never happens to run the code at the first try without problems, and therefore one should be able to quickly understand how to approach
+and solve these situations.
 
-## To do
+For all demos I needed a certain degree of debugging, but for demo #4 it was particularly tough. Indeed, I had to deal with an unexpected behaviour of the demo:
+whenever I used `degree = 3` (or higher) discretization elements, the error for the efficiencies increased, and DOLFINx solutions had some nasty artifacts, as shown in
+the image below.
 
-- Improve ipynb of demos: add title to mesh files, add visualization for waveguide demo and axis demo, add gifs, check why in Docker PyVista does not work.
+![error](images/error.png "Artifacts in the field for high degree elements")
+
+In order to understand the error, I tried to isolate the problem and collect as much
+information as possible. The first thing that came to my mind was a bug in the
+functions I wrote for the demo. Therefore I substituted PML with scattering
+boundary conditions, and verified if the background field showed the same artifacts
+of the output field. However, scattering boundary conditions did not change the
+output (high errors, same nasty artifacts), and the background field had no strange
+behavior, and was consistent with the background field I implemented
+for the same problem in legacy DOLFIN (extensively tested up to `degree = 5`). Therefore, I was reasonably sure that PML and
+the background field were implemented correctly. What I tried to do next was
+comparing my legacy DOLFIN demo with my new DOLFINx demo for different
+harmonic numbers. What I noticed was that for `m = 0` both demos output the
+same efficiencies whatever the degree, while these efficiencies diverged for
+`m = 1` solutions. Therefore, something happened when passing from `m = 0` and
+`m = 1`. The only two Python objects affected by the harmonic numbers were the
+`background_field_rz`, `background_field_p`, and the `curl_axis` functions. As
+already said, the background field functions were doing their job correctly, and
+it was then clear that something wrong was happening within `curl_axis`, and
+in particular for the terms activated by `m = 1`. At this point, the problem
+was clearly something wrong in the DOLFINx codebase, and together with my
+mentors I decided to open a GitHub issue and to "pass the ball" to more
+experienced developers. It turned out that there was a bug in the permuation
+inside `MixedElement`, solved by [PR #2347](https://github.com/FEniCS/dolfinx/pull/2347).
+
+When dealing with these issues, it was particularly important to not get frustrated,
+and to build a strong communications with my mentors. Therefore, my suggestions for new
+GSoC contributors are: 1) do not work on an issue if you are too much tired, rather take
+some time off and try again after few hours or the next day, and 2) ask for help if
+you are running out of ideas!
+
+In the end, the GSoC has been the best professional experience of my life, since I have
+learnt
+so much in 12 weeks that I can hardly recall everything. Just to name a few: I have learnt how to run and manage Docker containers, I have a deeper knowledge of the
+FEniCSx environment, I can now run and build static websites as the one you are reading now, I have a deeper understanding of how a big project as FEniCSx is managed, and I have
+gained much more confidence in using git and GitHub tools.
+
+My only regret is that I have not been too much active on the [FEniCS discourse group](https://fenicsproject.discourse.group/)
+for helping other users, mainly because answering many of the posted questions require a deep
+technical knowledge about the FEniCSx environment that I have not gained yet. However,
+I have also understood that solving other users' problems is a great way to better understand FEniCSx, and therefore I will be for sure more active in the future.
+
+Last but not least, I would like to thank my mentors Jørgen S. Dokken, Igor Baratta and Jack Hale for their patience and help over the 12 weeks. Discussing and working with them has been great since the beginning, and I could not have wished for a better
+mentors/mentee relationship. I would also like to thank my supervisor Cristian
+Ciracì, which introduced me to FEniCS and which helped me so much when solving
+the problems I show in the demo.
+
+And, if you arrived here, I would like to thank you too!
 
 ## Contacts
 
