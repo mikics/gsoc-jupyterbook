@@ -420,11 +420,11 @@ title="Print to PDF"
     </a>
     <ul class="nav section-nav flex-column">
      <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#nabla-times-operator-for-cylindrical-coordinates">
+      <a class="reference internal nav-link" href="#nabla-times-operator-in-cylindrical-coordinates">
        <span class="math notranslate nohighlight">
         \(\nabla\times\)
        </span>
-       operator for cylindrical coordinates
+       operator in cylindrical coordinates
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
@@ -538,11 +538,11 @@ title="Print to PDF"
     </a>
     <ul class="nav section-nav flex-column">
      <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#nabla-times-operator-for-cylindrical-coordinates">
+      <a class="reference internal nav-link" href="#nabla-times-operator-in-cylindrical-coordinates">
        <span class="math notranslate nohighlight">
         \(\nabla\times\)
        </span>
-       operator for cylindrical coordinates
+       operator in cylindrical coordinates
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
@@ -603,37 +603,38 @@ title="Print to PDF"
 <h1>GSoC 2022 - Expanding FEniCSx electromagnetic demos<a class="headerlink" href="#gsoc-2022-expanding-fenicsx-electromagnetic-demos" title="Permalink to this headline">#</a></h1>
 <p>In this website, I will provide an overview of my work as a GSoC 2022 contributor for
 the <a class="reference external" href="https://fenicsproject.org/">FEniCS project</a> (sponsored by <a class="reference external" href="https://numfocus.org/">NumFOCUS</a>)
-and its main environment <a class="reference external" href="https://github.com/FEniCS/dolfinx">DOLFINx</a>.
+and its main repository <a class="reference external" href="https://github.com/FEniCS/dolfinx">DOLFINx</a>.
 The goal of the project was to expand DOLFINx electromagnetic demos, in order to
 promote the use of the FEniCSx environment for solving electromagnetic and photonic
-problems. During GSoC 2022, I have implemented demos showing how to:</p>
+problems. During GSoC 2022, I have developed demos showing how to:</p>
 <ul class="simple">
 <li><p>implement scattering boundary conditions;</p></li>
 <li><p>implement perfectly matched layers;</p></li>
 <li><p>solve electromagnetic eigenvalue problems;</p></li>
 <li><p>solve 3D electromagnetic problems for axisymmetric structures.</p></li>
 </ul>
-<p>All the problems are solved within the time-harmonic approximation, and use simple
+<p>All the problems are solved within the time-harmonic approximation for simple
 geometries, but can be easily generalized to more complicated study cases.
 The documentation for the demos has been provided under the form of Python
 comments that can be visualized as text and math formula in <a class="reference external" href="https://jupyter.org/">Jupyter notebook</a>
-by using <a class="reference external" href="https://jupytext.readthedocs.io/en/latest/install.html">Jupytext</a>. Besides,
-each demo contains tests for comparing the DOLFINx outputs with analytical results
+by converting the <code class="docutils literal notranslate"><span class="pre">.py</span></code> files with <a class="reference external" href="https://jupytext.readthedocs.io/en/latest/install.html">Jupytext</a>. Besides,
+each demo contains tests for comparing the DOLFINx outputs with the analytical results
 for each problem.</p>
-<p>This website has been built with Jupyterbook, and on the left-hand side you can find
-the Jupyter notebook of the demos I have written. In this way, you can directly
+<p>This website has been built with <a class="reference external" href="https://jupyterbook.org/en/stable/intro.html">Jupyter book</a>, and on the left-hand side you can find
+the Jupyter notebooks of the demos I developed. In this way, you can directly
 visualize the mathematical documentation in the demos, the code, the outputs, and
-you can play with them by using Binder (just click on the <i class="fa fa-rocket"></i> icon).</p>
+you can play with the settings by using Binder (just click on the <i class="fa fa-rocket"></i> icon).</p>
 <p>With respect to the original plan, we have not developed the demo showing how to
 handle complex numbers in DOLFINx, and the demo showing how to use the <code class="docutils literal notranslate"><span class="pre">MPI.COMM_SELF</span></code>
-communicator. In the first case, the demo was then considered unnecessary, since all the
-main features of complex numbers in DOLFINx naturally arises in all the developed electromagnetic demos, that
-widely implement them. In the second case, the demo has been substituted with the waveguide
+communicator. In the first case, the demo was considered unnecessary, since all the
+main features of complex numbers in DOLFINx naturally arises in all electromagnetic demos, which
+widely implement them. In the second case, the demo was substituted with the eigenvalue
 demo, which was not planned at first. However, I plan to work on the <code class="docutils literal notranslate"><span class="pre">MPI.COMM_SELF</span></code> demo
 in the weeks following the end of GSoC 2022.</p>
 <p>In my opinion, the original goal has been successfully reached. Indeed, even if many pull
 requests are still open, the main work for the demos have been done, and they just need
-to pass the final rounds of reviews by FEniCSx reviewers.</p>
+to pass the final rounds of reviews by FEniCSx reviewers to be finally merged into
+the <code class="docutils literal notranslate"><span class="pre">main</span></code> DOLFINx branch.</p>
 <section id="list-of-contributions">
 <h2>List of contributions<a class="headerlink" href="#list-of-contributions" title="Permalink to this headline">#</a></h2>
 <section id="pull-requests">
@@ -654,19 +655,19 @@ for a wire;</p></li>
 <li><p><a class="reference external" href="https://github.com/FEniCS/dolfinx/pull/2276">PR #2276</a> (<strong>open</strong>): this pull request
 adds the demo showing how to set a time-harmonic electromagnetic problem with perfectly matched layers:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">demo_pml.py</span></code>: demo for solving the time-harmonic problem of a TM-polarized plane wave scattered by a gold wire using perfectly matched layers;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">demo_pml.py</span></code>: solves the time-harmonic problem of a TM-polarized plane wave scattered by a gold wire using perfectly matched layers;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">mesh_wire_pml.py</span></code>: generates the mesh for the demo;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">analytical_efficiencies_wire.py</span></code>: calculates the analytical efficiencies
 for a wire;</p></li>
 </ul>
 </li>
 <li><p><a class="reference external" href="https://github.com/FEniCS/dolfinx/pull/2338">PR #2338</a> (<strong>open</strong>): this pull request adds
-the demo showing how to solve a time-harmonic electromagnetic eigenvalue problem problem with DOLFINx and SLEPc:</p>
+the demo showing how to solve a time-harmonic electromagnetic eigenvalue problem with DOLFINx and SLEPc:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">demo_waveguide.py</span></code>: solves the eigenvalue problem associated with an electromagnetic half-loaded
 waveguide with SLEPc;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">analytical_modes.py</span></code>: verifies if FEniCSx modes satisfy the analytical equations for the
-half-loaded waveguide;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">analytical_modes.py</span></code>: verifies if FEniCSx modes are consistent with the equations
+for the analytical modes;</p></li>
 </ul>
 </li>
 <li><p><a class="reference external" href="https://github.com/FEniCS/dolfinx/pull/2339">PR #2339</a> (<strong>open</strong>): this pull request adds the demo
@@ -690,12 +691,12 @@ block.</p></li>
 showing an inconsistency when solving problems with <code class="docutils literal notranslate"><span class="pre">MixedElement</span></code> having <code class="docutils literal notranslate"><span class="pre">Lagrange</span></code> elements. This
 issue arose during the writing for <a class="reference external" href="https://github.com/FEniCS/dolfinx/pull/2339">PR #2339</a>, when
 I noticed different DOLFINx outputs when changing the <code class="docutils literal notranslate"><span class="pre">degree</span></code> of <code class="docutils literal notranslate"><span class="pre">Lagrange</span></code> elements. The root of
-this issue was a wrong permutation inside <code class="docutils literal notranslate"><span class="pre">MixedElement</span></code>, which has been then fixed with <a class="reference external" href="https://github.com/FEniCS/dolfinx/pull/2347">PR #2347</a>.</p></li>
+this issue was a wrong permutation inside <code class="docutils literal notranslate"><span class="pre">MixedElement</span></code>, which was then fixed with <a class="reference external" href="https://github.com/FEniCS/dolfinx/pull/2347">PR #2347</a>.</p></li>
 </ul>
 </section>
 <section id="whats-next">
 <h3>What’s next<a class="headerlink" href="#whats-next" title="Permalink to this headline">#</a></h3>
-<p>The plan after the end of the Google Summer of Code is the following one:</p>
+<p>The plan after the end of the Google Summer of Code is the following:</p>
 <ul class="simple">
 <li><p>Work on merging the open pull requests;</p></li>
 <li><p>Develop a demo showing how to use the <code class="docutils literal notranslate"><span class="pre">MPI.COMM_SELF</span></code> communicator; this will be
@@ -732,7 +733,7 @@ these equations (Maxwell’s equations + scattering boundary conditions):</p>
 \right) \mathbf{n} \times \mathbf{E}_s
 \times \mathbf{n}=0\quad \textrm{ on } \partial \Omega
 \]</div>
-<p>and arrive at this weak form:</p>
+<p>and show all the steps to arrive at the final weak form:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{align}
@@ -822,9 +823,9 @@ these equations (Maxwell’s equations + scattering boundary conditions):</p>
 <span class="n">q_sca_fenics</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">q_sca_fenics_proc</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We compared these efficiencies with analytical ones (calculated by a function in <code class="docutils literal notranslate"><span class="pre">analytical_efficiencies_wire.py</span></code>) to test our demo. In the end, we get
+<p>We compared these efficiencies with analytical ones (by means of a function in <code class="docutils literal notranslate"><span class="pre">analytical_efficiencies_wire.py</span></code>) to test our demo. In the end, we get
 an error much smaller than <span class="math notranslate nohighlight">\(1\%\)</span>, as certified by the final output,and
-therefore we can say that our demo works correctly:</p>
+therefore we can say that our demo works correctly.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">analytical</span> <span class="n">absorption</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">1.2115253567863489</span>
 <span class="n">The</span> <span class="n">numerical</span> <span class="n">absorption</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">1.210977254477182</span>
 <span class="n">The</span> <span class="n">error</span> <span class="ow">is</span> <span class="mf">0.04524067994918296</span><span class="o">%</span>
@@ -847,12 +848,13 @@ paraview:</p>
 <p>In the second demo, we show how to implement perfectly matched layers (shortly PMLs) for
 the same problem solved in the first demo, i.e. the
 scattering of a TM-polarized plane wave by an infinite gold wire. Perfectly
-matched layers are artificial layers that gradually absorb outgoing waves impinging on them, and are extensively used in time-harmonic electromagnetic
-problems for domain truncation. However, their mathematical implementation can
+matched layers are artificial layers surrounding the domain that gradually absorb outgoing waves impinging on them, and are extensively used in time-harmonic electromagnetic
+problems to solve the corresponding PDE within a finite domain. However, their mathematical implementation can
 be quite tricky, and therefore showing the math and the corresponding DOLFINx
-implementation is crucial for allowing users to quickly apply the FEniCSx environment to their electromagnetic problems.</p>
-<p>For this demo, we chose to use a square PML layer. In order to define PML, we
-implement in the PML domain a complex coordinate transformation of this kind:</p>
+implementation is crucial for allowing users to quickly use FEniCSx to solve
+photonic problems.</p>
+<p>For this demo, we chose to use a square PML layer. In order to define PML equation, we
+use a complex coordinate transformation of this kind in the PML domain:</p>
 <div class="math notranslate nohighlight">
 \[ \begin{align}\begin{aligned}\begin{split}
 \begin{align}
@@ -935,7 +937,7 @@ inhomogeneous, and complex relative permittivity <span class="math notranslate n
 <span class="n">eps_xy</span><span class="p">,</span> <span class="n">mu_xy</span> <span class="o">=</span> <span class="n">create_eps_mu</span><span class="p">(</span><span class="n">xy_pml</span><span class="p">,</span> <span class="n">eps_bkg</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We need to define multiple coordinate transformation since in the corners of the PML both coordinates are transformed, while in the rest of the PML just
+<p>We need to define multiple coordinate transformation <code class="docutils literal notranslate"><span class="pre">xy_pml</span></code>, <code class="docutils literal notranslate"><span class="pre">x_pml</span></code> and <code class="docutils literal notranslate"><span class="pre">y_pml</span></code> since in the corners of the PML both coordinates are transformed, while in the rest of the PML just
 one of them is. In the end, we can implement the weak form in DOLFINx in this way:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -963,7 +965,7 @@ one of them is. In the end, we can implement the weak form in DOLFINx in this wa
 </pre></div>
 </div>
 <p>Then, as in the first demo, we calculated the efficiencies and compared them with analytical ones. For scattering efficiencies, we needed to define
-the integration line slightly differently with respect to demo #1, since
+the integration domain slightly differently with respect to demo #1, since
 we have to deal with an inner facet:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">marker</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
 <span class="n">scatt_facets</span> <span class="o">=</span> <span class="n">facet_tags</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">scatt_tag</span><span class="p">)</span>
@@ -989,7 +991,7 @@ we have to deal with an inner facet:</p>
 
 </pre></div>
 </div>
-<p>As in the first demo, even in this case the error is under <span class="math notranslate nohighlight">\(1\%\)</span>:</p>
+<p>As in the first demo, also in this case the error is smaller than <span class="math notranslate nohighlight">\(1\%\)</span>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">analytical</span> <span class="n">absorption</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">0.9089500187622276</span>
 <span class="n">The</span> <span class="n">numerical</span> <span class="n">absorption</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">0.9075812357239408</span>
 <span class="n">The</span> <span class="n">error</span> <span class="ow">is</span> <span class="mf">0.1505894724718481</span><span class="o">%</span>
@@ -1011,7 +1013,8 @@ electric field norm obtained in DOLFINx and post-processed in Paraview:</p>
 <h3>Demo #3: Half-loaded waveguide with SLEPc<a class="headerlink" href="#demo-3-half-loaded-waveguide-with-slepc" title="Permalink to this headline">#</a></h3>
 <p>The third demo shows how to solve an eigenvalue electromagnetic problem
 in DOLFINx with the SLEPc library. In particular, we solve the eigenvalue problem of a half-loaded electromagnetic waveguide with perfect
-electric conducting walls. The equations for our problem are:</p>
+electric conducting walls (PEC conditions). The equations for our problem are the
+Maxwell’s equation and the PEC equation:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{align}
@@ -1064,7 +1067,7 @@ B_{z t} &amp; B_{z z}
 e_{z}
 \end{array}\right\}
 \end{split}\]</div>
-<p>This problem is a <em>generalized eigenvalue problem</em>, where the eigenvalues are all the possible <span class="math notranslate nohighlight">\(-k_z^2\)</span> and <span class="math notranslate nohighlight">\(\mathbf{e}_t, e_z\)</span> substained by the structure.</p>
+<p>A problem of this form is commonly known as a <em>generalized eigenvalue problem</em>, where the eigenvalue is <span class="math notranslate nohighlight">\(-k_z^2\)</span> and the eigenvector is <span class="math notranslate nohighlight">\(\mathbf{e}_t, e_z\)</span>.</p>
 <p>The weak form in DOLFINx can be written in this way:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a_tt</span> <span class="o">=</span> <span class="p">(</span><span class="n">inner</span><span class="p">(</span><span class="n">curl</span><span class="p">(</span><span class="n">et</span><span class="p">),</span> <span class="n">curl</span><span class="p">(</span><span class="n">vt</span><span class="p">))</span> <span class="o">-</span> <span class="n">k0</span>
         <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">inner</span><span class="p">(</span><span class="n">et</span><span class="p">,</span> <span class="n">vt</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
@@ -1102,7 +1105,8 @@ e_{z}
 <span class="n">eps</span><span class="o">.</span><span class="n">setOperators</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Then, we need to tweak some SLEPc settings, to guarantee the convergence of the solver, as shown below. For this problem, we need to use a spectral transformation to solve the problem, and getting our eigenvalue(s). In particular, spectral transformation techniques map the eigenvalues in other portion of the spectrum, to make the algorithm more efficient. We then need to set a target value for our eigenvalue, the number of eigenvalues we want to find, and we can finally solve the problem. It is worth highlighting that solving eigenvalue problems can be tricky, and therefore finding the correct eigenvalues of the problem may require a lot of tweaking.</p>
+<p>Then, we need to tweak some SLEPc settings, to guarantee the convergence of the solver, as shown below. For this problem, we need to use a spectral transformation to solve the problem, and getting our eigenvalue(s). In particular, spectral transformation techniques map the eigenvalues in other portion of the spectrum, to make the algorithm more efficient. We then need to set a target value for our eigenvalue, the number of eigenvalues we want to find, and we can finally solve the problem. It is worth highlighting that solving eigenvalue problems can be tricky, and therefore finding the correct eigenvalues of the problem may require a lot of tweaking. For this problem,
+the following settings worked well:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set the tolerance for the solution</span>
 <span class="n">eps</span><span class="o">.</span><span class="n">setTolerances</span><span class="p">(</span><span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
 
@@ -1126,7 +1130,58 @@ e_{z}
 <span class="n">eps</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Then, we verify if the solutions from SLEPc are consistent with the analytical formula for the half-loaded waveguide modes, which are:</p>
+<p>We then get and save the solutions in this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vals</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="n">eps</span><span class="o">.</span><span class="n">getEigenvalue</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">eps</span><span class="o">.</span><span class="n">getConverged</span><span class="p">())]</span>
+
+<span class="n">vals</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+
+<span class="n">eh</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+
+<span class="n">kz_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">kz</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">:</span>
+
+    <span class="c1"># Save eigenvector in eh</span>
+    <span class="n">eps</span><span class="o">.</span><span class="n">getEigenpair</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">eh</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+
+    <span class="c1"># Compute error for i-th eigenvalue</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">eps</span><span class="o">.</span><span class="n">computeError</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">SLEPc</span><span class="o">.</span><span class="n">EPS</span><span class="o">.</span><span class="n">ErrorType</span><span class="o">.</span><span class="n">RELATIVE</span><span class="p">)</span>
+
+    <span class="c1"># Verify, save and visualize solution</span>
+    <span class="k">if</span> <span class="n">error</span> <span class="o">&lt;</span> <span class="n">tol</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">kz</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">tol</span><span class="p">):</span>
+
+        <span class="n">kz_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kz</span><span class="p">)</span>
+
+        <span class="c1"># Verify if kz satisfy the analytical equations for the modes</span>
+        <span class="k">assert</span> <span class="n">verify_mode</span><span class="p">(</span><span class="n">kz</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">lmbd0</span><span class="p">,</span> <span class="n">eps_d</span><span class="p">,</span> <span class="n">eps_v</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;eigenvalue: </span><span class="si">{</span><span class="o">-</span><span class="n">kz</span><span class="o">**</span><span class="mi">2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;kz: </span><span class="si">{</span><span class="n">kz</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;kz/k0: </span><span class="si">{</span><span class="n">kz</span><span class="o">/</span><span class="n">k0</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">eh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">scatter_forward</span><span class="p">()</span>
+
+        <span class="n">eth</span><span class="p">,</span> <span class="n">ezh</span> <span class="o">=</span> <span class="n">eh</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+        <span class="c1"># Transform eth, ezh into Et and Ez</span>
+        <span class="n">eth</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">eth</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">/</span> <span class="n">kz</span>
+        <span class="n">ezh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">ezh</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[:]</span> <span class="o">*</span> <span class="mi">1</span><span class="n">j</span>
+
+        <span class="n">V_dg</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;DQ&quot;</span><span class="p">,</span> <span class="n">degree</span><span class="p">))</span>
+        <span class="n">Et_dg</span> <span class="o">=</span> <span class="n">fem</span><span class="o">.</span><span class="n">Function</span><span class="p">(</span><span class="n">V_dg</span><span class="p">)</span>
+        <span class="n">Et_dg</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">eth</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">VTXWriter</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;sols/Et_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.bp&quot;</span><span class="p">,</span> <span class="n">Et_dg</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">VTXWriter</span><span class="p">(</span><span class="n">domain</span><span class="o">.</span><span class="n">comm</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;sols/Ez_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.bp&quot;</span><span class="p">,</span> <span class="n">ezh</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It is worth highlighting that we filtered out the solutions that do not
+satisfy the tolerance requirements set in SLEPc, and that have a corresponding <span class="math notranslate nohighlight">\(k_z\)</span> with an imaginary
+part different from zero, since we are only interested in propagating solutions (i.e. real <span class="math notranslate nohighlight">\(k_z\)</span>)</p>
+<p>Then, we verify that our SLEPc solutions are consistent with the analytical formula for the half-loaded waveguide modes, which are:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
@@ -1145,27 +1200,63 @@ e_{z}
 \begin{aligned}
 \textrm{For TM}_x \textrm{ modes}:
 \begin{cases}
-&amp;k_{x d}^{2}+\left(\frac{n \pi}{b}\right)^{2}+k_{z}^{2}=
+&amp;k_{x d}^{2}+\left(\frac{n \pi}{w}\right)^{2}+k_{z}^{2}=
 k_0^{2} \varepsilon_{d} \\
-&amp;k_{x v}^{2}+\left(\frac{n \pi}{b}\right)^{2}+k_{z}^{2}=
+&amp;k_{x v}^{2}+\left(\frac{n \pi}{w}\right)^{2}+k_{z}^{2}=
 k_0^{2} \varepsilon_{v} \\
 &amp; \frac{k_{x d}}{\varepsilon_{d}} \tan k_{x d} d +
 \frac{k_{x v}}{\varepsilon_{v}} \tan \left[k_{x v}(h-d)\right] = 0
 \end{cases}
 \end{aligned}
 \end{split}\]</div>
-<p>The <code class="docutils literal notranslate"><span class="pre">analytical_modes.py</span></code> file defines the functions for doing the verification.</p>
-<p>In the end, we get the following eigenvalue, and the corresponding <span class="math notranslate nohighlight">\(k_z\)</span>:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">analytical_modes.py</span></code> file defines these formula:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">TMx_condition</span><span class="p">(</span><span class="n">kx_d</span><span class="p">,</span> <span class="n">kx_v</span><span class="p">,</span> <span class="n">eps_d</span><span class="p">,</span> <span class="n">eps_v</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">kx_d</span> <span class="o">/</span> <span class="n">eps_d</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">kx_d</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">kx_v</span> <span class="o">/</span> <span class="n">eps_v</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">kx_v</span> <span class="o">*</span> <span class="p">(</span><span class="n">h</span> <span class="o">-</span> <span class="n">d</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">TEx_condition</span><span class="p">(</span><span class="n">kx_d</span><span class="p">,</span> <span class="n">kx_v</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">kx_d</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">kx_d</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span> <span class="o">+</span> <span class="n">kx_v</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">kx_v</span> <span class="o">*</span> <span class="p">(</span><span class="n">h</span> <span class="o">-</span> <span class="n">d</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">verify_mode</span><span class="p">(</span>
+        <span class="n">kz</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">lmbd0</span><span class="p">,</span> <span class="n">eps_d</span><span class="p">,</span> <span class="n">eps_v</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+
+    <span class="n">k0</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">lmbd0</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ky</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">w</span>
+
+    <span class="n">kx_d_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">k0</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">eps_d</span> <span class="o">-</span> <span class="n">ky</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="o">-</span> <span class="n">kz</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">0</span><span class="n">j</span><span class="p">)</span>
+
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">kx_d_target</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">-</span> <span class="n">k0</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">eps_d</span> <span class="o">-</span> <span class="n">eps_v</span><span class="p">)</span>
+
+    <span class="n">kx_v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+    <span class="n">kx_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+
+    <span class="n">f_tm</span> <span class="o">=</span> <span class="n">TMx_condition</span><span class="p">(</span><span class="n">kx_d</span><span class="p">,</span> <span class="n">kx_v</span><span class="p">,</span> <span class="n">eps_d</span><span class="p">,</span> <span class="n">eps_v</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+    <span class="n">f_te</span> <span class="o">=</span> <span class="n">TEx_condition</span><span class="p">(</span><span class="n">kx_d</span><span class="p">,</span> <span class="n">kx_v</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
+        <span class="n">f_tm</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
+        <span class="n">f_te</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">verify_mode</span></code> function takes a <span class="math notranslate nohighlight">\(k_z\)</span> value, finds the corresponding
+<span class="math notranslate nohighlight">\(k_{xd}\)</span> and <span class="math notranslate nohighlight">\(k_{xv}\)</span>, and verify if for these values either the <span class="math notranslate nohighlight">\(\text{TM}_x\)</span> or
+the <span class="math notranslate nohighlight">\(\text{TE}_x\)</span> equations are close to zero (within a certain range of confidence).
+For the sake of simplicity, we just considered the fundamental mode for <span class="math notranslate nohighlight">\(k_y = n\pi/w = \pi/w\)</span>. For a more general approach, one should run this verification for multiple
+harmonic numbers <span class="math notranslate nohighlight">\(n\)</span>.</p>
+<p>In the end, we get the following eigenvalue, which successfully passes our test:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">eigenvalue</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.6924040028250327</span><span class="o">+</span><span class="mf">1.3702668664033287e-14</span><span class="n">j</span><span class="p">)</span>
 <span class="n">kz</span><span class="p">:</span> <span class="p">(</span><span class="mf">1.3009242878911258</span><span class="o">-</span><span class="mf">5.266512736973384e-15</span><span class="n">j</span><span class="p">)</span>
 <span class="n">kz</span><span class="o">/</span><span class="n">k0</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.4658591947638973</span><span class="o">-</span><span class="mf">1.885930953627917e-15</span><span class="n">j</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The eigenvalue successfuly passes the verification step, and therefore it satisfies the mode equations (up to a certain threshold).</p>
 </section>
 <section id="demo-4-maxwells-equations-for-axisymmetric-geometries">
 <h3>Demo #4: Maxwell’s equations for axisymmetric geometries<a class="headerlink" href="#demo-4-maxwells-equations-for-axisymmetric-geometries" title="Permalink to this headline">#</a></h3>
-<p>The fourth demo shows how to solve Maxwell’s equations for a simple three-dimensional axisymmetric geometry, i.e. a sphere. Generally, solving three-dimensional electromagnetic problems is computationally expensive, and it may result in prohibitive memory and time requirements. However, if the three-dimensional geometry has an axisymmetry, the full wave problem can be decomposed in few two-dimensional problems, with an overall much lower computational cost.</p>
+<p>The fourth demo shows how to solve Maxwell’s equations for a simple three-dimensional axisymmetric scattering structure, i.e. a sphere. Generally, solving three-dimensional electromagnetic problems is computationally expensive, and it may result in prohibitive memory and time requirements. However, if the three-dimensional geometry has an axisymmetry, the full wave problem can be decomposed in few two-dimensional problems, with an overall much lower computational cost.</p>
 <p>We start from the weak form for Maxwell’s equations and PML equations:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -1207,8 +1298,8 @@ k_0^{2} \varepsilon_{v} \\
 \end{split}\]</div>
 <p>Therefore, the original problem can be solved for each cylindrical harmonic over a 2D cross-section of the original domain. For the sake of simplicity, we choose this cross-section to be the one at <span class="math notranslate nohighlight">\(\phi = 0\)</span>.</p>
 <p>In the demo we present and implement a lof of concepts that we need for axisymmetric problems. We list them in the following sections.</p>
-<section id="nabla-times-operator-for-cylindrical-coordinates">
-<h4><span class="math notranslate nohighlight">\(\nabla\times\)</span> operator for cylindrical coordinates<a class="headerlink" href="#nabla-times-operator-for-cylindrical-coordinates" title="Permalink to this headline">#</a></h4>
+<section id="nabla-times-operator-in-cylindrical-coordinates">
+<h4><span class="math notranslate nohighlight">\(\nabla\times\)</span> operator in cylindrical coordinates<a class="headerlink" href="#nabla-times-operator-in-cylindrical-coordinates" title="Permalink to this headline">#</a></h4>
 <p>In cylindrical coordinates, the curl operator becomes:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -1352,10 +1443,14 @@ as:</p>
 </section>
 <section id="solving-the-problem">
 <h4>Solving the problem<a class="headerlink" href="#solving-the-problem" title="Permalink to this headline">#</a></h4>
-<p>The problem needs to be solved over many <span class="math notranslate nohighlight">\(m\in \mathbb{Z}\)</span>. Thanks to Bessel functions parities,
+<p>In DOLFINx, we need to solve as many weak form as the harmonic numbers <span class="math notranslate nohighlight">\(m\in \mathbb{Z}\)</span>. Thanks to Bessel functions parities,
 we can only solve for <span class="math notranslate nohighlight">\(m\geq0\)</span>, and adding a <span class="math notranslate nohighlight">\(2\)</span> factor to solutions for <span class="math notranslate nohighlight">\(m\geq1\)</span>.
-Another question is: where do we stop the expansion? For deeply sub-wavelength particles, as in our case, few cylindrical harmonics (<span class="math notranslate nohighlight">\(m = 0, 1\)</span>) are usually enough to reach a good accuracy.</p>
-<p>Therefore, the problem can be solved in DOLFINx with a loop over the <span class="math notranslate nohighlight">\(m\)</span>:</p>
+But… where do we stop the expansion? Theoretically, the expansion in cylindrical
+harmonics has infinite terms, and it goes without saying that we cannot
+consider all of them. However, a good rule of thumb is that for deeply sub-wavelength particles, as in our case, few cylindrical harmonics (e.g. <span class="math notranslate nohighlight">\(m = 0, 1\)</span>) are usually enough to reach a good accuracy. The bigger the particle, the bigger the expansion,
+since we need more cylindrical harmonics to construct a plane wave in bigger domains.</p>
+<p>Finally, the problem can be solved in DOLFINx with a loop over the <span class="math notranslate nohighlight">\(m\)</span> in the
+following way:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">m_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 
 <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">m_list</span><span class="p">:</span>
@@ -1414,10 +1509,10 @@ with the following call:</p>
 <span class="n">q_ext</span><span class="p">,</span> <span class="n">q_sca</span><span class="p">,</span> <span class="n">q_abs</span> <span class="o">=</span> <span class="n">scattnlay</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">m</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">))[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>The calculation of the numerical efficiencies is similar to what we did in
+<p>The procedure for numerical efficiencies is similar to what we already did in
 demo #2, with the only difference that we need to add a <span class="math notranslate nohighlight">\(2\)</span> factor for the
 efficiencies resulting from <span class="math notranslate nohighlight">\(m\geq1\)</span> harmonics.</p>
-<p>The final error for all efficiencies is well below <span class="math notranslate nohighlight">\(1\%\)</span>, as shown by the final output in the demo, and therefore we can safely say that the problem in DOLFINx is well
+<p>The comparison between analytical and numerical results shows an error well below <span class="math notranslate nohighlight">\(1\%\)</span>, and therefore we can safely say that the problem in DOLFINx is well
 set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">analytical</span> <span class="n">absorption</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">0.9622728008329892</span>
 <span class="n">The</span> <span class="n">numerical</span> <span class="n">absorption</span> <span class="n">efficiency</span> <span class="ow">is</span> <span class="mf">0.9583126377885698</span>
@@ -1441,10 +1536,10 @@ scattered field:</p>
 <section id="challenges-and-final-remarks">
 <h2>Challenges and final remarks<a class="headerlink" href="#challenges-and-final-remarks" title="Permalink to this headline">#</a></h2>
 <p>The most challenging aspect of GSoC was dealing with unexpected results and
-troubleshooting. Indeed, debugging was one of the most important skill I needed to improve during GSoC, since it never happens to run the code at the first try without problems, and therefore one should be able to quickly understand how to approach
+troubleshooting. Indeed, debugging was one of the most important skill I needed to improve during GSoC, since it never happened to run a demo at the first try without problems, and therefore I needed to quickly understand how to approach
 and solve these situations.</p>
-<p>For all demos I needed a certain degree of debugging, but for demo #4 it was particularly tough. Indeed, I had to deal with an unexpected behaviour of the demo:
-whenever I used <code class="docutils literal notranslate"><span class="pre">degree</span> <span class="pre">=</span> <span class="pre">3</span></code> (or higher) discretization elements, the error for the efficiencies increased, and DOLFINx solutions had some nasty artifacts, as shown in
+<p>For all demos I needed quite a lof of time just for debugging purposes, but for demo #4 this time was much higher. Indeed, I had to deal with an unexpected behaviour of the demo:
+whenever I used discretization elements with <code class="docutils literal notranslate"><span class="pre">degree</span> <span class="pre">=</span> <span class="pre">3</span></code> (or higher), the error for the efficiencies unexpectedly increased, and the corresponding DOLFINx solutions had some nasty artifacts, as shown in
 the image below.</p>
 <p><img alt="error" src="_images/error.png" /></p>
 <p>In order to understand the error, I tried to isolate the problem and collect as much
@@ -1457,16 +1552,17 @@ behavior, and was consistent with the background field I implemented
 for the same problem in legacy DOLFIN (extensively tested up to <code class="docutils literal notranslate"><span class="pre">degree</span> <span class="pre">=</span> <span class="pre">5</span></code>). Therefore, I was reasonably sure that PML and
 the background field were implemented correctly. What I tried to do next was
 comparing my legacy DOLFIN demo with my new DOLFINx demo for different
-harmonic numbers. What I noticed was that for <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">0</span></code> both demos output the
+harmonic numbers. What I noticed was that for <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">0</span></code> the outputs for both demos had the
 same efficiencies whatever the degree, while these efficiencies diverged for
-<code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">1</span></code> solutions. Therefore, something happened when passing from <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">0</span></code> and
+<code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">1</span></code>. Therefore, something happened when passing from <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">0</span></code> and
 <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">1</span></code>. The only two Python objects affected by the harmonic numbers were the
 <code class="docutils literal notranslate"><span class="pre">background_field_rz</span></code>, <code class="docutils literal notranslate"><span class="pre">background_field_p</span></code>, and the <code class="docutils literal notranslate"><span class="pre">curl_axis</span></code> functions. As
 already said, the background field functions were doing their job correctly, and
 it was then clear that something wrong was happening within <code class="docutils literal notranslate"><span class="pre">curl_axis</span></code>, and
-in particular for the terms activated by <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">1</span></code>. At this point, the problem
+in particular for the terms activated by <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">1</span></code>. Since the mathematical
+implementation of <code class="docutils literal notranslate"><span class="pre">curl_axis</span></code> was correct, the problem
 was clearly something wrong in the DOLFINx codebase, and together with my
-mentors I decided to open a GitHub issue and to “pass the ball” to more
+mentors I decided to open <span class="xref myst">a GitHub issue</span> and to “pass the ball” to more
 experienced developers. It turned out that there was a bug in the permuation
 inside <code class="docutils literal notranslate"><span class="pre">MixedElement</span></code>, solved by <a class="reference external" href="https://github.com/FEniCS/dolfinx/pull/2347">PR #2347</a>.</p>
 <p>When dealing with these issues, it was particularly important to not get frustrated,
@@ -1483,11 +1579,12 @@ gained much more confidence in using git and GitHub tools.</p>
 for helping other users, mainly because answering many of the posted questions require a deep
 technical knowledge about the FEniCSx environment that I have not gained yet. However,
 I have also understood that solving other users’ problems is a great way to better understand FEniCSx, and therefore I will be for sure more active in the future.</p>
-<p>Last but not least, I would like to thank my mentors Jørgen S. Dokken, Igor Baratta and Jack Hale for their patience and help over the 12 weeks. Discussing and working with them has been great since the beginning, and I could not have wished for a better
+<p>Last but not least, I would like to thank my mentors Jørgen S. Dokken, Igor Baratta and Jack S. Hale for their patience and help over the 12 weeks. Discussing and working with them has been great since the beginning, and I could not have wished for a better
 mentors/mentee relationship. I would also like to thank my supervisor Cristian
 Ciracì, which introduced me to FEniCS and which helped me so much when solving
 the problems I show in the demo.</p>
-<p>And, if you arrived here, I would like to thank you too!</p>
+<p>And, if you arrived here, I would like to thank you too for reading about this
+amazing journey!</p>
 </section>
 <section id="contacts">
 <h2>Contacts<a class="headerlink" href="#contacts" title="Permalink to this headline">#</a></h2>
