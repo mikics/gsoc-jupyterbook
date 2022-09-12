@@ -1281,16 +1281,17 @@ e^{i k z \cos \theta} i^{-m} J_{m}\left(k \rho \sin \theta\right)\right)
 <p>For axisymmetric structure, we need an axisymmetric complex coordinate transformation
 for PML. One possible choice is:</p>
 <div class="math notranslate nohighlight">
-\[ \begin{align}\begin{aligned}
+\[\begin{split}
 \begin{split}
 \begin{align}
-&amp; \rho^{\prime} = \rho\left[1 +j \alpha/k_0 \left(\frac{r\\\begin{split}- r_{dom}}{r~r_{pml}}\right)\right] \\
+&amp; \rho^{\prime} = \rho\left[1 +j \alpha/k_0 \left(\frac{r
+- r_{dom}}{r~r_{pml}}\right)\right] \\
 &amp; z^{\prime} = z\left[1 +j \alpha/k_0 \left(\frac{r
 - r_{dom}}{r~r_{pml}}\right)\right] \\
 &amp; \phi^{\prime} = \phi \\
 \end{align}
 \end{split}
-\end{split}\end{aligned}\end{align} \]</div>
+\end{split}\]</div>
 <p>and the corresponding Jacobian is:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -1351,7 +1352,7 @@ as:</p>
 </section>
 <section id="solving-the-problem">
 <h4>Solving the problem<a class="headerlink" href="#solving-the-problem" title="Permalink to this headline">#</a></h4>
-<p>The problem needs to be solved over many <span class="math notranslate nohighlight">\(m\in \Z\)</span>. Thanks to Bessel functions parities,
+<p>The problem needs to be solved over many <span class="math notranslate nohighlight">\(m\in \mathbb{Z}\)</span>. Thanks to Bessel functions parities,
 we can only solve for <span class="math notranslate nohighlight">\(m\geq0\)</span>, and adding a <span class="math notranslate nohighlight">\(2\)</span> factor to solutions for <span class="math notranslate nohighlight">\(m\geq1\)</span>.
 Another question is: where do we stop the expansion? For deeply sub-wavelength particles, as in our case, few cylindrical harmonics (<span class="math notranslate nohighlight">\(m = 0, 1\)</span>) are usually enough to reach a good accuracy.</p>
 <p>Therefore, the problem can be solved in DOLFINx with a loop over the <span class="math notranslate nohighlight">\(m\)</span>:</p>
