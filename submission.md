@@ -64,7 +64,7 @@ the demo showing how to solve a time-harmonic electromagnetic eigenvalue problem
   - `analytical_modes.py`: verifies if FEniCSx modes are consistent with the equations
   for the analytical modes;
 - [PR #2339](https://github.com/FEniCS/dolfinx/pull/2339) (**open**): this pull request adds the demo
-showing how to solve a time-harmonic electromagnetic problem for axisymmetric geometry:
+showing how to solve a time-harmonic electromagnetic problem for an axisymmetric geometry:
   - `demo_axis.py`: solves the time-harmonic problem of a plane wave scattered by a sphere
   within the axisymmetric approximation, using perfectly matched layers
   - `mesh_sphere_axis.py`: generates the mesh for the demo
