@@ -1,6 +1,6 @@
 # Final Product Submission for GSoC 2022 - Michele Castriotta
 
-This repository contains a Jupyterbook-powered website providing an overview over
+This repository builds a [Jupyterbook-powered website](https://mikics.github.io/gsoc-jupyterbook/submission.html) providing an overview over
 my work for the FEniCS project during the Google Summer of Code 2022.
 
 This website is an adaptation of [the FEniCSx tutorial @ FEniCS 2022](https://jorgensd.github.io/fenics22-tutorial),
