@@ -1,5 +1,5 @@
 FROM dolfinx/lab:v0.5.1
-RUN PYVISTA_JUPYTER_BACKEND=static PYVISTA_OFF_SCREEN=false
+RUN pip3 install notebook ipywidgets==7.7.2 nbconvert==6.5.3 jupyter-book --upgrade
 
 # create user with a home directory
 ARG NB_USER
