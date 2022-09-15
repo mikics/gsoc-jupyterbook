@@ -8,13 +8,11 @@ parts:
     chapters:
     - file: chapter1/demo_scattering_boundary_conditions
     - file: chapter1/analytical_efficiencies_wire
-    - file: chapter1/mesh_wire
 
   - caption: Perfectly matched layer (PML)
     chapters:
     - file: chapter2/demo_pml
     - file: chapter2/analytical_efficiencies_wire
-    - file: chapter2/mesh_wire_pml
   
   - caption: Half-loaded waveguide
     chapters:
@@ -24,4 +22,3 @@ parts:
   - caption: Axisymmetric Maxwell's equations
     chapters:
     - file: chapter4/demo_axis
-    - file: chapter4/mesh_sphere_axis
