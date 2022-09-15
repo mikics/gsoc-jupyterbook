@@ -1,5 +1,4 @@
-FROM dolfinx/lab:v0.5.1
-RUN python3 -m pip install --no-cache-dir ipywidgets==7.7.2 --upgrade
+FROM ghcr.io/jorgensd/dolfinx-tutorial:v0.5.1
 
 # create user with a home directory
 ARG NB_USER
@@ -14,5 +13,4 @@ USER root
 RUN chown -R ${NB_UID} ${HOME}
 
 USER ${NB_USER}
-
 ENTRYPOINT []
