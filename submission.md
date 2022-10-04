@@ -737,7 +737,7 @@ $$
 
 Therefore, the original problem can be solved for each cylindrical harmonic over a 2D cross-section of the original domain. For the sake of simplicity, we choose this cross-section to be the one at $\phi = 0$.
 
-In the demo we present and implement a lof of concepts that we need for axisymmetric problems. We list them in the following sections.
+In the demo we present and implement a lot of concepts that we need for axisymmetric problems. We list them in the following sections.
 
 #### $\nabla\times$ operator in cylindrical coordinates
 
@@ -993,7 +993,7 @@ The most challenging aspect of GSoC was dealing with unexpected results and
 troubleshooting. Indeed, debugging was one of the most important skill I needed to improve during GSoC, since it never happened to run a demo at the first try without problems, and therefore I needed to quickly understand how to approach
 and solve these situations.
 
-For all demos I needed quite a lof of time just for debugging purposes, but for demo #4 this time was much higher. Indeed, I had to deal with an unexpected behaviour of the demo:
+For all demos I needed quite a lot of time just for debugging purposes, but for demo #4 this time was much higher. Indeed, I had to deal with an unexpected behavior of the demo:
 whenever I used discretization elements with `degree = 3` (or higher), the error for the efficiencies unexpectedly increased, and the corresponding DOLFINx solutions had some nasty artifacts, as shown in
 the image below.
 
@@ -1020,7 +1020,7 @@ in particular for the terms activated by `m = 1`. Since the mathematical
 implementation of `curl_axis` was correct, the problem
 was clearly something wrong in the DOLFINx codebase, and together with my
 mentors I decided to open [a GitHub issue](https://github.com/FEniCS/dolfinx/issues/2343) and to "pass the ball" to more
-experienced developers. It turned out that there was a bug in the permuation
+experienced developers. It turned out that there was a bug in the permutation
 inside `MixedElement`, solved by [PR #2347](https://github.com/FEniCS/dolfinx/pull/2347).
 
 When dealing with these issues, it was particularly important to not get frustrated,
@@ -1030,8 +1030,8 @@ some time off and try again after few hours or the next day, and 2) ask for help
 you are running out of ideas!
 
 In the end, the GSoC has been the best professional experience of my life, since I have
-learnt
-so much in 12 weeks that I can hardly recall everything. Just to name a few: I have learnt how to run and manage Docker containers, I have a deeper knowledge of the
+learned
+so much in 12 weeks that I can hardly recall everything. Just to name a few: I have learned how to run and manage Docker containers, I have a deeper knowledge of the
 FEniCSx environment, I can now run and build static websites as the one you are reading now, I have a deeper understanding of how a big project as FEniCSx is managed, and I have
 gained much more confidence in using git and GitHub tools.
 
