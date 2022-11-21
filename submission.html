@@ -1299,7 +1299,7 @@ harmonic numbers <span class="math notranslate nohighlight">\(n\)</span>.</p>
 \end{align}
 \end{split}\]</div>
 <p>Therefore, the original problem can be solved for each cylindrical harmonic over a 2D cross-section of the original domain. For the sake of simplicity, we choose this cross-section to be the one at <span class="math notranslate nohighlight">\(\phi = 0\)</span>.</p>
-<p>In the demo we present and implement a lof of concepts that we need for axisymmetric problems. We list them in the following sections.</p>
+<p>In the demo we present and implement a lot of concepts that we need for axisymmetric problems. We list them in the following sections.</p>
 <section id="nabla-times-operator-in-cylindrical-coordinates">
 <h4><span class="math notranslate nohighlight">\(\nabla\times\)</span> operator in cylindrical coordinates<a class="headerlink" href="#nabla-times-operator-in-cylindrical-coordinates" title="Permalink to this headline">#</a></h4>
 <p>In cylindrical coordinates, the curl operator becomes:</p>
@@ -1540,7 +1540,7 @@ scattered field:</p>
 <p>The most challenging aspect of GSoC was dealing with unexpected results and
 troubleshooting. Indeed, debugging was one of the most important skill I needed to improve during GSoC, since it never happened to run a demo at the first try without problems, and therefore I needed to quickly understand how to approach
 and solve these situations.</p>
-<p>For all demos I needed quite a lof of time just for debugging purposes, but for demo #4 this time was much higher. Indeed, I had to deal with an unexpected behaviour of the demo:
+<p>For all demos I needed quite a lot of time just for debugging purposes, but for demo #4 this time was much higher. Indeed, I had to deal with an unexpected behavior of the demo:
 whenever I used discretization elements with <code class="docutils literal notranslate"><span class="pre">degree</span> <span class="pre">=</span> <span class="pre">3</span></code> (or higher), the error for the efficiencies unexpectedly increased, and the corresponding DOLFINx solutions had some nasty artifacts, as shown in
 the image below.</p>
 <p><img alt="error" src="_images/error.png" /></p>
@@ -1565,7 +1565,7 @@ in particular for the terms activated by <code class="docutils literal notransla
 implementation of <code class="docutils literal notranslate"><span class="pre">curl_axis</span></code> was correct, the problem
 was clearly something wrong in the DOLFINx codebase, and together with my
 mentors I decided to open <a class="reference external" href="https://github.com/FEniCS/dolfinx/issues/2343">a GitHub issue</a> and to “pass the ball” to more
-experienced developers. It turned out that there was a bug in the permuation
+experienced developers. It turned out that there was a bug in the permutation
 inside <code class="docutils literal notranslate"><span class="pre">MixedElement</span></code>, solved by <a class="reference external" href="https://github.com/FEniCS/dolfinx/pull/2347">PR #2347</a>.</p>
 <p>When dealing with these issues, it was particularly important to not get frustrated,
 and to have built a strong communication with my mentors. Therefore, my suggestions for new
@@ -1573,8 +1573,8 @@ GSoC contributors are: 1) do not work on an issue if you are too much tired, rat
 some time off and try again after few hours or the next day, and 2) ask for help if
 you are running out of ideas!</p>
 <p>In the end, the GSoC has been the best professional experience of my life, since I have
-learnt
-so much in 12 weeks that I can hardly recall everything. Just to name a few: I have learnt how to run and manage Docker containers, I have a deeper knowledge of the
+learned
+so much in 12 weeks that I can hardly recall everything. Just to name a few: I have learned how to run and manage Docker containers, I have a deeper knowledge of the
 FEniCSx environment, I can now run and build static websites as the one you are reading now, I have a deeper understanding of how a big project as FEniCSx is managed, and I have
 gained much more confidence in using git and GitHub tools.</p>
 <p>My only regret is that I have not been too much active on the <a class="reference external" href="https://fenicsproject.discourse.group/">FEniCS discourse group</a>
