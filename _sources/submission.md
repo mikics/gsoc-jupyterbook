@@ -42,7 +42,7 @@ the `main` DOLFINx branch.
 
 ### Pull Requests
 
-- [PR #2237](https://github.com/FEniCS/dolfinx/pull/2237) (**open**): this pull request
+- [PR #2237](https://github.com/FEniCS/dolfinx/pull/2237) (**merged**): this pull request
 adds the demo showing how to set a time-harmonic electromagnetic problem
 with scattering boundary conditions:
   - `demo_scattering_boundary_conditions.py`: solves the time-harmonic problem
@@ -51,19 +51,19 @@ with scattering boundary conditions:
   - `mesh_wire.py`: generates the mesh for the demo;
   - `analytical_efficiencies_wire.py`: calculates the analytical efficiencies
   for a wire;
-- [PR #2276](https://github.com/FEniCS/dolfinx/pull/2276) (**open**): this pull request
+- [PR #2276](https://github.com/FEniCS/dolfinx/pull/2276) (**merged**): this pull request
 adds the demo showing how to set a time-harmonic electromagnetic problem with perfectly matched layers:
   - `demo_pml.py`: solves the time-harmonic problem of a TM-polarized plane wave scattered by a gold wire using perfectly matched layers;
   - `mesh_wire_pml.py`: generates the mesh for the demo;
   - `analytical_efficiencies_wire.py`: calculates the analytical efficiencies
   for a wire;
-- [PR #2338](https://github.com/FEniCS/dolfinx/pull/2338) (**open**): this pull request adds
+- [PR #2338](https://github.com/FEniCS/dolfinx/pull/2338) (**merged**): this pull request adds
 the demo showing how to solve a time-harmonic electromagnetic eigenvalue problem with DOLFINx and SLEPc:
   - `demo_waveguide.py`: solves the eigenvalue problem associated with an electromagnetic half-loaded
   waveguide with SLEPc;
   - `analytical_modes.py`: verifies if FEniCSx modes are consistent with the equations
   for the analytical modes;
-- [PR #2339](https://github.com/FEniCS/dolfinx/pull/2339) (**open**): this pull request adds the demo
+- [PR #2339](https://github.com/FEniCS/dolfinx/pull/2339) (**merged**): this pull request adds the demo
 showing how to solve a time-harmonic electromagnetic problem for an axisymmetric geometry:
   - `demo_axis.py`: solves the time-harmonic problem of a plane wave scattered by a sphere
   within the axisymmetric approximation, using perfectly matched layers
